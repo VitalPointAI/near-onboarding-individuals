@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import globe from '../../img/globe.png'
+import globe from '../../img/personas-logo.png'
 import { Link } from 'react-router-dom'
 
 // Material UI Components

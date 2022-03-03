@@ -17,7 +17,7 @@ import { Typography } from '@mui/material'
 
 import '../../../global.css'
 
-const nearLogo = require('../../../img/near-guilds-logo.png')
+const nearLogo = require('../../../img/near-personas-logo.png')
 
 const logoStyle = {
     maxWidth: '150px',
