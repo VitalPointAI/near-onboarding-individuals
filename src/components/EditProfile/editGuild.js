@@ -202,7 +202,7 @@ console.log('platform', platform)
                     setWebhook('')
                 }
 
-                let result = await appIdx.get('daoProfile', did)
+                let result = await appIdx.get('guildProfile', did)
                 if(result) {
                     if(result.purpose){
                         let contentBlock = htmlToDraft(result.purpose)
@@ -400,7 +400,7 @@ console.log('platform', platform)
  
         try {
             let result2 = await ceramic.storeKeysSecret(curUserIdx, hookArray, 'apiKeys', curUserIdx.id)
-            let result = await curUserIdx.set('daoProfile', record)
+            let result = await curUserIdx.set('guildProfile', record)
             setFinished(true)
             update('', { isUpdated: !isUpdated })
             window.location.assign('/')
@@ -565,9 +565,7 @@ console.log('platform', platform)
                 <Grid container spacing={2}>
                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                     <TextField
-                    
                     margin="dense"
-                    id="input-with-icon-grid"
                     id="profile-email"
                     variant="outlined"
                     name="email"
@@ -591,7 +589,7 @@ console.log('platform', platform)
                     <TextField
                     
                     margin="dense"
-                    id="daoprofile-website"
+                    id="guildprofile-website"
                     variant="outlined"
                     name="website"
                     label="Website"
@@ -705,7 +703,7 @@ console.log('platform', platform)
                     <TextField
                     
                     margin="dense"
-                    id="daoprofile-platform"
+                    id="guildprofile-platform"
                     variant="outlined"
                     name="dao"
                     label="DAO"
@@ -729,7 +727,7 @@ console.log('platform', platform)
                     <TextField
                     
                     margin="dense"
-                    id="daoprofile-contract"
+                    id="guildprofile-contract"
                     variant="outlined"
                     name="contract"
                     label="NEAR Contract Account"

@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
+import qs from 'qs'
 import Social from '../common/Social/social'
+import { MAIL_URL, getSendyAPI } from '../../state/near'
+const axios = require('axios').default
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
@@ -24,7 +27,8 @@ import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration'
 import VerifiedIcon from '@mui/icons-material/Verified'
-import { Divider } from '@mui/material'
+import { Divider, LinearProgress } from '@mui/material'
+import MailIcon from '@mui/icons-material/Mail'
 
 // CSS Styles
 
@@ -87,7 +91,11 @@ export default function IndivProfile(props) {
     const [skillSet, setSkillSet] = useState({})
     const [developerSkillSet, setDeveloperSkillSet] = useState({})
     const [personaSkillSet, setPersonaSkillSet] = useState([])
+    const [personaValueSet, setPersonaValueSet] = useState([])
     const [personaSpecificSkillSet, setPersonaSpecificSkillSet] = useState([])
+    const [interests, setInterests] = useState([])
+    const [learningGoals, setLearningGoals] = useState([])
+    const [workDesires, setWorkDesires] = useState([])
     const [personId, setPersonId] = useState()
     const [intro, setIntro] = useState('')
     const [date, setDate] = useState('')
@@ -97,6 +105,12 @@ export default function IndivProfile(props) {
     const [twitter, setTwitter] = useState('')
     const [reddit, setReddit] = useState('')
     const [discord, setDiscord] = useState('')
+    const [pfpAvatar, setPfpAvatar] = useState(imageName)
+    const [nftContract, setNftContract] = useState('')
+    const [nftTokenId, setNftTokenId] = useState('')
+
+    const [emailNotifications, setEmailNotifications] = useState(false)
+    const [emailFinished, setEmailFinished] = useState(true)
 
     const classes = useStyles()
 
@@ -116,6 +130,46 @@ export default function IndivProfile(props) {
     const {
       indivDid
     }= props
+
+    useEffect(
+        () => {
+            async function getEmailStatus(){
+                if(email){
+                    let key = await getSendyAPI()
+                    let emailStatus
+                    let data = {
+                        api_key: key.data.seed,
+                        email: email,
+                        list_id: process.env.NP_SENDY_LIST_ID
+                    }
+                    let url = `${MAIL_URL}/api/subscribers/subscription-status.php`
+                    try{
+                        emailStatus = await axios.post(url,
+                            qs.stringify(data),
+                            {
+                                headers: {
+                                    'content-type': 'application/x-www-form-urlencoded'
+                                }
+                            })
+                        console.log('emailstatus', emailStatus)
+                        if(emailStatus.data == 'Subscribed') {
+                            setEmailNotifications(true)
+                        }
+                        if(emailStatus.data == 'Email does not exist in list' || emailStatus.data == 'Unsubscribed' || emailStatus.data == 'Unconfirmed' || emailStatus.data == 'Bounced'){
+                            setEmailNotifications(false)
+                        }
+                    } catch (err) {
+                        console.log('error getting email status', err)
+                    }
+                }
+            }
+
+            getEmailStatus()
+            .then((res) => {
+
+            })
+
+        }, [email])
 
     
     useEffect(
@@ -145,8 +199,15 @@ export default function IndivProfile(props) {
                   result.developerSkillSet ? setDeveloperSkillSet(result.developerSkillSet) : setDeveloperSkillSet({})
                   result.personaSkills ? setPersonaSkillSet(result.personaSkills) : setPersonaSkillSet([])
                   result.personaSpecificSkills ? setPersonaSpecificSkillSet(result.personaSpecificSkills) : setPersonaSpecificSkillSet([])
+                  result.values ? setPersonaValueSet(result.values) : setPersonaValueSet([])
+                  result.interests ? setInterests(result.interests) : setInterests([])
+                  result.learningGoals ? setLearningGoals(result.learningGoals) : setLearningGoals([])
+                  result.workDesires ? setWorkDesires(result.workDesires) : setWorkDesires([])
                   result.owner ? setPersonId(result.owner) : null
                   result.intro ? setIntro(result.intro) : null
+                  result.nftContract ? setNftContract(result.nftContract) : setNftContract('')
+                  result.nftTokenId ? setNftTokenId(result.nftTokenId) : setNftTokenId('')
+                  result.profileNft ? setPfpAvatar(result.profileNft) : setPfpAvatar(imageName)
                 }
             } else {
               if(did && appIdx){
@@ -170,8 +231,15 @@ export default function IndivProfile(props) {
                         result.developerSkillSet ? setDeveloperSkillSet(result.developerSkillSet) : setDeveloperSkillSet({})
                         result.personaSkills ? setPersonaSkillSet(result.personaSkills) : setPersonaSkillSet([])
                         result.personaSpecificSkills ? setPersonaSpecificSkillSet(result.personaSpecificSkills) : setPersonaSpecificSkillSet([])
+                        result.values ? setPersonaValueSet(result.values) : setPersonaValueSet([])
+                        result.interests ? setInterests(result.interests) : setInterests([])
+                        result.learningGoals ? setLearningGoals(result.learningGoals) : setLearningGoals([])
+                        result.workDesires ? setWorkDesires(result.workDesires) : setWorkDesires([])
                         result.owner ? setPersonId(result.owner) : null
                         result.intro ? setIntro(result.intro) : null
+                        result.nftContract ? setNftContract(result.nftContract) : setNftContract('')
+                        result.nftTokenId ? setNftTokenId(result.nftTokenId) : setNftTokenId('')
+                        result.profileNft ? setPfpAvatar(result.profileNft) : setPfpAvatar(imageName)
                       }
               }
             }
@@ -184,6 +252,59 @@ export default function IndivProfile(props) {
           
     }, [did, indivDid, appIdx, isUpdated]
     )
+
+    async function optin() {
+        setEmailFinished(false)
+        let key = await getSendyAPI()
+        let subscribeUrl = `${MAIL_URL}/subscribe`
+        let data = {
+            api_key: key.data.seed, 
+            email: email,
+            name: name,
+            list: process.env.NP_SENDY_LIST_ID,
+            boolean: true
+        }
+        try{
+            axiosCall = await axios.post(subscribeUrl,
+                qs.stringify(data),
+                {
+                    headers: {
+                        'content-type': 'application/x-www-form-urlencoded'
+                    }
+                })
+        console.log('axioscall', axiosCall)
+        setEmailNotifications(true)
+        setEmailFinished(true)
+       
+        } catch (err) {
+            console.log('error subscribing', err)
+        }
+    }
+
+    async function optout() {
+        setEmailFinished(false)
+        let key = await getSendyAPI()
+        let deleteUrl = `${MAIL_URL}/api/subscribers/delete.php`
+        let data = {
+            api_key: key.data.seed, 
+            email: email,
+            list_id: process.env.NP_SENDY_LIST_ID
+        }
+        try{
+            axiosCall = await axios.post(deleteUrl,
+                qs.stringify(data),
+                {
+                    headers: {
+                        'content-type': 'application/x-www-form-urlencoded'
+                    }
+                })
+        console.log('axiosCalldelete', axiosCall)
+        setEmailNotifications(false)
+        setEmailFinished(true)
+        } catch (err) {
+            console.log('error subscribing', err)
+        }
+    }
 
     const languages = language.map((item, i) => {
       if (i == language.length -1){
@@ -203,7 +324,17 @@ export default function IndivProfile(props) {
               
                 <Grid container justifyContent="space-evenly" spacing={1} style={{marginTop:'20px', padding:'10px'}}>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                        <Avatar src={avatar} style={{width:'150px', height:'auto', marginBottom:'10px'}}  />
+                    {personId == accountId ? 
+                            emailFinished ? 
+                                emailNotifications ?
+                                    <Chip icon={<MailIcon />} label="Email Notifications: ON" variant="outlined" onClick={optout}/>
+                                : <Chip icon={<MailIcon />} label="Email Notifications: OFF" variant="outlined" onClick={optin}/>
+                            : <LinearProgress/>
+                    : null
+                    }
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+                        <Avatar src={pfpAvatar && pfpAvatar != imageName && pfpAvatar != '' ? pfpAvatar : avatar} style={{width:'150px', height:'auto', marginBottom:'10px'}}  />
                         <Typography variant="h5">
                             {name ? name : accountId}
                         </Typography>
@@ -254,20 +385,8 @@ export default function IndivProfile(props) {
                                     
                                     </TableHead>
                                     <TableBody>
-                                    {skillSet ?
-                                        Object.entries(skillSet).map(([key, value]) => {
-                                            if(value){
-                                            return(
-                                                <TableRow key={key}>
-                                                <TableCell>{key}</TableCell>
-                                                </TableRow>
-                                            )
-                                            }
-                                        })
-                                        : null
-                                    }
-                                    {personaSkillSet && personaSkillSet.length > 0 ?
-                                        personaSkillSet.map((values, index) => {
+                                    {personaValueSet && personaValueSet.length > 0 ?
+                                        personaValueSet.map((values, index) => {
                                         
                                             return (
                                             <TableRow key={values.name}>
@@ -278,14 +397,52 @@ export default function IndivProfile(props) {
                                     })
                                     : null
                                     }
-                                        
-                                            
+                                             
                                     </TableBody>
                                     </Table>
                                 </TableContainer>
                             </Grid>
                             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                            <Typography variant="h6">Skills & Competencies</Typography>
+                            <Typography variant="h6">General Skills</Typography>
+                            <TableContainer component={Paper}>
+                                <Table className={classes.table} size="small" aria-label="a dense table">
+                                <TableHead>
+                                
+                                </TableHead>
+                                <TableBody>
+                                
+                                {skillSet ?
+                                  Object.entries(skillSet).map(([key, value]) => {
+                                      if(value){
+                                      return(
+                                          <TableRow key={key}>
+                                          <TableCell>{key}</TableCell>
+                                          </TableRow>
+                                      )
+                                      }
+                                  })
+                                  : null
+                              }
+                                {personaSkillSet && personaSkillSet.length > 0 ?
+                                
+                                    personaSkillSet.map((values, index) => {
+                                        
+                                        return (
+                                            <TableRow key={values.name}>
+                                            <TableCell>{values.name}</TableCell>
+                                            </TableRow>
+                                        )
+                                    
+                                    })
+                                    : null
+                                }
+                                
+                                </TableBody>
+                                </Table>
+                            </TableContainer>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <Typography variant="h6">Specific Skills</Typography>
                             <TableContainer component={Paper}>
                                 <Table className={classes.table} size="small" aria-label="a dense table">
                                 <TableHead>
@@ -317,6 +474,78 @@ export default function IndivProfile(props) {
                                             </TableRow>
                                         )
                                     
+                                    })
+                                    : null
+                                }
+                                
+                                </TableBody>
+                                </Table>
+                            </TableContainer>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <Typography variant="h6">Interests</Typography>
+                            <TableContainer component={Paper}>
+                                <Table className={classes.table} size="small" aria-label="a dense table">
+                                <TableHead>
+                                
+                                </TableHead>
+                                <TableBody>
+                                
+                                {interests && interests.length > 0 ?
+                                    interests.map((values, index) => { 
+                                        return (
+                                            <TableRow key={values.name}>
+                                            <TableCell>{values.name}</TableCell>
+                                            </TableRow>
+                                        )
+                                    })
+                                    : null
+                                }
+                                
+                                </TableBody>
+                                </Table>
+                            </TableContainer>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <Typography variant="h6">Learning Goals</Typography>
+                            <TableContainer component={Paper}>
+                                <Table className={classes.table} size="small" aria-label="a dense table">
+                                <TableHead>
+                                
+                                </TableHead>
+                                <TableBody>
+                                
+                                {learningGoals && learningGoals.length > 0 ?
+                                    learningGoals.map((values, index) => { 
+                                        return (
+                                            <TableRow key={values.name}>
+                                            <TableCell>{values.name}</TableCell>
+                                            </TableRow>
+                                        )
+                                    })
+                                    : null
+                                }
+                                
+                                </TableBody>
+                                </Table>
+                            </TableContainer>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <Typography variant="h6">Type of Work Desired</Typography>
+                            <TableContainer component={Paper}>
+                                <Table className={classes.table} size="small" aria-label="a dense table">
+                                <TableHead>
+                                
+                                </TableHead>
+                                <TableBody>
+                                
+                                {workDesires && workDesires.length > 0 ?
+                                    workDesires.map((values, index) => { 
+                                        return (
+                                            <TableRow key={values.name}>
+                                            <TableCell>{values.name}</TableCell>
+                                            </TableRow>
+                                        )
                                     })
                                     : null
                                 }

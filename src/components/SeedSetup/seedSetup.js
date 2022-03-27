@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
     tooltip: {
       backgroundColor: '#f5f5f9',
       color: 'rgba(0, 0, 0, 0.87)',
-      maxWidth: '100px',
+      maxWidth: '95%',
       fontSize: '12px',
       border: '1px solid #dadde9',
     },
@@ -123,7 +123,7 @@ export default function Import(props) {
     currentAccounts.push(newAccount)
     set(ACCOUNT_LINKS, currentAccounts)
     update('', {key: false})
-    window.location.assign('/register-guild')
+    window.location.assign('/register-individual')
     }
 
     // recovers an existing key
@@ -150,33 +150,33 @@ export default function Import(props) {
        {!matches ?
         <Grid container spacing={1}>
           <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-            <Typography variant="h4" style={{marginTop:'40px'}}>You've Founded a Guild</Typography><br></br>
-            <Typography variant="h5" style={{marginTop:'20px', marginBottom: '20px'}}>Now secure it's data!</Typography>
+            <Typography variant="h4" style={{marginTop:'40px'}}>Setup Persona Identity</Typography><br></br>
+            <Typography variant="h5" style={{marginTop:'20px', marginBottom: '20px'}}>Control your data!</Typography>
               
-                <Typography variant="body1">What's a secret phrase and why do you need one?
+                <Typography variant="body1">What's a seed phrase?
                 <HtmlTooltip
                 title={
                   <>
-                      <Typography variant="h6">What's a Secret Phrase?</Typography>
+                      <Typography variant="h6">What's a Seed Phrase?</Typography>
 
-                      <Typography variant="body2">NEAR Guilds is an open web application that gives
-                      you complete control of your guild's data.</Typography>
+                      <Typography variant="body2">NEAR Personas is an open web application that gives
+                      you complete control of your persona's data.</Typography>
                       <br></br>
-                      <Typography variant="body2">This secret phrase is like a long password. It
+                      <Typography variant="body2">Seed phrases are common in crypto. They are like a long password. It
                       allows you to access your data to add, update, or delete at will.
                       </Typography>
                       <br></br>
-                      <Typography variant="body2">You need to keep it safe. Nobody else, including NEAR Guilds,
-                      can change your guild's data without your secret phrase.
+                      <Typography variant="body2">You need to keep it safe. Nobody else, including NEAR Personas,
+                      can change your persona's data without control of your seed phrase.
                       </Typography>
                       <br></br>
                       <Typography variant="body2">
-                      Your Guild's secret phrase is the secret phrase to it's unique identity, not it's wallet. 
-                      You <b>SHOULD NOT USE</b> the account's wallet seed phrase as the Guild's secret phrase.
+                      Your persona's seed phrase is the key to it's unique identity, not it's wallet. 
+                      You <b>SHOULD NOT USE</b> the account's wallet seed phrase as the persona's seed phrase.
                       </Typography>
                   </>
                 }
-                placement="left"
+                placement="bottom-start"
                 ><InfoIcon />
                 </HtmlTooltip>
                 </Typography>
@@ -192,22 +192,22 @@ export default function Import(props) {
           >
             <Typography className={classes.heading}>Option 1</Typography>
             <Typography className={classes.secondaryHeading}>
-              You do not have your Guild's secret phrase.
+              New Seed Phrase
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
           <Card>
           <CardHeader 
-            title="New Guild?"
+            title="New Persona?"
             align="center"
           />
           <CardContent>
-            <Typography variant="body1" gutterBottom>This sets a new 12 word secret phrase for this guild's data stream.</Typography>
+            <Typography variant="body1" gutterBottom>This sets a new 12 word seed phrase for this persona's data stream.</Typography>
             <Typography variant="body1" gutterBottom>It does not allow access to this account's wallet. Protect it like any other secret key.</Typography>
-            <Typography variant="body1" gutterBottom>We cannot recover this phrase for you. As the guild leader, it is your responsibility to keep it safe.</Typography>
+            <Typography variant="body1" gutterBottom>We cannot recover this phrase for you. As the persona owner, it is your responsibility to keep it safe.</Typography>
             <div class="form-floating mb-3" align="center">
             {seedHidden && <Button color="primary" style={{marginBottom: '10px'}} onClick={() => { setSeedHidden(!seedHidden) }}>
-                REVEAL GUILD'S SECRET PHRASE
+                REVEAL PERSONA'S SEED PHRASE
             </Button>}
            
                 <textarea readonly class="form-control" id="seedPhrase" value={seedHidden ? `************` : seedPhrase} style={{marginTop: '10px', marginBottom: '10px'}}/>
@@ -229,18 +229,17 @@ export default function Import(props) {
             id="panel2bh-header"
           >
             <Typography className={classes.heading}>Option 2</Typography>
-            <Typography className={classes.secondaryHeading}>You have the Guild's 
-            secret phrase and need to restore it.</Typography>
+            <Typography className={classes.secondaryHeading}>Restore Seed Phrase</Typography>
           </AccordionSummary>
           <AccordionDetails>
           <Card>
           <CardHeader 
-            title="Have the Guild's Secret Phrase?"
+            title="Have the Persona's Seed Phrase?"
             align="center"
           />
           <CardContent>
-            <Typography variant="body1" gutterBottom>If you have your Guild's 12 word secret phrase, enter it below.</Typography>
-            <Typography variant="body1" gutterBottom><b>Please DO NOT USE use the Guild's wallet seed phrase.</b></Typography>
+            <Typography variant="body1" gutterBottom>If you have your Persona's 12 word seed phrase, enter it below.</Typography>
+            <Typography variant="body1" gutterBottom><b>Please DO NOT USE use the your account wallet seed phrase.</b></Typography>
             <div class="form-floating mb-3" align="center">
                 <div>
                   <TextField
@@ -250,7 +249,7 @@ export default function Import(props) {
                       margin="dense"
                       variant="outlined"
                       name="id"
-                      label="12 Word Recovery Secret Phrase"
+                      label="12 Word Recovery Seed Phrase"
                       helperText="12 words, 1 space between each word"
                       value={recoverSeed}
                       onChange={handleRecoverSeed}
@@ -273,36 +272,36 @@ export default function Import(props) {
         :
         <Grid container spacing={1}>
           <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-            <Typography variant="h4" style={{marginTop:'40px'}}>You've Founded a Guild</Typography><br></br>
-            <Typography variant="h5" style={{marginTop:'20px', marginBottom: '20px'}}>Now secure it's data!</Typography>
+            <Typography variant="h4" style={{marginTop:'40px'}}>Setup Persona Identity</Typography><br></br>
+            <Typography variant="h5" style={{marginTop:'20px', marginBottom: '20px'}}>Control your data!</Typography>
               
-                <Typography variant="body1">What's a secret phrase and why do you need one?
-                <HtmlTooltip
-                title={
-                  <>
-                      <Typography variant="h6">What's a Secret Phrase?</Typography>
+            <Typography variant="body1">What's a seed phrase?
+            <HtmlTooltip
+            title={
+              <>
+                  <Typography variant="h6">What's a Seed Phrase?</Typography>
 
-                      <Typography variant="body2">NEAR Guilds is an open web application that gives
-                      you complete control of your guild's data.</Typography>
-                      <br></br>
-                      <Typography variant="body2">This secret phrase is like a long password. It
-                      allows you to access your data to add, update, or delete at will.
-                      </Typography>
-                      <br></br>
-                      <Typography variant="body2">You need to keep it safe. Nobody else, including NEAR Guilds,
-                      can change your guild's data without your secret phrase.
-                      </Typography>
-                      <br></br>
-                      <Typography variant="body2">
-                      Your Guild's secret phrase is the secret phrase to it's unique identity, not it's wallet. 
-                      You <b>SHOULD NOT USE</b> the account's wallet seed phrase as the Guild's secret phrase.
-                      </Typography>
-                  </>
-                }
-                placement="left"
-                ><InfoIcon />
-                </HtmlTooltip>
-                </Typography>
+                  <Typography variant="body2">NEAR Personas is an open web application that gives
+                  you complete control of your persona's data.</Typography>
+                  <br></br>
+                  <Typography variant="body2">Seed phrases are common in crypto. They are like a long password. It
+                  allows you to access your data to add, update, or delete at will.
+                  </Typography>
+                  <br></br>
+                  <Typography variant="body2">You need to keep it safe. Nobody else, including NEAR Personas,
+                  can change your persona's data without control of your seed phrase.
+                  </Typography>
+                  <br></br>
+                  <Typography variant="body2">
+                  Your persona's seed phrase is the key to it's unique identity, not it's wallet. 
+                  You <b>SHOULD NOT USE</b> the account's wallet seed phrase as the persona's seed phrase.
+                  </Typography>
+              </>
+            }
+            placement="bottom-start"
+            ><InfoIcon />
+            </HtmlTooltip>
+            </Typography>
             <Typography variant="h6" style={{marginTop: '20px', marginBottom:'20px'}}>Choose your situation:</Typography>
           </Grid>
           <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
@@ -315,22 +314,22 @@ export default function Import(props) {
           >
             <Typography className={classes.heading}>Option 1</Typography>
             <Typography className={classes.secondaryHeading}>
-              You do not have your Guild's secret phrase.
+              New Persona
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
           <Card>
           <CardHeader 
-            title="New Guild?"
+            title="New Persona?"
             align="center"
           />
           <CardContent>
-            <Typography variant="body1" gutterBottom>This sets a new 12 word secret phrase for this guild's data stream.</Typography>
+            <Typography variant="body1" gutterBottom>This sets a new 12 word seed phrase for this persona's data stream.</Typography>
             <Typography variant="body1" gutterBottom>It does not allow access to this account's wallet. Protect it like any other secret key.</Typography>
-            <Typography variant="body1" gutterBottom>We cannot recover this phrase for you. As the guild leader, it is your responsibility to keep it safe.</Typography>
+            <Typography variant="body1" gutterBottom>We cannot recover this phrase for you. As the persona owner, it is your responsibility to keep it safe.</Typography>
             <div class="form-floating mb-3" align="center">
             {seedHidden && <Button color="primary" style={{marginBottom: '10px'}} onClick={() => { setSeedHidden(!seedHidden) }}>
-                REVEAL GUILD'S SECRET PHRASE
+                REVEAL PERSONA'S SEED PHRASE
             </Button>}
            
                 <textarea readonly class="form-control" id="seedPhrase" value={seedHidden ? `************` : seedPhrase} style={{marginTop: '10px', marginBottom: '10px'}}/>
@@ -352,18 +351,17 @@ export default function Import(props) {
             id="panel2bh-header"
           >
             <Typography className={classes.heading}>Option 2</Typography>
-            <Typography className={classes.secondaryHeading}>You have the Guild's 
-            secret phrase and need to restore it.</Typography>
+            <Typography className={classes.secondaryHeading}>Recover Persona</Typography>
           </AccordionSummary>
           <AccordionDetails>
           <Card>
           <CardHeader 
-            title="Have the Guild's Secret Phrase?"
+            title="Have the Persona's Seed Phrase?"
             align="center"
           />
           <CardContent>
-            <Typography variant="body1" gutterBottom>If you have your Guild's 12 word secret phrase, enter it below.</Typography>
-            <Typography variant="body1" gutterBottom><b>Please DO NOT USE use the Guild's wallet seed phrase.</b></Typography>
+            <Typography variant="body1" gutterBottom>If you have your Persona's 12 word seed phrase, enter it below.</Typography>
+            <Typography variant="body1" gutterBottom><b>Please DO NOT USE use the account wallet seed phrase.</b></Typography>
             <div class="form-floating mb-3" align="center">
                 <div>
                   <TextField
@@ -373,14 +371,14 @@ export default function Import(props) {
                       margin="dense"
                       variant="outlined"
                       name="id"
-                      label="12 Word Recovery Secret Phrase"
+                      label="12 Word Recovery Seed Phrase"
                       helperText="12 words, 1 space between each word"
                       value={recoverSeed}
                       onChange={handleRecoverSeed}
                   />
                 </div>
               <Button color="primary" onClick={handleSubmit(onRecover)}>
-                  Recover It!
+                  Recover Persona!
               </Button>
             </div>
           </CardContent>

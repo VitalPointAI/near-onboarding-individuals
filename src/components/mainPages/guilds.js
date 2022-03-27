@@ -3,6 +3,7 @@ import { appStore, onAppMount } from '../../state/app'
 import Fuse from 'fuse.js'
 import GuildCard from '../Cards/GuildCard/guildCard'
 import SearchBar from '../common/SearchBar/search'
+import { updateCurrentGuilds } from '../../state/near'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
@@ -77,15 +78,15 @@ export default function ExploreGuilds(props) {
 
     useEffect(
         () => {
-            if(isUpdated){}
-            console.log('currentGuilds', currentGuilds)
             async function fetchData() {
+                if(isUpdated){await updateCurrentGuilds()}
+                console.log('currentGuilds', currentGuilds)
                 if(currentGuilds && near){
                     setGuildCount(currentGuilds.length)
                     sortedGuilds = _.sortBy(currentGuilds, 'registered').reverse()
                     console.log('sortedGuilds', sortedGuilds)
                     for(let x = 0; x < sortedGuilds.length; x++){
-                        let result = await appIdx.get('daoProfile', sortedGuilds[x].did)
+                        let result = await appIdx.get('guildProfile', sortedGuilds[x].did)
                         console.log('result', result)
                         if(result){
                             let category
@@ -104,7 +105,7 @@ export default function ExploreGuilds(props) {
                 //     while (i < currentGuildsList.data.putDIDs.length){
                 //         let account
                 //         let guildDid = currentGuildsList.data.putDIDs[i].did
-                //         let guildInfo = await appIdx.get('daoProfile', guildDid)
+                //         let guildInfo = await appIdx.get('guildProfile', guildDid)
                 //         if(guildInfo.contractId){
                 //             setContractId(guildInfo.contractId)
                 //             try {
@@ -235,7 +236,7 @@ export default function ExploreGuilds(props) {
         if (!pattern) {
             let sortedGuilds = _.sortBy(currentGuilds, 'registered').reverse()
             for(let x = 0; x < sortedGuilds.length; x++){
-                let result = await appIdx.get('daoProfile', sortedGuilds[x].did)
+                let result = await appIdx.get('guildProfile', sortedGuilds[x].did)
                 if(result){
                     result.category ? category = result.category : category = ''
                     let newObject = {...sortedGuilds[x], category: category}
@@ -326,22 +327,22 @@ export default function ExploreGuilds(props) {
             (<>
               
             {guilds.map(({accountId, blockTime, did, owner, category}, i) => {
-                console.log('guilds', guilds)
-                return ( 
-                    <GuildCard
-                        key={i}
-                        contractId={accountId}
-                        created={blockTime}
-                        summoner={owner}
-                        did={did}
-                        link={''}
-                        state={state}
-                        makeSearchGuilds={makeSearchGuilds}
-                        status={'active'}
-                        registered={true}
-                        category={category}
-                    />
-               )
+                console.log('guilds', guilds)   
+                    return ( 
+                        <GuildCard
+                            key={i}
+                            contractId={accountId}
+                            created={blockTime}
+                            summoner={owner}
+                            did={did}
+                            link={''}
+                            state={state}
+                            makeSearchGuilds={makeSearchGuilds}
+                            status={'active'}
+                            registered={true}
+                            category={category}
+                        />
+                        )
             }
             )}
        

@@ -98,5 +98,11 @@ export const guildProfileSchema = {
       "focus": {
         type: 'array'
       },
+      "projects": {
+        type: 'array'
+      },
+      "services": {
+        type: 'array'
+      },
    },
   }

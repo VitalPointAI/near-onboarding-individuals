@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
-import { STORAGE, GAS, parseNearAmount } from '../../state/near'
+import { ceramic } from '../../utils/ceramic'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
@@ -48,24 +48,28 @@ export default function IndivRegister(props) {
           let urlVariables = window.location.search
           const urlParameters = new URLSearchParams(urlVariables)
           let transactionHash = urlParameters.get('transactionHashes')
-          accountType != undefined && transactionHash ? window.location.assign('/create-indiv-profile') : null
+          accountType == 'individual' ? window.location.assign('/create-indiv-profile') : null
     }, [accountType]
     )
 
-   async function onSubmit(){
+    async function register(type){
       if(did){
-        try{
-          await didRegistryContract.register({
-            publicKey: pKey,
-            accountId: accountId,
-            did: did,
-            type: 'individual'
-          })
-        } catch (err) {
+          let freeContract = await ceramic.useFundingAccount(accountId)
+         
+          try{
+              await freeContract.contract.putDID({
+                  accountId: accountId,
+                  did: did,
+                  type: type
+              })
+              update('', {accountType: type})
+          } catch (err) {
           console.log('error registering', err)
-        }
+          }
       }
+      location.reload()
     }
+
 
     function handleNo(){
       window.location.assign('/create-indiv-profile')
@@ -75,18 +79,17 @@ export default function IndivRegister(props) {
         <>
         <Grid container spacing={1} style={{padding: '10px'}}>
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-          <Typography variant="h4" style={{marginTop:'40px', marginBottom: '40px'}}>Is your journey a solitary or social one?</Typography>
-          <Typography variant="h6" style={{marginTop:'40px'}}>Decide if you want to register your profile.</Typography>
+          <Typography variant="h4" style={{marginTop:'40px', marginBottom: '40px'}}>To be found or not to be found?</Typography>
+          <Typography variant="h6" style={{marginTop:'40px'}}>Decide if you want to register your persona.</Typography>
         </Grid>
-        <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
-        <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
+        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
           <List>
               <ListItem className={classes.spacing}>
                 <ListItemIcon>
                   <AccountBoxIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary="Showcases your profile and is the first step towards obtaining verified status."
+                  primary="Showcases your persona and is the first step towards obtaining verified status."
                 />
               </ListItem>
               <Divider variant="middle" />
@@ -95,7 +98,7 @@ export default function IndivRegister(props) {
                   <SupervisedUserCircleIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary="Enables community features and opportunities based on your skills and values."
+                  primary="Enables community and opportunity recommendations based on your skills and values."
                 />
               </ListItem>
               <Divider variant="middle" />
@@ -104,14 +107,14 @@ export default function IndivRegister(props) {
                 <StarsIcon />
               </ListItemIcon>
               <ListItemText
-                primary="Allows you to show up on leaderboards and be eligible for reputation based rewards."
+                primary="Allows your persona to show up on leaderboards and be eligible for reputation based rewards."
               />
             </ListItem>
             <Divider variant="middle" />
           </List>
           <Grid container spacing={1} style={{padding: '10px'}}>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-              <Button className={classes.spacing} style={{float: 'left', marginTop: '20px', marginRight: '15px'}} variant="contained" color="primary" onClick={onSubmit}>
+              <Button className={classes.spacing} style={{float: 'left', marginTop: '20px', marginRight: '15px'}} variant="contained" color="primary" onClick={(e) => register('individual')}>
                 Register
               </Button>
               <Typography variant="body2" style={{marginTop: '30px'}}>
@@ -128,7 +131,6 @@ export default function IndivRegister(props) {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
       </Grid>
         </>
         

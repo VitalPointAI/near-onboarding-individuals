@@ -1,14 +1,32 @@
-require('dotenv').config({ path: './.env.local' })
+require('dotenv').config({ path: './.env.test' })
 const express = require('express')
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
 const path = require('path')
 const cors = require('cors')
 const app = express()
+const { DefaultAzureCredential } = require("@azure/identity")
+const { SecretClient } = require("@azure/keyvault-secrets")
+
+const credential = new DefaultAzureCredential()
+
+const vaultName = process.env.VAULT_NAME
+
+const url = `https://${vaultName}.vault.azure.net`
+
+const client = new SecretClient(url, credential)
+
+const secretKey = process.env.SECRET_KEY
+const secretSeed = process.env.SEED
+const fundingSeed = process.env.FUNDING_SEED
+const sendyAPI = process.env.SENDY_API
+
+const allowList = ['https://nearpersonas.live, https://ceramic-node.vitalpointai.com']
 
 app.use(cors({
   origin: '*'
-}))
+}));
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
@@ -16,12 +34,31 @@ app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, 'dist')));
 
 app.post('/appseed', cors(), verifyToken, async (req, res) => {
-    
-  jwt.verify(req.token, process.env.SECRET_KEY, async (err, authData) => {
+  const latestTokenResponse = await client.getSecret(secretKey)
+  jwt.verify(req.token, latestTokenResponse.value, async (err, authData) => {
     if(err) {
       res.sendStatus(403);
     } else {
-      const seed = (process.env.APP_SEED).slice(0, 32)
+      const latestSecret = await client.getSecret(secretSeed)
+      const seed = (latestSecret.value).slice(0, 32)
+      res.json({
+        seed: seed,
+        authData
+      });
+    }
+  })
+  
+
+});
+
+app.post('/appseed', cors(), verifyToken, async (req, res) => {
+  let latestTokenResponse = await client.getSecret(secretKey)
+  jwt.verify(req.token, latestTokenResponse.value, async (err, authData) => {
+    if(err) {
+      res.sendStatus(403);
+    } else {
+      const latestSecret = await client.getSecret(secretSeed)
+      const seed = (latestSecret.value).slice(0, 32)
       res.json({
         seed: seed,
         authData
@@ -31,25 +68,13 @@ app.post('/appseed', cors(), verifyToken, async (req, res) => {
 });
 
 app.post('/funding-seed', cors(), verifyToken, async (req, res) => {
-  jwt.verify(req.token, process.env.SECRET_KEY, async (err, authData) => {
+  let latestTokenResponse = await client.getSecret(secretKey)
+  jwt.verify(req.token, latestTokenResponse.value, async (err, authData) => {
     if(err) {
       res.sendStatus(403);
     } else {
-      const seed = process.env.FUNDING_ACCOUNT
-      res.json({
-        seed: seed,
-        authData
-      });
-    }
-  })
-});
-
-app.post('/sendy', cors(), verifyToken, async (req, res) => {
-  jwt.verify(req.token, process.env.SECRET_KEY, async (err, authData) => {
-    if(err) {
-      res.sendStatus(403);
-    } else {
-      const seed = process.env.SENDY_API
+      const latestSecret = await client.getSecret(fundingSeed)
+      const seed = (latestSecret.value)
       res.json({
         seed: seed,
         authData
@@ -60,8 +85,10 @@ app.post('/sendy', cors(), verifyToken, async (req, res) => {
 
 app.post('/token', cors(), async (req, res) => {
   const accountId = req.body.accountId
+  console.log('account', accountId)
   if(!accountId) res.sendStatus(403)
-  jwt.sign({ accountId: accountId }, process.env.SECRET_KEY, (err, token) => {
+  const latestTokenSecret = await client.getSecret(secretKey)
+  jwt.sign({ accountId: accountId }, latestTokenSecret.value, (err, token) => {
     res.json({
       token
     })
@@ -75,6 +102,7 @@ app.get('/*', cors(), function (req, res) {
   // );
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
+
 
 // FORMAT OF TOKEN
 // Authorization: Bearer <access_token>
@@ -97,6 +125,7 @@ function verifyToken(req, res, next){
   }
 }
 
-app.listen(3005, () => {
+app.listen(3000, () => {
   console.log('running')
+  console.log('and listening')
 });

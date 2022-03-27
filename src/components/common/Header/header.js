@@ -94,7 +94,7 @@ const Header = ({ state, handleUpdate }) => {
     
     return (
         <div>
-        <Grid container justifyContent="space-between" alignItems="center" spacing={1} style={{paddingRight: '10px', paddingLeft: '10px', backgroundColor: 'black'}}>
+        <Grid container justifyContent="space-between" alignItems="center" spacing={1} style={{paddingRight: '10px', paddingLeft: '10px', paddingBottom: '5px', backgroundColor: 'black'}}>
             
             {wallet && wallet.signedIn ? 
                 !matches ? (

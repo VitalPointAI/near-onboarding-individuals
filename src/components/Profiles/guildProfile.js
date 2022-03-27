@@ -146,7 +146,7 @@ export default function GuildProfile(props) {
                     let data = {
                         api_key: process.env.SENDY_API,
                         email: email,
-                        list_id: process.env.SENDY_LIST_ID
+                        list_id: process.env.NP_SENDY_LIST_ID
                     }
                     let url = `${MAIL_URL}/api/subscribers/subscription-status.php`
                     try{
@@ -183,7 +183,7 @@ export default function GuildProfile(props) {
         async function fetchData() {
             if(isUpdated){}
             if(guildDid && appIdx){
-                let result = await appIdx.get('daoProfile', guildDid)
+                let result = await appIdx.get('guildProfile', guildDid)
                 console.log('result', result)
                 if(result) {
                     setGuild(true)
@@ -213,7 +213,7 @@ export default function GuildProfile(props) {
                 }
             } else {
                 if(did && appIdx){
-                    let result = await appIdx.get('daoProfile', did)
+                    let result = await appIdx.get('guildProfile', did)
                     console.log('result', result)
                         if(result) {
                             setGuild(true)
@@ -262,7 +262,7 @@ export default function GuildProfile(props) {
             api_key: process.env.SENDY_API, 
             email: email,
             name: name,
-            list: process.env.SENDY_LIST_ID,
+            list: process.env.NP_SENDY_LIST_ID,
             boolean: true
         }
         try{
@@ -288,7 +288,7 @@ export default function GuildProfile(props) {
         let data = {
             api_key: process.env.SENDY_API, 
             email: email,
-            list_id: process.env.SENDY_LIST_ID
+            list_id: process.env.NP_SENDY_LIST_ID
         }
         try{
             axiosCall = await axios.post(deleteUrl,

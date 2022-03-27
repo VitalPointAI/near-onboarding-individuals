@@ -1,5 +1,5 @@
 {
-  "name": "near-onboarding-guilds",
+  "name": "near-personas",
   "version": "0.1.0",
   "author": "Aaron Luhning <a.luhning@vitalpoint.ai>",
   "license": "MIT",
@@ -8,7 +8,7 @@
     "clean": "rimraf ./dist && rimraf .parcel-cache",
     "cleandist": "rimraf ./dist",
     "build": "npm run clean && env-cmd -f ./.env.local node ./node_modules/.bin/parcel build src/index.html --no-scope-hoist",
-    "build:test": "npm run clean && env-cmd -f ./.env.test node ./node_modules/.bin/parcel build src/index.html --no-scope-hoist",
+    "build:test": "npm run clean && env-cmd -f ../.env.test node ./node_modules/.bin/parcel build src/index.html --no-scope-hoist",
     "build:contract": "node contract/compile.js",
     "build:contract:debug": "node contract/compile.js --debug",
     "build:web": "parcel build src/index.html --public-url ./",

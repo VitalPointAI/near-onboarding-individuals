@@ -94,7 +94,8 @@ export default function Admin(props) {
     wallet,
     isAdmin,
     accountId,
-    appIdx
+    appIdx,
+    announcements
   } = state
 
   useEffect(() => {
@@ -104,7 +105,7 @@ export default function Admin(props) {
 
       if(near){
         let accessKey
-        let thisFreeContract = await ceramic.useFundingAccount()
+        let thisFreeContract = await ceramic.useFundingAccount(accountId)
         setFreeContract(thisFreeContract)
         console.log('thisfreecontract', thisFreeContract)
         let publicKey = "ed25519:" + thisFreeContract.pubKey
@@ -260,8 +261,8 @@ export default function Admin(props) {
         subject: subject,
         plain_text: messagePlainText,
         html_text: draftToHtml(convertToRaw(message.getCurrentContent())),
-        list_ids: process.env.SENDY_LIST_ID,
-        brand_id: process.env.BRAND_ID,
+        list_ids: process.env.NP_SENDY_LIST_ID,
+        brand_id: process.env.NP_BRAND_ID,
         track_opens: 1,
         track_clicks: 1,
         send_campaign: 1
@@ -283,8 +284,23 @@ export default function Admin(props) {
         message: draftToHtml(convertToRaw(message.getCurrentContent())),
         date: Date.now().toString()
       }
-
-      await appIdx.set('announcements', record)
+      console.log('admin announcements', announcements)
+      if(!announcements){
+        let announcementList = []
+        announcementList.push(record)
+        try{
+          await ceramic.storeKeysSecret(appIdx, announcementList, 'announcementList', appIdx.id)
+        } catch (err) {
+          console.log('error saving announcement', err)
+        }
+      } else {
+        announcements.push(record)
+        try{
+          await ceramic.storeKeysSecret(appIdx, announcements, 'announcementList', appIdx.id)
+        } catch (err) {
+          console.log('error saving announcement', err)
+        }
+      }
     }
     if(axiosCall){
       setMessageResult(axiosCall.data)
@@ -565,7 +581,7 @@ export default function Admin(props) {
         <Typography sx={{ width: '33%', flexShrink: 0 }}>
           Message
         </Typography>
-        <Typography sx={{ color: 'text.secondary', marginLeft: '10px' }}>Message all guilds</Typography>
+        <Typography sx={{ color: 'text.secondary', marginLeft: '10px' }}>Message all Personas</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <Grid container spacing={0} style={{padding: '10px', marginBottom: '5px', marginLeft: '0px'}} alignItems="center" justifyContent="space-evenly">

@@ -33,7 +33,7 @@ const Footer = ({}) => {
             </div>
            
             <div className="footerright">
-            <Typography variant="body2" style={{fontSize: '90%'}}>NEAR Guilds<br></br>Open source/as is.<br></br>
+            <Typography variant="body2" style={{fontSize: '90%'}}>NEAR Personas<br></br>Open source/as is.<br></br>
            No warranty of any kind.
             </Typography>
             </div>
@@ -59,7 +59,7 @@ const Footer = ({}) => {
             <ImageLoader image={powered} style={{height: "3em", marginTop: '8px'}} />
         </div>
         <div className="footerright">
-            <Typography variant="body2" style={{fontSize: '90%'}}>NEAR Guilds<br></br>
+            <Typography variant="body2" style={{fontSize: '90%'}}>NEAR Personas<br></br>
             Open source/as is.<br></br>
             No warranty.
             </Typography>

@@ -45,8 +45,10 @@ let config = {
     APP_OWNER_ACCOUNT: 'vitalpointai.testnet',
     CERAMIC_API_URL: 'https://ceramic-node.vitalpointai.com',
     IPFS_PROVIDER: 'https://cloudflare-ipfs.com/ipfs/',
-    TOKEN_CALL: 'https://cdao.app/token',
-    APPSEED_CALL: 'https://cdao.app/appseed',
+    TOKEN_CALL: 'https://nearpersonas.live/token',
+    APPSEED_CALL: 'https://nearpersonas.live/appseed',
+    FUNDING_SEED_CALL: 'http://nearpersonas.live/funding-seed',
+    SENDY_API_KEY_CALL: 'http://nearpersonas.live/sendy',
     networkId: 'testnet',
     nodeUrl: 'https://rpc.testnet.near.org',
     walletUrl: 'https://wallet.testnet.near.org',
@@ -54,25 +56,26 @@ let config = {
     nameSuffix: '.testnet',
     nftFactorySuffix: '.nft.vitalpointai.testnet',
     contractName: 'testnet',
-    rootName: 'https://mynear.xyz',
+    rootName: 'https://nearpersonas.live',
     PLATFORM_SUPPORT_ACCOUNT: 'vitalpointai.testnet',
     didRegistryContractName: 'dids2.vitalpointai.testnet',
     nftFactoryContractName: 'nft.vitalpointai.testnet',
     fundingContractName: 'funding.vitalpointai.testnet',
     MAIL_URL: 'https://vitalpoint.ai/mail',
     ACCOUNT_HELPER_URL: 'https://near-contract-helper.onrender.com',
-    GRAPH_FACTORY_API_URL: 'https://api.thegraph.com/subgraphs/name/aluhning/catalyst-factory-tnet',
-    GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/aluhning/registry-tnet',
-    GRAPH_CHEDDAR_API_URL: 'https://api.thegraph.com/subgraphs/name/aluhning/cheddar'
+    GRAPH_FACTORY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/catalyst-factory-tnet',
+    GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/registry-near-tnet'
   }
 
 if(process.env.ENV === 'localhost') {
   config = {
     ...config,
     factoryContractName: 'cdao.near',
-    rootName: 'http://localhost:3000',
-    TOKEN_CALL: 'http://localhost:3000/token',
-    APPSEED_CALL: 'http://localhost:3000/appseed',
+    rootName: 'http://localhost:3005',
+    TOKEN_CALL: 'http://localhost:3005/token',
+    APPSEED_CALL: 'http://localhost:3005/appseed',
+    FUNDING_SEED_CALL: 'http://localhost:3005/funding-seed',
+    SENDY_API_KEY_CALL: 'http://localhost:3005/sendy',
   }
 }
 
@@ -80,8 +83,6 @@ if(process.env.ENV === 'test'){
   config = {
     ...config,
     factoryContractName: 'cdao.near',
-    TOKEN_CALL: 'https://mynear.xyz/token',
-    APPSEED_CALL: 'https://mynear.xyz/appseed',
   }
 }
 
@@ -90,8 +91,6 @@ if(process.env.ENV === 'test'){
 if (process.env.ENV === 'prod') {
     config = {
         ...config,
-        TOKEN_CALL: 'https://cdao.app/token',
-        APPSEED_CALL: 'https://cdao.app/appseed',
         networkId: 'mainnet',
         //nodeUrl: 'https://rpc.mainnet.near.org',
         nodeUrl: 'https://mainnet-rpc.openshards.io',
@@ -109,7 +108,8 @@ if (process.env.ENV === 'prod') {
         APP_OWNER_ACCOUNT: 'aaron.near',
         PLATFORM_SUPPORT_ACCOUNT: 'catalystsp.near',
         CERAMIC_API_URL: 'https://ceramic-node.vitalpointai.com',
-        GRAPH_FACTORY_API_URL: 'https://api.thegraph.com/subgraphs/name/aluhning/catalyst-factory'
+        GRAPH_FACTORY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/catalyst-factory-mnet',
+        GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/registry-near-mnet'
       }
 }
 

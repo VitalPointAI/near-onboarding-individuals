@@ -29,7 +29,6 @@ export const profileSchema = {
       email: {
         description: 'Email of profile owner',
         type: 'string',
-        format: 'email'
       },
       reddit: {
         type: 'string'
@@ -64,28 +63,40 @@ export const profileSchema = {
       notifications: {
         type: 'array'
       },
-      "personaSkills": {
-        type: "array"
-      },
-      "personaSpecificSkills": {
-        type: "array"
-      },
-      "nftContract": {
-        type: 'string'
-      },
-      "profileNft": {
-        type: 'string'
-      },
-      "nftTokenId": {
-        type: 'string'
-      },
-      "likes": {
+      personaSkills: {
         type: 'array'
       },
-      "dislikes": {
+      personaSpecificSkills: {
         type: 'array'
       },
-      "neutrals": {
+      values: {
+        type: 'array'
+      },
+      learningGoals: {
+        type: 'array'
+      },
+      workDesires: {
+        type: 'array'
+      },
+      interests: {
+        type: 'array'
+      },
+      nftContract: {
+        type: 'string'
+      },
+      profileNft: {
+        type: 'string'
+      },
+      nftTokenId: {
+        type: 'string'
+      },
+      likes: {
+        type: 'array'
+      },
+      dislikes: {
+        type: 'array'
+      },
+      neutrals: {
         type: 'array'
       },
     },

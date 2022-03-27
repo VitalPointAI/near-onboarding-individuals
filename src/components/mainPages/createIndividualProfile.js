@@ -83,8 +83,8 @@ export default function CreateIndivProfile(props) {
         
         <Grid container spacing={1} style={{padding: '10px'}}>
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-          <Typography variant="h4" style={{marginTop:'40px', marginBottom: '30px'}}>You're approaching your destination.</Typography><br></br>
-          <Typography variant="h5" >Will you introduce yourself?</Typography>
+          <Typography variant="h4" style={{marginTop:'40px', marginBottom: '30px'}}>It's Time.</Typography><br></br>
+          <Typography variant="h5" >Bring Your Persona to Life!</Typography>
         </Grid>
         <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
         <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
@@ -103,7 +103,7 @@ export default function CreateIndivProfile(props) {
                   <SupervisedUserCircleIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary="Declare the skills and values you possess to help us recommend the guilds and NEAR apps that match your interests."
+                  primary="Declare the skills you possess and values you hold so we can recommend the guilds and opportunities that match your interests."
                 />
               </ListItem>
               <Divider variant="middle" />
@@ -112,7 +112,7 @@ export default function CreateIndivProfile(props) {
                 <MonetizationOnIcon />
               </ListItemIcon>
               <ListItemText
-                primary="Browse and join guilds, become active in the NEAR ecosystem, earn NEAR, earn rewards."
+                primary="Browse and join guilds, become active in the NEAR ecosystem, earn NEAR, reputation and rewards."
               />
             </ListItem>
             <Divider variant="middle" />

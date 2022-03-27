@@ -111,6 +111,7 @@ export default function EditProfileForm(props) {
     const [date, setDate] = useState('')
     const [name, setName] = useState('')
     const [avatar, setAvatar] = useState(imageName)
+    const [pfpAvatar, setPfpAvatar] = useState(imageName)
     const [shortBio, setShortBio] = useState('')
     const [email, setEmail] = useState('')
     const [discord, setDiscord] = useState('')
@@ -123,8 +124,9 @@ export default function EditProfileForm(props) {
     const [skill, setSkill] = useState([])
     const [familiarity, setFamiliarity] = useState('0')
     const [intro, setIntro] = useState(EditorState.createEmpty())
+    const [nftContract, setNftContract] = useState('')
+    const [nftTokenId, setNftTokenId] = useState('')
    
-    
     const [otherSkills, setOtherSkills] = useState([])
     const [notifications, setNotifications] = useState([])
 
@@ -134,6 +136,10 @@ export default function EditProfileForm(props) {
 
     const [avatarLoaded, setAvatarLoaded] = useState(true)
     const [progress, setProgress] = useState(false)
+
+    const [pfpAvatarLoaded, setPfpAvatarLoaded] = useState(true)
+    const [pfpProgress, setPfpProgress] = useState(false)
+
     const [introLength, setIntroLength] = useState(0)
 
     const { state, dispatch, update } = useContext(appStore)
@@ -145,6 +151,14 @@ export default function EditProfileForm(props) {
     const [developerSkillSet, setDeveloperSkillSet] = useState({})
 
     const { register, handleSubmit, watch, errors, control, reset, setValue, getValues } = useForm()
+    const {
+      fields: personaValuesFields,
+      append: personaValuesAppend,
+      remove: personaValuesRemove} = useFieldArray({
+     name: "personaValues",
+     control
+    })
+    
     const {
       fields: personaSkillsFields,
       append: personaSkillsAppend,
@@ -161,9 +175,37 @@ export default function EditProfileForm(props) {
      control
     })
 
+    const {
+      fields: personaInterestsFields,
+      append: personaInterestsAppend,
+      remove: personaInterestsRemove} = useFieldArray({
+     name: "personaInterests",
+     control
+    })
+
+    const {
+      fields: personaLearnFields,
+      append: personaLearnAppend,
+      remove: personaLearnRemove} = useFieldArray({
+     name: "personaLearn",
+     control
+    })
+
+    const {
+      fields: personaWorkFields,
+      append: personaWorkAppend,
+      remove: personaWorkRemove} = useFieldArray({
+     name: "personaWork",
+     control
+    })
+    
+    const personaInterests = watch('personaInterests', personaInterestsFields)
+    const personaLearn = watch('personaLearn', personaLearnFields)
+    const personaWork = watch('personaWork', personaWorkFields)
+    const personaValues = watch('personaValues', personaValuesFields)
     const personaSkills = watch('personaSkills', personaSkillsFields)
     const personaSpecificSkills = watch('personaSpecificSkills', personaSpecificSkillsFields)
-
+    
     const {
         handleEditProfileClickState,
         curUserIdx,
@@ -173,18 +215,12 @@ export default function EditProfileForm(props) {
 
     const {
       appIdx,
-      isUpdated
+      isUpdated,
+      account,
+      near
     } = state
-
     
     const classes = useStyles()
-
-    let base 
-
-    let currentSkillsArray = []
-    let currentSpecificSkillsArray = []
-    let currentSkills = {}
-    let currentSpecificSkills = {}
 
     useEffect(() => {
       if(avatar != imageName && avatarLoaded){
@@ -195,6 +231,46 @@ export default function EditProfileForm(props) {
       }
     }, [avatar, avatarLoaded]
     )
+
+    useEffect(() => {
+      if(pfpAvatar != imageName && pfpAvatarLoaded){
+        setPfpProgress(false)
+      }
+      if(pfpAvatar != imageName && !pfpAvatarLoaded){
+        setPfpProgress(true)
+      }
+    }, [pfpAvatar, pfpAvatarLoaded]
+    )
+
+    useEffect(() => {
+      async function fetchNftData() {
+        if(nftContract && nftTokenId && near){
+          let data = await account.viewFunction(nftContract, 'nft_token', { token_id: nftTokenId })
+          if(data.metadata.media.length == 46 && data.metadata.media.substr(0,2) == "Qm"){
+            setPfpAvatar(`${IPFS_PROVIDER}/${data.metadata.media}`)
+          }
+          if(data.metadata.media.length == 59 && data.metadata.media.substr(0,4) == "bafy"){
+            setPfpAvatar(`${IPFS_PROVIDER}/${data.metadata.media}`)
+          }
+          if(data.metadata.media.substr(0,4) == "http"){
+            setPfpAvatar(data.metadata.media)
+          }
+          // let data = await axios.post(`${nodeUrl}/view_nft/${nftTokenId}`, 
+          //   {
+          //   "token_id": nftTokenId,
+          //   "contract": nftContract
+          //   })
+          console.log('nft data', data)
+        }
+      }
+      
+
+      fetchNftData()
+      .then((res) => {
+
+      })
+
+    }, [nftContract, nftTokenId])
 
     useEffect(() => {
         async function fetchData() {
@@ -234,9 +310,16 @@ export default function EditProfileForm(props) {
                 result.developerSkillSet ? setDeveloperSkillSet(result.developerSkillSet) : setDeveloperSkillSet({})
                 result.personaSkills? setValue('personaSkills', result.personaSkills): setValue('personaSkills', {name: ''})
                 result.personaSpecificSkills? setValue('personaSpecificSkills', result.personaSpecificSkills): setValue('personaSpecificSkills', {name: ''})
+                result.values && result.values.length > 0 ? setValue('personaValues', result.values) : null
+                result.interests && result.interests.length > 0 ? setValue('personaInterests', result.interests) : null
+                result.learningGoals && result.learningGoals.length > 0 ? setValue('personaLearn', result.learningGoals) : null
+                result.workDesires && result.workDesires.length > 0 ? setValue('personaWork', result.workDesires) : null
                 result.likes ? setCurrentLikes(result.likes) : setCurrentLikes([])
                 result.dislikes ? setCurrentDisLikes(result.dislikes) : setCurrentDisLikes([])
                 result.neutrals ? setCurrentNeutrals(result.neutrals) : setCurrentNeutrals([])  
+                result.nftContract ? setNftContract(result.nftContract) : setNftContract('')
+                result.nftTokenId ? setNftTokenId(result.nftTokenId) : setNftTokenId('')
+                result.profileNft ? setPfpAvatar(result.profileNft) : setPfpAvatar(imageName)
               }
               return true
            }
@@ -255,6 +338,10 @@ export default function EditProfileForm(props) {
 
     function handleAvatarLoaded(property){
       setAvatarLoaded(property)
+    }
+
+    function handlePfpAvatarLoaded(property){
+      setPfpAvatarLoaded(property)
     }
 
     const handleClose = () => {
@@ -297,17 +384,30 @@ export default function EditProfileForm(props) {
       let value = event.target.value;
       setCountry(value);
     }
+
     const handleTwitterChange = (event) =>{
       let value = event.target.value;
       setTwitter(value); 
     }
+
     const handleBirthdateChange = (event) => {
       let value = event.target.value.toString() 
       setBirthdate(value); 
     }
+
     const handleLanguageChange = (event) => {
       let value = event.target.value
       setLanguage(value)
+    }
+
+    const handleNftContractChange = (event) => {
+      let value = event.target.value
+      setNftContract(value)
+    }
+
+    const handleNftTokenIdChange = (event) => {
+      let value = event.target.value
+      setNftTokenId(value)
     }
    
     const handleRatingChange = (event, newValue) => {
@@ -353,10 +453,17 @@ export default function EditProfileForm(props) {
             developerSkillSet: developerSkillSet,
             personaSkills: personaSkills,
             personaSpecificSkills: personaSpecificSkills,
+            values: personaValues,
+            learningGoals: personaLearn,
+            workDesires: personaWork,
+            interests: personaInterests,
             notifications: notifications,
             likes: currentLikes,
             dislikes: currentDisLikes,
-            neutrals: currentNeutrals
+            neutrals: currentNeutrals,
+            nftContract: nftContract,
+            nftTokenId: nftTokenId,
+            profileNft: pfpAvatar
         }
      
       try {
@@ -389,29 +496,97 @@ export default function EditProfileForm(props) {
                   Provide as much detail as you'd like.
                   </DialogContentText>
                   <div>
-                    <Grid container spacing={1} style={{marginBottom: '5px'}}>
-                      <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
-                        <Avatar
-                          alt={accountId}
-                          src={avatar} 
-                          className={avatarLoaded ? classes.square : classes.hide}
-                          imgProps={{
-                            onLoad:(e) => { handleAvatarLoaded(true) }
-                          }}  
-                        />
-                        {progress ?
-                          <CircularProgress />
-                        : null }
-                      </Grid>
-                      <Grid item xs={10} sm={10} md={10} lg={10} xl={10}>
-                        <FileUpload handleFileHash={handleFileHash} handleAvatarLoaded={handleAvatarLoaded}/>
-                      </Grid>
-                    </Grid>
-                    <Accordion>
+                  <Accordion>
                       <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1bh-content"
                         id="panel1bh-header"
+                      >
+                        <Typography variant="h6">Upload an Avatar</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Grid container spacing={2} style={{marginBottom: '5px'}}>
+                          <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <Avatar
+                              alt={accountId}
+                              src={avatar} 
+                              className={avatarLoaded ? classes.square : classes.hide}
+                              imgProps={{
+                                onLoad:(e) => { handleAvatarLoaded(true) }
+                              }}  
+                            />
+                            {progress ?
+                              <CircularProgress />
+                            : null }
+                          </Grid>
+                          <Grid item xs={10} sm={10} md={10} lg={10} xl={10}>
+                            <FileUpload handleFileHash={handleFileHash} handleAvatarLoaded={handleAvatarLoaded}/>
+                          </Grid>
+                        </Grid>
+                      </AccordionDetails>
+                  </Accordion>
+                  <Accordion>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel2bh-content"
+                        id="panel2bh-header"
+                      >
+                        <Typography variant="h6">Specify NFT Avatar</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Grid container spacing={2} style={{marginBottom: '5px'}}>
+                          <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <Avatar
+                              alt={accountId}
+                              src={pfpAvatar} 
+                              className={pfpAvatarLoaded ? classes.square : classes.hide}
+                              imgProps={{
+                                onLoad:(e) => { handlePfpAvatarLoaded(true) }
+                              }}  
+                            />
+                            {pfpProgress ?
+                              <CircularProgress />
+                            : null }
+                          </Grid>
+                          <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <TextField
+                              autoFocus
+                              margin="dense"
+                              id="profile-nftcontract"
+                              variant="outlined"
+                              name="nftContract"
+                              label="NFT Contract"
+                              placeholder="x.paras.near"
+                              value={nftContract}
+                              onChange={handleNftContractChange}
+                              inputRef={register({
+                                  required: false                              
+                              })}
+                            />
+                          </Grid>
+                          <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <TextField
+                              autoFocus
+                              margin="dense"
+                              id="profile-nftcontract"
+                              variant="outlined"
+                              name="nftTokenId"
+                              label="Token Id"
+                              value={nftTokenId}
+                              onChange={handleNftTokenIdChange}
+                              inputRef={register({
+                                  required: false                              
+                              })}
+                            />
+                          </Grid>
+                        </Grid>
+                      </AccordionDetails>
+                  </Accordion>
+                    <Accordion>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel3bh-content"
+                        id="panel3bh-header"
                       >
                       <Typography variant="h6">General Information</Typography>
                       <Tooltip TransitionComponent={Zoom} title="Here you can add information to let people, and communities know some basic information about yourself.">
@@ -521,20 +696,69 @@ export default function EditProfileForm(props) {
                   <Accordion>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1bh-content"
-                    id="panel1bh-header"
+                    aria-controls="panel4bh-content"
+                    id="panel4bh-header"
                   >
                   <Typography variant="h6">Skills and Values</Typography>
                   </AccordionSummary>
                     <AccordionDetails>
                       <Grid container spacing={2}>
                       <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                      <FormControl component="fieldset" className={classes.formControl}>
-                        
+                     
                         
                       <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         <Grid container justifyContent="space-between" alignItems="flex-end" spacing={1}>
                         <Typography variant="body1" style={{fontSize: 'large', fontWeight:'400', marginTop: '10px', marginBottom:'10px'}}>Values</Typography>
+                        {
+                          personaValuesFields.map((field, index) => {
+                           
+                          return(
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} key={field.id}>
+                            <TextField
+                              
+                              margin="dense"
+                              id={`personaValues[${index}].name`}
+                              variant="outlined"
+                              name={`personaValues[${index}].name`}
+                              defaultValue={field.name}
+                              label="Values:"
+                              InputProps={{
+                                endAdornment: <div>
+                                <Tooltip TransitionComponent={Zoom} title="Short name of value.">
+                                    <InfoIcon fontSize="small" style={{marginLeft:'5px', marginTop:'-3px'}} />
+                                </Tooltip>
+                                </div>
+                              }}
+                              inputRef={register({
+                                  required: true                              
+                              })}
+                            />
+                            {errors[`personaValues${index}.name`] && <p style={{color: 'red', fontSize:'80%'}}>You must provide a value name.</p>}
+                            
+                            <Button type="button" onClick={() => personaValuesRemove(index)} style={{float: 'right', marginLeft:'10px'}}>
+                              <DeleteForeverIcon />
+                            </Button>
+                            </Grid>
+                            
+                          )
+                        }) 
+                        }
+                        {!personaValuesFields || personaValuesFields.length == 0 ?
+                          <Typography variant="body1" style={{marginLeft: '5px'}}>No values defined yet.</Typography>
+                        : null }
+                          <Button
+                            type="button"
+                            onClick={() => personaValuesAppend({name: ''})}
+                            startIcon={<AddBoxIcon />}
+                          >
+                            Add Value
+                          </Button>
+                        </Grid>
+                      </Grid>
+                      <Divider variant="middle" style={{marginTop: '15px', marginBottom: '15px'}}/>
+                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        <Grid container justifyContent="space-between" alignItems="flex-end" spacing={1}>
+                        <Typography variant="body1" style={{fontSize: 'large', fontWeight:'400', marginTop: '10px', marginBottom:'10px'}}>General Skills</Typography>
                         {
                           personaSkillsFields.map((field, index) => {
                           return(
@@ -547,10 +771,10 @@ export default function EditProfileForm(props) {
                               variant="outlined"
                               name={`personaSkills[${index}].name`}
                               defaultValue={field.name}
-                              label="Value:"
+                              label="General Skill:"
                               InputProps={{
                                 endAdornment: <div>
-                                <Tooltip TransitionComponent={Zoom} title="Short name of value.">
+                                <Tooltip TransitionComponent={Zoom} title="Short name of skill.">
                                     <InfoIcon fontSize="small" style={{marginLeft:'5px', marginTop:'-3px'}} />
                                 </Tooltip>
                                 </div>
@@ -559,7 +783,7 @@ export default function EditProfileForm(props) {
                                   required: true                              
                               })}
                             />
-                            {errors[`personaSkills${index}.name`] && <p style={{color: 'red', fontSize:'80%'}}>You must provide a value name.</p>}
+                            {errors[`personaSkills${index}.name`] && <p style={{color: 'red', fontSize:'80%'}}>You must provide a skill name.</p>}
                             
                             <Button type="button" onClick={() => personaSkillsRemove(index)} style={{float: 'right', marginLeft:'10px'}}>
                               <DeleteForeverIcon />
@@ -636,16 +860,184 @@ export default function EditProfileForm(props) {
                             <Typography>Level of NEAR familiarity</Typography>
                             <Rating name="Familiarity" onChange={handleRatingChange} value={parseInt(familiarity)} />
                       </Grid>
-                  </FormControl>
+                
                   </Grid>
                   </Grid>
                   </AccordionDetails>
               </Accordion>
+
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel5bh-content"
+                  id="panel5bh-header"
+                >
+                <Typography variant="h6">Interests and Goals</Typography>
+                </AccordionSummary>
+                  <AccordionDetails>
+                    <Grid container spacing={2}>
+                    <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                  
+                      
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                      <Grid container justifyContent="space-between" alignItems="flex-end" spacing={1}>
+                      <Typography variant="body1" style={{fontSize: 'large', fontWeight:'400', marginTop: '10px', marginBottom:'10px'}}>Interests</Typography>
+                      {
+                        personaInterestsFields.map((field, index) => {
+                        
+                        return(
+                          <Grid item xs={12} sm={12} md={12} lg={12} xl={12} key={field.id}>
+                          <TextField
+                            
+                            margin="dense"
+                            id={`personaInterests[${index}].name`}
+                            variant="outlined"
+                            name={`personaInterests[${index}].name`}
+                            defaultValue={field.name}
+                            label="Interests:"
+                            InputProps={{
+                              endAdornment: <div>
+                              <Tooltip TransitionComponent={Zoom} title="Short name of interest.">
+                                  <InfoIcon fontSize="small" style={{marginLeft:'5px', marginTop:'-3px'}} />
+                              </Tooltip>
+                              </div>
+                            }}
+                            inputRef={register({
+                                required: true                              
+                            })}
+                          />
+                          {errors[`personaInterests${index}.name`] && <p style={{color: 'red', fontSize:'80%'}}>You must provide an interest name.</p>}
+                          
+                          <Button type="button" onClick={() => personaInterestsRemove(index)} style={{float: 'right', marginLeft:'10px'}}>
+                            <DeleteForeverIcon />
+                          </Button>
+                          </Grid>
+                          
+                        )
+                      }) 
+                      }
+                      {!personaInterestsFields || personaInterestsFields.length == 0 ?
+                        <Typography variant="body1" style={{marginLeft: '5px'}}>No interests defined yet.</Typography>
+                      : null }
+                        <Button
+                          type="button"
+                          onClick={() => personaInterestsAppend({name: ''})}
+                          startIcon={<AddBoxIcon />}
+                        >
+                          Add Interest
+                        </Button>
+                      </Grid>
+                    </Grid>
+                    <Divider variant="middle" style={{marginTop: '15px', marginBottom: '15px'}}/>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                      <Grid container justifyContent="space-between" alignItems="flex-end" spacing={1}>
+                      <Typography variant="body1" style={{fontSize: 'large', fontWeight:'400', marginTop: '10px', marginBottom:'10px'}}>I Want to Learn</Typography>
+                      {
+                        personaLearnFields.map((field, index) => {
+                        return(
+                          
+                          <Grid item xs={12} sm={12} md={12} lg={12} xl={12} key={field.id}>
+                          <TextField
+                            
+                            margin="dense"
+                            id={`personaLearn[${index}].name`}
+                            variant="outlined"
+                            name={`personaLearn[${index}].name`}
+                            defaultValue={field.name}
+                            label="Learn:"
+                            InputProps={{
+                              endAdornment: <div>
+                              <Tooltip TransitionComponent={Zoom} title="Short name of skill to learn.">
+                                  <InfoIcon fontSize="small" style={{marginLeft:'5px', marginTop:'-3px'}} />
+                              </Tooltip>
+                              </div>
+                            }}
+                            inputRef={register({
+                                required: true                              
+                            })}
+                          />
+                          {errors[`personaLearn${index}.name`] && <p style={{color: 'red', fontSize:'80%'}}>You must provide a skill name to learn.</p>}
+                          
+                          <Button type="button" onClick={() => personaLearnRemove(index)} style={{float: 'right', marginLeft:'10px'}}>
+                            <DeleteForeverIcon />
+                          </Button>
+                          </Grid>
+                          
+                        )
+                      }) 
+                      }
+                      {!personaLearnFields || personaLearnFields.length == 0 ?
+                        <Typography variant="body1" style={{marginLeft: '5px'}}>No learning goals defined yet.</Typography>
+                      : null }
+                        <Button
+                          type="button"
+                          onClick={() => personaLearnAppend({name: ''})}
+                          startIcon={<AddBoxIcon />}
+                        >
+                          Add Learning Goal
+                        </Button>
+                      </Grid>
+                    </Grid>
+                    <Divider variant="middle" style={{marginTop: '15px', marginBottom: '15px'}}/>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                      <Grid container justifyContent="space-between" alignItems="flex-end" spacing={1}>
+                      <Typography variant="body1" style={{fontSize: 'large', fontWeight:'400', marginTop: '10px', marginBottom:'10px'}}>Types of Work I Want</Typography>
+                      {
+                        personaWorkFields.map((field, index) => {
+                        return(
+                          
+                          <Grid item xs={12} sm={12} md={12} lg={12} xl={12} key={field.id}>
+                          <TextField
+                            
+                            margin="dense"
+                            id={`personaWork[${index}].name`}
+                            variant="outlined"
+                            name={`personaWork[${index}].name`}
+                            defaultValue={field.name}
+                            label="Work Type:"
+                            InputProps={{
+                              endAdornment: <div>
+                              <Tooltip TransitionComponent={Zoom} title="Short name of work you want to do.">
+                                  <InfoIcon fontSize="small" style={{marginLeft:'5px', marginTop:'-3px'}} />
+                              </Tooltip>
+                              </div>
+                            }}
+                            inputRef={register({
+                                required: true                              
+                            })}
+                          />
+                          {errors[`personaWork${index}.name`] && <p style={{color: 'red', fontSize:'80%'}}>You must provide the name of work you want to do.</p>}
+                          
+                          <Button type="button" onClick={() => personaWorkRemove(index)} style={{float: 'right', marginLeft:'10px'}}>
+                            <DeleteForeverIcon />
+                          </Button>
+                          </Grid>
+                          
+                        )
+                      }) 
+                      }
+                      {!personaWorkFields || personaWorkFields.length == 0 ?
+                        <Typography variant="body1" style={{marginLeft: '5px'}}>No work types defined yet. Add them for better chance of being matched to opportunities.</Typography>
+                      : null }
+                        <Button
+                          type="button"
+                          onClick={() => personaWorkAppend({name: ''})}
+                          startIcon={<AddBoxIcon />}
+                        >
+                          Add Work Type
+                        </Button>
+                      </Grid>
+                    </Grid>              
+                </Grid>
+                </Grid>
+                </AccordionDetails>
+            </Accordion>
+
                       <Accordion>
                       <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1bh-content"
-                        id="panel1bh-header"
+                        aria-controls="panel6bh-content"
+                        id="panel6bh-header"
                       >
                       <Typography variant="h6">Accounts and Notifications</Typography>
                       <Tooltip TransitionComponent={Zoom} title="Here you can add some of your social media handles if you would like others to be able to find or contact you elsewhere.">
@@ -658,7 +1050,6 @@ export default function EditProfileForm(props) {
                               <TextField
                                 autoFocus
                                 margin="dense"
-                                id="input-with-icon-grid"
                                 id="profile-email"
                                 variant="outlined"
                                 name="email"

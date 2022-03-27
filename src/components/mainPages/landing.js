@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import globe from '../../img/personas-logo.png'
+import personaTitle from '../../img/personas-title.png'
 import { Link } from 'react-router-dom'
+import { login } from '../../state/near'
 
 // Material UI Components
 import { makeStyles } from '@mui/styles'
@@ -13,7 +14,7 @@ import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite'
-
+import { List, ListItem } from '@mui/material'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -37,28 +38,29 @@ const useStyles = makeStyles((theme) => ({
 
 const steps = [
     {
-      label: 'Step 1: Take the Pledge',
-      description: `Each guild shares a specific vision and mission related to driving 
-      a more open, interconnected and consumer-empowered word. You must pledge 
-      to operate your Guild in a manner that reflects positively
-      on the NEAR ecosystem.`,
+      label: 'Design Your Persona',
+      description: `Create a specific persona for each NEAR account you own.
+      By using a persona you design for an account, you have total control 
+      over how much or little information you want to provide when interacting
+      with a community. A rich web 3 profile for your NEAR account is only a 
+      few minutes away.`,
     },
     {
-      label: 'Step 2: Describe your Guild',
+      label: 'Find Work and Community',
       description:
-        `After choosing and signing in with your guild's NEAR account, you'll create it's
-        profile. Describe your guild's vision, purpose and values.  List it's desired
-        skills and competences, contact information, logo, and other information
-        to make it easy for people to find and join your guild. This is the first
-        step to guild verification and tiering.`,
+        `Including skills and values in your persona allows NEAR Personas
+        to provide you with recommendations for NEAR guilds you may want to 
+        join that hold those same values or need those skills. That leads to
+        opportunities for work, new friends, and a community focused on
+        objectives that matter to you.`,
     },
     {
-      label: 'Step 3: Manage your Guild',
-      description: `Grow your guild using the guild platform to interact with other guild leaders,
-      be notified of opportunities and collaborations, manage your members, and 
-      access the analytics that show how your guild is contributing to the 
-      growth of the ecosystem. See the milestones your guild needs to reach
-      to move up in tiering, unlocking new possibilities and status.`,
+      label: 'Control Your Data',
+      description: `You own your persona data. Like your NEAR account, your 
+      NEAR account persona is 100% yours, protected by a seed phrase for your
+      data stream. Your Persona will automatically change/update anywhere it is
+      in use anytime you make a change to it here. Manage in one place and it 
+      propagates everywhere.`,
     },
 ]
 
@@ -73,13 +75,14 @@ const Landing = (state) => {
       
     {!matches ?
             <Grid container justifyContent="center" alignItems="center" spacing={0}>
-               
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                    <img src={globe} style={{width: '75%', marginTop: '20px'}}/>
+                
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center" style={{marginTop: '50px'}}>
+                    <img src={personaTitle} style={{width: '75%', marginTop: '20px'}}/>
                 </Grid>
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                    <Typography variant="h4" style={{marginTop: '15px', marginBottom: '15px'}}>Make your vision real.</Typography>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center" style={{marginBottom: '40px'}}>
+                  <Typography variant="h5">Give your NEAR Account a Personality.</Typography>
                 </Grid>
+
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                 <Accordion style={{marginLeft: '10px', marginRight:'10px'}}>
                 <AccordionSummary
@@ -87,7 +90,7 @@ const Landing = (state) => {
                   aria-controls="panel1a-content"
                   id="panel1a-header"
                 >
-                  <Typography style={{fontSize: '1.5em'}}>{steps[0].label}</Typography>
+                  <Typography style={{fontSize: '1.4em'}}>{steps[0].label}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <Typography align="left">
@@ -101,7 +104,7 @@ const Landing = (state) => {
                   aria-controls="panel2a-content"
                   id="panel2a-header"
                 >
-                  <Typography style={{fontSize: '1.5em'}}>{steps[1].label}</Typography>
+                  <Typography style={{fontSize: '1.4em'}}>{steps[1].label}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <Typography align="left">
@@ -115,7 +118,7 @@ const Landing = (state) => {
                     aria-controls="panel3a-content"
                     id="panel3a-header"
                 >
-                    <Typography style={{fontSize: '1.5em'}}>{steps[2].label}</Typography>
+                    <Typography style={{fontSize: '1.4em'}}>{steps[2].label}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Typography align="left">
@@ -125,37 +128,37 @@ const Landing = (state) => {
                 </Accordion>
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                   <Link to="/pledge">
                     <Button
                         variant="contained"
                         color="primary"
                         className={classes.button}
+                        onClick={login}
                         style={{marginTop: '20px', marginBottom: '20px'}}
                     ><PlayCircleFilledWhiteIcon style={{marginRight: '5px'}}/>
                         <Typography variant="body1" style={{fontSize: '26px'}}>
                             Let's Go
                         </Typography>
                     </Button>
-                    </Link>
                 </Grid>
             </Grid>
         :
             <Grid container justifyContent="center" alignItems="center" spacing={0} >
               
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                    <img src={globe} style={{width: '75%', marginTop: '20px'}}/>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center" style={{marginTop:'50px'}}>
+                    <img src={personaTitle} style={{width: '75%', marginTop: '20px'}}/>
                 </Grid>
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                    <Typography variant="h4" style={{marginTop: '15px', marginBottom: '15px'}}>Make your vision real.</Typography>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center"  style={{marginBottom: '40px'}}>
+                  <Typography variant="h5">Give your NEAR Account a Personality.</Typography>
                 </Grid>
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+        
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                 <Accordion style={{marginLeft: '10px', marginRight:'10px'}}>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
                 >
-                  <Typography style={{fontSize: '1.5em'}}>{steps[0].label}</Typography>
+                  <Typography style={{fontSize: '1.4em'}}>{steps[0].label}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <Typography align="left">
@@ -169,7 +172,7 @@ const Landing = (state) => {
                   aria-controls="panel2a-content"
                   id="panel2a-header"
                 >
-                  <Typography style={{fontSize: '1.5em'}}>{steps[1].label}</Typography>
+                  <Typography style={{fontSize: '1.4em'}}>{steps[1].label}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <Typography align="left">
@@ -183,7 +186,7 @@ const Landing = (state) => {
                     aria-controls="panel3a-content"
                     id="panel3a-header"
                 >
-                    <Typography style={{fontSize: '1.5em'}}>{steps[2].label}</Typography>
+                    <Typography style={{fontSize: '1.4em'}}>{steps[2].label}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Typography align="left">
@@ -193,18 +196,19 @@ const Landing = (state) => {
                 </Accordion>
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center" style={{marginTop: '15px'}}>
-                   <Link to="/pledge">
+                  
                     <Button
                         variant="contained"
                         color="primary"
                         className={classes.button}
+                        onClick={login}
                         style={{marginTop: '20px', marginBottom: '20px'}}
                     ><PlayCircleFilledWhiteIcon style={{marginRight: '5px'}}/>
                         <Typography variant="body1" style={{fontSize: '26px'}}>
                             Let's Go
                         </Typography>
                     </Button>
-                    </Link>
+                    
                 </Grid>
             </Grid>
     }

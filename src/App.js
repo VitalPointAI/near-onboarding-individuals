@@ -21,6 +21,8 @@ import DisplayIndivProfile from './components/mainPages/displayIndivProfile'
 import Admin from './components/mainPages/admin'
 import Pledge from './components/mainPages/pledge'
 import Announcements from './components/mainPages/announcements'
+import Leaderboards from './components/mainPages/leaderboards'
+import Rewards from './components/mainPages/rewards'
 import { Home } from './components/mainPages/home'
 
 
@@ -163,6 +165,20 @@ const App = () => {
                     >
                     { children }
                 </ExploreGuilds>
+            </Route>
+            <Route exact path="/leaderboards">
+                <Leaderboards
+                    state={state}
+                    >
+                    { children }
+                </Leaderboards>
+            </Route>
+            <Route exact path="/rewards">
+                <Rewards
+                    state={state}
+                    >
+                    { children }
+                </Rewards>
             </Route>
             <Route exact path="/pledge">
                 <Pledge

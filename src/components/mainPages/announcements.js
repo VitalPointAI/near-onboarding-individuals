@@ -41,11 +41,7 @@ export default function Announcements(props) {
     } = state
 
     useEffect(()=> {
-        if(announcements && !announcements.length){
-            announces.push(announcements)
-        }
         if(announcements || isUpdated){}
-
     },[isUpdated, announcements])
  
     return(
@@ -54,7 +50,7 @@ export default function Announcements(props) {
             (<>
                 
             {announcements.reverse().map(({adminId, subject, message, date}, i) => {
-                console.log('announcements', announcements)
+               
                 return ( 
                     <AnnouncementCard
                         key={i}
@@ -68,23 +64,7 @@ export default function Announcements(props) {
             )}
         
             </>)
-            : announces.length > 0 ?
-                (<>
-                {announces.map(({adminId, subject, message, date}, i) => {
-                    console.log('announcements', announcements)
-                    return ( 
-                        <AnnouncementCard
-                            key={i}
-                            adminId={adminId}
-                            subject={subject}
-                            message={message}
-                            date={date}
-                        />
-                    )
-                    })
-                }
-                </>)
-                : <Typography variant="h5" className={classes.center}>No Announcements Yet</Typography>
+            : <Typography variant="h5" className={classes.center}>No Announcements Yet</Typography>
             }
 
         </List>

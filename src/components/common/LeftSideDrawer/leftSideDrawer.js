@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext} from 'react'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 import { appStore, onAppMount } from '../../../state/app'
-import EditGuildProfileForm from '../../EditProfile/editGuild'
+import EditProfileForm from '../../EditProfile/editProfile'
 
 // Material UI
 import { makeStyles, useTheme } from '@mui/styles'
@@ -200,7 +200,7 @@ const list = (anchor) => (
 
   <Typography variant='h6'>Account</Typography>
   <List>
-    <ListItem button key={2} onClick={(e) => editGuildProfileClick(e)}>
+    <ListItem button key={2} onClick={(e) => editProfileClick(e)}>
         <ListItemIcon><EditIcon /></ListItemIcon>
         <ListItemText primary='Edit Profile'/>
     </ListItem>
@@ -277,7 +277,7 @@ const list = (anchor) => (
 
         <Typography variant='h6'>Account</Typography>
         <List>
-          <ListItem button key={2} onClick={(e) => editGuildProfileClick(e)}>
+          <ListItem button key={2} onClick={(e) => editProfileClick(e)}>
               <ListItemIcon><EditIcon /></ListItemIcon>
               <ListItemText primary='Edit Profile'/>
           </ListItem>
@@ -343,19 +343,19 @@ const list = (anchor) => (
     
     <Typography variant='h6' style={{marginTop:'50px'}}></Typography>
     <List>
-    <a href='/'>
+    <a href='https://vitalpoint.ai/near-personas'>
       <ListItem button key={10}>
         <ListItemIcon><InfoIcon /></ListItemIcon>
-        <ListItemText primary='About NEAR Guilds'/>
+        <ListItemText primary='About NEAR Personas'/>
       </ListItem>
     </a>
-    <a href='/'>
+    <a href='https://vitalpoint.ai/docs-near-personas'>
       <ListItem button key={11}>
         <ListItemIcon><SchoolIcon /></ListItemIcon>
-        <ListItemText primary='Learn'/>
+        <ListItemText primary='Docs'/>
       </ListItem>
     </a>
-    <a href='/'>
+    <a href='https://vitalpoint.ai/contact'>
       <ListItem button key={12}>
         <ListItemIcon><ContactSupportIcon /></ListItemIcon>
         <ListItemText primary='Contact'/>
@@ -376,9 +376,9 @@ return (
         {list('left')}
         </Drawer>
 
-        {editGuildProfileClicked ? <EditGuildProfileForm
+        {editProfileClicked ? <EditProfileForm
           state={state}
-          handleEditGuildClickState={handleEditGuildClickState}
+          handleEditProfileClickState={handleEditProfileClickState}
           accountId={accountId}
           did={did}
           curUserIdx={curUserIdx}

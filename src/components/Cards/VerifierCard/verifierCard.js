@@ -199,7 +199,7 @@ export default function VerifierCard(props) {
         console.log('error removing verifier', err)
       }
   }
-console.log('personid verify', personId.accountId)
+
     return(
         <>
         {!display ? <LinearProgress /> : 

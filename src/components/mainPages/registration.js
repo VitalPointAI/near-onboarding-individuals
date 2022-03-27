@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { appStore, onAppMount } from '../../state/app'
 import { ceramic } from '../../utils/ceramic'
+import { updateCurrentGuilds } from '../../state/near'
 
 // Material UI Components
 import { makeStyles } from '@mui/styles'
@@ -65,7 +66,7 @@ const Registration = () => {
 useEffect(
     () => {
         async function fetchData(){
-            if(isUpdated){}
+            if(isUpdated){await updateCurrentGuilds()}
             if(accountType){
                 setLoaded(true)
             }
@@ -87,7 +88,7 @@ useEffect(
 
 async function register(type){
     if(did){
-        let freeContract = await ceramic.useFundingAccount()
+        let freeContract = await ceramic.useFundingAccount(accountId)
        
         try{
             await freeContract.contract.putDID({
@@ -105,7 +106,7 @@ async function register(type){
 
 async function unregister(){
     if(did){
-        let freeContract = await ceramic.useFundingAccount()
+        let freeContract = await ceramic.useFundingAccount(accountId)
       
         if(freeContract){
             try{
@@ -159,20 +160,21 @@ async function unregister(){
                     </Button>
                 </Grid>
                 </> :
+               
                 <>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center" style={{marginBottom:'20px'}}>
                     <Typography variant="h5">
                         Please confirm<br></br>
                         <b>{accountId}</b><br></br>
-                        is your Guild's account.
+                        is your Persona's account.
                     </Typography>
                     <Typography variant="overline">
-                        (account that manages your Guild's profile)
+                        (account you want to build a Persona for)
                     </Typography>
                 </Grid>
                 <Grid container spacing={1} style={{padding: '10px'}}>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                    <Typography variant="h6">Why register your guild?</Typography>
+                    <Typography variant="h6">Why register your persona?</Typography>
                     </Grid>
                    
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
@@ -182,7 +184,7 @@ async function unregister(){
                             <AccountBoxIcon />
                             </ListItemIcon>
                             <ListItemText
-                            primary="Showcases your guild and is the first step towards obtaining verified status and higher tier levels."
+                            primary="Establishes a unique identity and is the first step towards verified status."
                             />
                         </ListItem>
                         <Divider variant="middle" />
@@ -191,7 +193,7 @@ async function unregister(){
                             <SupervisedUserCircleIcon />
                             </ListItemIcon>
                             <ListItemText
-                            primary="Enables guild discoverability - making it easier for people to find, join, and participate in your guild."
+                            primary="Enables discoverability - making it easier for you to find, join, and participate in guilds and communities."
                             />
                         </ListItem>
                         <Divider variant="middle" />
@@ -200,14 +202,14 @@ async function unregister(){
                             <StarsIcon />
                         </ListItemIcon>
                         <ListItemText
-                            primary="Allows your guild to show up on leaderboards and be eligible for reputation based rewards."
+                            primary="Allows your persona to show up on leaderboards and be eligible for reputation based rewards."
                         />
                         </ListItem>
                         <Divider variant="middle" />
                     </List>
                     <Grid container spacing={1} style={{marginLeft: '20px', marginRight: '20px', width:'95%'}}>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                        <Button className={classes.spacing} style={{float: 'left', marginTop: '20px'}} variant="contained" color="primary" onClick={(e) => register('guild')}>
+                        <Button className={classes.spacing} style={{float: 'left', marginTop: '20px'}} variant="contained" color="primary" onClick={(e) => register('individual')}>
                             Register
                         </Button>
                         <Typography variant="body2" style={{marginTop: '30px'}}>
@@ -257,65 +259,65 @@ async function unregister(){
             </Grid>
             </> :
             <>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center" style={{marginBottom:'20px'}}>
-                <Typography variant="h5">
-                    Please confirm<br></br>
-                    <b>{accountId}</b><br></br>
-                    is your Guild's account.
-                </Typography>
-                <Typography variant="overline">
-                    (account that manages your Guild's profile)
-                </Typography>
-            </Grid>
-            <Grid container spacing={1} style={{padding: '10px'}}>
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                <Typography variant="h6">Why register your guild?</Typography>
-                </Grid>
-                <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
-                <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
-                <List>
-                    <ListItem className={classes.spacing}>
-                        <ListItemIcon>
-                        <AccountBoxIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                        primary="Showcases your guild and is the first step towards obtaining verified status and higher tier levels."
-                        />
-                    </ListItem>
-                    <Divider variant="middle" />
-                    <ListItem className={classes.spacing}>
-                        <ListItemIcon>
-                        <SupervisedUserCircleIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                        primary="Enables guild discoverability - making it easier for people to find, join, and participate in your guild."
-                        />
-                    </ListItem>
-                    <Divider variant="middle" />
-                    <ListItem className={classes.spacing}>
-                    <ListItemIcon>
-                        <StarsIcon />
-                    </ListItemIcon>
-                    <ListItemText
-                        primary="Allows your guild to show up on leaderboards and be eligible for reputation based rewards."
-                    />
-                    </ListItem>
-                    <Divider variant="middle" />
-                </List>
-                <Grid container spacing={1} style={{marginLeft: '20px', marginRight: '20px', width:'95%'}}>
-                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                    <Button className={classes.spacing} style={{float: 'left', marginTop: '20px'}} variant="contained" color="primary" onClick={(e) => register('guild')}>
-                        Register
-                    </Button>
-                    <Typography variant="body2" style={{marginTop: '30px'}}>
-                        You can unregister at any time.
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center" style={{marginBottom:'20px'}}>
+                    <Typography variant="h5">
+                        Please confirm<br></br>
+                        <b>{accountId}</b><br></br>
+                        is your Persona's account.
                     </Typography>
+                    <Typography variant="overline">
+                        (account you want to build a Persona for)
+                    </Typography>
+                </Grid>
+                <Grid container spacing={1} style={{padding: '10px'}}>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+                    <Typography variant="h6">Why register your persona?</Typography>
                     </Grid>
+                   
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
+                    <List>
+                        <ListItem className={classes.spacing}>
+                            <ListItemIcon>
+                            <AccountBoxIcon />
+                            </ListItemIcon>
+                            <ListItemText
+                            primary="Establishes a unique identity and is the first step towards verified status."
+                            />
+                        </ListItem>
+                        <Divider variant="middle" />
+                        <ListItem className={classes.spacing}>
+                            <ListItemIcon>
+                            <SupervisedUserCircleIcon />
+                            </ListItemIcon>
+                            <ListItemText
+                            primary="Enables discoverability - making it easier for you to find, join, and participate in guilds and communities."
+                            />
+                        </ListItem>
+                        <Divider variant="middle" />
+                        <ListItem className={classes.spacing}>
+                        <ListItemIcon>
+                            <StarsIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                            primary="Allows your persona to show up on leaderboards and be eligible for reputation based rewards."
+                        />
+                        </ListItem>
+                        <Divider variant="middle" />
+                    </List>
+                    <Grid container spacing={1} style={{marginLeft: '20px', marginRight: '20px', width:'95%'}}>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+                        <Button className={classes.spacing} style={{float: 'left', marginTop: '20px'}} variant="contained" color="primary" onClick={(e) => register('individual')}>
+                            Register
+                        </Button>
+                        <Typography variant="body2" style={{marginTop: '30px'}}>
+                            You can unregister at any time.
+                        </Typography>
+                        </Grid>
+                    </Grid>
+                    </Grid>
+                   
                 </Grid>
-                </Grid>
-                <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
-            </Grid>
-            </>
+                </>
         }
     </Grid>
     : <>

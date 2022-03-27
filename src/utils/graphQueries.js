@@ -3,8 +3,7 @@ import { config } from '../state/config'
 
 const {
   GRAPH_FACTORY_API_URL,
-  GRAPH_REGISTRY_API_URL,
-  GRAPH_CHEDDAR_API_URL
+  GRAPH_REGISTRY_API_URL
 } = config
 
 const FACTORY_QUERY=`
@@ -131,6 +130,18 @@ query{
 const VERIFIED_GUILDS = `
 query{
     changeVerificationStatuses(where: {verified_in: [true]})
+    {
+        accountId
+        time
+        verified
+        changedBy
+    }
+}
+`
+
+const ALL_ALIASES = `
+query{
+    storeAliases(where: {verified_in: [true]})
     {
         accountId
         time

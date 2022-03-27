@@ -47,14 +47,14 @@ export default function GuildRegister(props) {
             let urlVariables = window.location.search
             const urlParameters = new URLSearchParams(urlVariables)
             let transactionHash = urlParameters.get('transactionHashes')
-            accountType != 'not registered' ? window.location.assign('/create-guild-profile') : null
+            accountType == 'guild' ? window.location.assign('/create-guild-profile') : null
           }
     }, [accountType]
     )
 
     async function register(type){
       if(did){
-          let freeContract = await ceramic.useFundingAccount()
+          let freeContract = await ceramic.useFundingAccount(accountId)
          
           try{
               await freeContract.contract.putDID({

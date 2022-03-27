@@ -12,7 +12,7 @@ import { DID } from 'dids'
 
 // schemas
 import { profileSchema } from '../schemas/profile'
-import { daoProfileSchema } from '../schemas/daoProfile'
+import { guildProfileSchema } from '../schemas/guildProfile'
 import { accountKeysSchema } from '../schemas/accountKeys'
 import { definitionsSchema } from '../schemas/definitions'
 import { schemaSchema } from '../schemas/schemas'
@@ -21,8 +21,10 @@ import { notificationSchema } from '../schemas/notifications'
 import { metadataSchema } from '../schemas/metadata'
 import { apiKeysSchema } from '../schemas/apiKeys'
 import { announcementSchema } from '../schemas/announcements'
+import { announcementListSchema } from '../schemas/announceList'
 
 import { config } from '../state/config'
+
 
 const axios = require('axios').default
 
@@ -31,7 +33,7 @@ export const {
     KEY_REDIRECT, APP_OWNER_ACCOUNT, IPFS_PROVIDER, FACTORY_DEPOSIT, CERAMIC_API_URL, APPSEED_CALL, 
     networkId, nodeUrl, walletUrl, nameSuffix,
     contractName, didRegistryContractName, factoryContractName,
-    TOKEN_CALL, AUTH_TOKEN, ALIASES
+    TOKEN_CALL, AUTH_TOKEN, ALIASES, FUNDING_SEED_CALL
 } = config
 
 export const {
@@ -312,10 +314,27 @@ class Ceramic {
 
 
 
-  async useFundingAccount() {    
+  async useFundingAccount(accountId) {    
 
     // Step 1:  get the keypair from the funding account's full access private key
-    let keyPair = KeyPair.fromString(process.env.FUNDING_ACCOUNT)
+    let token = await axios.post(TOKEN_CALL, 
+      {
+      accountId: accountId
+      }    
+    )
+    
+    set(AUTH_TOKEN, token.data.token)
+  
+    let authToken = get(AUTH_TOKEN, [])
+   
+    let retrieveSeed = await axios.post(FUNDING_SEED_CALL, {
+      // ...data
+    },{
+      headers: {
+        'Authorization': `Basic ${authToken}`
+      }
+    })
+    let keyPair = KeyPair.fromString(retrieveSeed.data.seed)
 
     // Step 2:  load up an inMemorySigner using the keyPair for the account
     let signer = await InMemorySigner.fromKeyPair(networkId, didRegistryContractName, keyPair)
@@ -480,10 +499,10 @@ class Ceramic {
     } else {
 
     // uncomment below to change a definition
-    //  let changed = await this.changeDefinition(APP_OWNER_ACCOUNT, 'profile', appClient, profileSchema, 'persona profiles', contract)
-    //  let changed1 = await this.changeDefinition(APP_OWNER_ACCOUNT, 'daoProfile', appClient, daoProfileSchema, 'guild profiles', contract)
-    //  console.log('changed schema', changed)
-    //  console.log('changed1 schema', changed1)
+      // let changed = await this.changeDefinition(APP_OWNER_ACCOUNT, 'announcementList', appClient, announcementListSchema, 'list of all announcements', contract)
+      // let changed1 = await this.changeDefinition(APP_OWNER_ACCOUNT, 'guildProfile', appClient, guildProfileSchema, 'guild profiles', contract)
+      // console.log('changed schema', changed)
+      // console.log('changed1 schema', changed1)
 
       const definitions = this.getAlias(APP_OWNER_ACCOUNT, 'Definitions', appClient, definitionsSchema, 'alias definitions', contract)
       const schemas = this.getAlias(APP_OWNER_ACCOUNT, 'Schemas', appClient, schemaSchema, 'user schemas', contract)
@@ -491,9 +510,10 @@ class Ceramic {
       const accountsKeys = this.getAlias(APP_OWNER_ACCOUNT, 'accountsKeys', appClient, accountKeysSchema, 'user account info', contract)
       const comments = this.getAlias(APP_OWNER_ACCOUNT, 'comments', appClient, commentsSchema, 'comments', contract)
       const notifications = this.getAlias(APP_OWNER_ACCOUNT, 'notifications', appClient, notificationSchema, 'notifications', contract)
-      const daoProfile = this.getAlias(APP_OWNER_ACCOUNT, 'daoProfile', appClient, daoProfileSchema, 'guild profiles', contract)
+      const guildProfile = this.getAlias(APP_OWNER_ACCOUNT, 'guildProfile', appClient, guildProfileSchema, 'guild profiles', contract)
       const apiKeys = this.getAlias(APP_OWNER_ACCOUNT, 'apiKeys', appClient, apiKeysSchema, 'guild api keys', contract)
       const announcements = this.getAlias(APP_OWNER_ACCOUNT, 'announcements', appClient, announcementSchema, 'guild announcements', contract)
+      const announcementList = this.getAlias(APP_OWNER_ACCOUNT, 'announcementList', appClient, announcementListSchema, 'list of all announcements', contract)
      
       const done = await Promise.all([
         appDid, 
@@ -503,9 +523,10 @@ class Ceramic {
         accountsKeys, 
         comments,
         notifications,
-        daoProfile,
+        guildProfile,
         apiKeys,
-        announcements
+        announcements,
+        announcementList
       ])
       
       let rootAliases = {
@@ -515,9 +536,10 @@ class Ceramic {
         accountsKeys: done[4],
         comments: done[5],
         notifications: done[6],
-        daoProfile: done[7],
+        guildProfile: done[7],
         apiKeys: done[8],
-        announcements: done[9]
+        announcements: done[9],
+        announcementList: done[10]
       }
 
       // cache aliases
