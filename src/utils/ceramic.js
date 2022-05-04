@@ -230,8 +230,7 @@ class Ceramic {
 
 
   async getAppCeramic(accountId) {
-
-
+  console.log('token here')
     let token = await axios.post(TOKEN_CALL, 
       {
       accountId: accountId
