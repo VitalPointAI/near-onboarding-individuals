@@ -113,7 +113,7 @@ if (process.env.ENV === 'prod') {
         fundingContractName: 'funding.vitalpointai.near',
         PLATFORM_SUPPORT_ACCOUNT: 'catalystsp.near',
         TOKEN_CALL: 'https://nearpersonas.live/token',
-        APPSEED_CALL: 'https://nearpersonas.live/appseed',
+        APPSEED_CALL: 'https://happy-sea-0f8841c0f.1.azurestaticapps.net/appseed',
         FUNDING_SEED_CALL: 'https://nearpersonas.live/funding-seed',
         SENDY_API_KEY_CALL: 'https://nearpersonas.live/sendy',
         CERAMIC_API_URL: 'https://ceramic-node.vitalpointai.com',
