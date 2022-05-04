@@ -45,10 +45,11 @@ let config = {
     APP_OWNER_ACCOUNT: 'vitalpointai.testnet',
     CERAMIC_API_URL: 'https://ceramic-node.vitalpointai.com',
     IPFS_PROVIDER: 'https://cloudflare-ipfs.com/ipfs/',
-    TOKEN_CALL: 'https://nearpersonas.live/token',
-    APPSEED_CALL: 'https://nearpersonas.live/appseed',
-    FUNDING_SEED_CALL: 'http://nearpersonas.live/funding-seed',
-    SENDY_API_KEY_CALL: 'http://nearpersonas.live/sendy',
+    TOKEN_CALL: 'https://testnet.nearpersonas.live/token',
+    APPSEED_CALL: 'https://testnet.nearpersonas.live/appseed',
+    FUNDING_SEED_CALL: 'https://testnet.nearpersonas.live/funding-seed',
+    SENDY_API_KEY_CALL: 'https://testnet.nearpersonas.live/sendy',
+    ARCHIVAL_RPC: 'https://archival-rpc.testnet.near.org',
     networkId: 'testnet',
     nodeUrl: 'https://rpc.testnet.near.org',
     walletUrl: 'https://wallet.testnet.near.org',
@@ -56,22 +57,27 @@ let config = {
     nameSuffix: '.testnet',
     nftFactorySuffix: '.nft.vitalpointai.testnet',
     contractName: 'testnet',
-    rootName: 'https://nearpersonas.live',
+    personaRootName: 'https://nearpersonas.live',
+    guildRootName: 'https://nearguilds.live',
+    daoRootName: 'https//cdao.app',
     PLATFORM_SUPPORT_ACCOUNT: 'vitalpointai.testnet',
     didRegistryContractName: 'dids2.vitalpointai.testnet',
     nftFactoryContractName: 'nft.vitalpointai.testnet',
     fundingContractName: 'funding.vitalpointai.testnet',
+    factoryContractName: 'factory1.vitalpointai.testnet',
     MAIL_URL: 'https://vitalpoint.ai/mail',
     ACCOUNT_HELPER_URL: 'https://near-contract-helper.onrender.com',
     GRAPH_FACTORY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/catalyst-factory-tnet',
-    GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/registry-near-tnet'
+    GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/registry-near-tnet',
+    VALIDATORS_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/near-validators'
   }
 
 if(process.env.ENV === 'localhost') {
   config = {
     ...config,
-    factoryContractName: 'cdao.near',
-    rootName: 'http://localhost:3005',
+    personaRootName: 'http://localhost:3005',
+    daoRootName: 'http://localhost:3000',
+    guildRootName: 'http://localhost:3000',
     TOKEN_CALL: 'http://localhost:3005/token',
     APPSEED_CALL: 'http://localhost:3005/appseed',
     FUNDING_SEED_CALL: 'http://localhost:3005/funding-seed',
@@ -82,11 +88,8 @@ if(process.env.ENV === 'localhost') {
 if(process.env.ENV === 'test'){
   config = {
     ...config,
-    factoryContractName: 'cdao.near',
   }
 }
-
-
 
 if (process.env.ENV === 'prod') {
     config = {
@@ -96,6 +99,7 @@ if (process.env.ENV === 'prod') {
         nodeUrl: 'https://mainnet-rpc.openshards.io',
         walletUrl: 'https://wallet.near.org',
         explorerUrl: 'https://explorer.mainnet.near.org',
+        ARCHIVAL_RPC: 'https://archival-rpc.mainnet.near.org',
         nameSuffix: '.near',
         factorySuffix: '.cdao.near',
         tokenFactorySuffix: '.isft.near',
@@ -106,10 +110,16 @@ if (process.env.ENV === 'prod') {
         tokenFactoryContractName: 'isft.near',
         nftFactoryContractName: 'isnft.near',
         APP_OWNER_ACCOUNT: 'aaron.near',
+        fundingContractName: 'funding.vitalpointai.near',
         PLATFORM_SUPPORT_ACCOUNT: 'catalystsp.near',
+        TOKEN_CALL: 'https://nearpersonas.live/token',
+        APPSEED_CALL: 'https://nearpersonas.live/appseed',
+        FUNDING_SEED_CALL: 'https://nearpersonas.live/funding-seed',
+        SENDY_API_KEY_CALL: 'https://nearpersonas.live/sendy',
         CERAMIC_API_URL: 'https://ceramic-node.vitalpointai.com',
         GRAPH_FACTORY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/catalyst-factory-mnet',
-        GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/registry-near-mnet'
+        GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/registry-near-mnet',
+        VALIDATORS_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/near-validators'
       }
 }
 

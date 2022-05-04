@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { appStore, onAppMount } from '../../state/app';
+import { appStore, onAppMount } from '../../state/app'
 import { useForm } from 'react-hook-form'
 import { get, set, del } from '../../utils/storage'
 import confidential from '../../img/confidential.png'
+import { synchAccountLinks } from '../../state/near'
 
 // Material UI components
 import { makeStyles, withStyles } from '@mui/styles'
@@ -27,30 +28,6 @@ const bip39 = require('bip39')
 const base58 = require('bs58')
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: 50
-  },
-  warning: {
-    float: 'left',
-    paddingRight: '10px',
-    paddingBottom: '10px'
-  },
-  paper: {
-    padding: '20px',
-    textAlign: 'center',
-    color: '#000000',
-  },
-  customCard: {
-    maxWidth: 300,
-    minWidth: 275,
-    margin: 'auto',
-    padding: 20
-  },
-  rootForm: {
-    '& > *': {
-      margin: '10px',
-    },
-  },
   heading: {
     fontSize: '24px',
     flexBasis: '33.33%',
@@ -59,12 +36,6 @@ const useStyles = makeStyles((theme) => ({
   secondaryHeading: {
     fontSize: '18px',
     color: '#000000',
-  },
-  progress: {
-    width: '100%',
-    '& > * + *': {
-      marginTop: '20px',
-    },
   },
   }));
 
@@ -95,7 +66,8 @@ export default function Import(props) {
     const { state, dispatch, update } = useContext(appStore);
 
     const {
-      accountId
+      accountId,
+      curUserIdx
     } = state
     
     const handleRecoverSeed = (event) => {
@@ -119,7 +91,12 @@ export default function Import(props) {
         i++
     }
 
-    let newAccount = { key: (base58.encode(await bip39.mnemonicToSeed(seedPhrase))), accountId: accountId, owner: accountId, keyStored: Date.now() }
+    let newAccount = { 
+      key: (base58.encode(await bip39.mnemonicToSeed(seedPhrase))), 
+      accountId: accountId, 
+      owner: accountId,
+      type: 'individual',
+      keyStored: Date.now() }
     currentAccounts.push(newAccount)
     set(ACCOUNT_LINKS, currentAccounts)
     update('', {key: false})
@@ -138,7 +115,12 @@ export default function Import(props) {
         i++
     }
 
-    let newAccount = { key: (base58.encode(await bip39.mnemonicToSeed(recoverSeed))), accountId: accountId, owner: accountId, keyStored: Date.now() }
+    let newAccount = { 
+      key: (base58.encode(await bip39.mnemonicToSeed(recoverSeed))),
+      accountId: accountId,
+      type: 'individual',
+      owner: accountId, 
+      keyStored: Date.now() }
     currentAccounts.push(newAccount)
     set(ACCOUNT_LINKS, currentAccounts)
     update('', {key: false})
@@ -151,7 +133,7 @@ export default function Import(props) {
         <Grid container spacing={1}>
           <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
             <Typography variant="h4" style={{marginTop:'40px'}}>Setup Persona Identity</Typography><br></br>
-            <Typography variant="h5" style={{marginTop:'20px', marginBottom: '20px'}}>Control your data!</Typography>
+            <Typography variant="body1" style={{marginTop:'20px', marginBottom: '20px'}}><b>Note: Do not be alarmed.</b> NEAR Personas is not asking for your wallet's seed phrase!</Typography>
               
                 <Typography variant="body1">What's a seed phrase?
                 <HtmlTooltip

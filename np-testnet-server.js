@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../.env.test' })
+require('dotenv').config({ path: './.env.test' })
 const express = require('express')
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
@@ -34,24 +34,6 @@ app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, 'dist')));
 
 app.post('/appseed', cors(), verifyToken, async (req, res) => {
-  const latestTokenResponse = await client.getSecret(secretKey)
-  jwt.verify(req.token, latestTokenResponse.value, async (err, authData) => {
-    if(err) {
-      res.sendStatus(403);
-    } else {
-      const latestSecret = await client.getSecret(secretSeed)
-      const seed = (latestSecret.value).slice(0, 32)
-      res.json({
-        seed: seed,
-        authData
-      });
-    }
-  })
-  
-
-});
-
-app.post('/appseed', cors(), verifyToken, async (req, res) => {
   let latestTokenResponse = await client.getSecret(secretKey)
   jwt.verify(req.token, latestTokenResponse.value, async (err, authData) => {
     if(err) {
@@ -74,6 +56,22 @@ app.post('/funding-seed', cors(), verifyToken, async (req, res) => {
       res.sendStatus(403);
     } else {
       const latestSecret = await client.getSecret(fundingSeed)
+      const seed = (latestSecret.value)
+      res.json({
+        seed: seed,
+        authData
+      });
+    }
+  })
+});
+
+app.post('/sendy', cors(), verifyToken, async (req, res) => {
+  let latestTokenResponse = await client.getSecret(secretKey)
+  jwt.verify(req.token, latestTokenResponse.value, async (err, authData) => {
+    if(err) {
+      res.sendStatus(403);
+    } else {
+      const latestSecret = await client.getSecret(sendyAPI)
       const seed = (latestSecret.value)
       res.json({
         seed: seed,
@@ -125,7 +123,7 @@ function verifyToken(req, res, next){
   }
 }
 
-app.listen(3001, () => {
+app.listen(3002, () => {
   console.log('running')
   console.log('and listening')
 });

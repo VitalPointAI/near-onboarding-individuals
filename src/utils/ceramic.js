@@ -8,6 +8,7 @@ import { Ed25519Provider } from 'key-did-provider-ed25519'
 import KeyDidResolver from 'key-did-resolver'
 import ThreeIdResolver from '@ceramicnetwork/3id-did-resolver'
 import ThreeIdProvider from '3id-did-provider'
+import { updateCurrentGuilds } from '../state/near'
 import { DID } from 'dids'
 
 // schemas
@@ -22,6 +23,10 @@ import { metadataSchema } from '../schemas/metadata'
 import { apiKeysSchema } from '../schemas/apiKeys'
 import { announcementSchema } from '../schemas/announcements'
 import { announcementListSchema } from '../schemas/announceList'
+import { opportunitiesSchema } from '../schemas/opportunities'
+import { daoProfileSchema } from '../schemas/daoProfile'
+import { nearPriceHistorySchema } from '../schemas/nearPriceHistory'
+import { yearPriceHistorySchema } from '../schemas/yearPriceHistory'
 
 import { config } from '../state/config'
 
@@ -243,7 +248,7 @@ class Ceramic {
         'Authorization': `Basic ${authToken}`
       }
     })
- 
+    console.log('retrieveseed', retrieveSeed)
     const ceramic = new CeramicClient(CERAMIC_API_URL)
   
     let authSecret = retrieveSeed.data.seed
@@ -389,7 +394,7 @@ class Ceramic {
   }
 
 
-  async associateAppDID(accountId, contract, ceramic, publicKey) {
+  async associateAppDID(accountId, contract, ceramic) {
     /** Try and retrieve did from  contract if it exists */
       let did
         let didPresent = await contract.hasDID({accountId: accountId})
@@ -483,23 +488,23 @@ class Ceramic {
 
 
   // application IDX - maintains most up to date schemas and definitions ensuring chain always has the most recent commit
-  async getAppIdx(contract, account, publicKey){
+  async getAppIdx(contract, account){
   
     const appClient = await this.getAppCeramic(account.accountId)
 
     const legacyAppClient = await this.getLegacyAppCeramic(account.accountId)
 
-    const appDid = this.associateAppDID(APP_OWNER_ACCOUNT, contract, appClient, publicKey)
+    const appDid = this.associateAppDID(APP_OWNER_ACCOUNT, contract, appClient)
   
     // Retrieve cached aliases
-    let rootAliases = get(ALIASES, [])
-    if(rootAliases.length > 0){
-        const appIdx = new IDX({ ceramic: appClient, aliases: rootAliases[0]})
-        return appIdx
-    } else {
+    // let rootAliases = get(ALIASES, [])
+    // if(rootAliases.length > 0){
+    //     const appIdx = new IDX({ ceramic: appClient, aliases: rootAliases[0]})
+    //     return appIdx
+    // } else {
 
     // uncomment below to change a definition
-      // let changed = await this.changeDefinition(APP_OWNER_ACCOUNT, 'announcementList', appClient, announcementListSchema, 'list of all announcements', contract)
+       //let changed = await this.changeDefinition(APP_OWNER_ACCOUNT, 'nearPriceHistory', appClient, nearPriceHistorySchema, 'near price history', contract)
       // let changed1 = await this.changeDefinition(APP_OWNER_ACCOUNT, 'guildProfile', appClient, guildProfileSchema, 'guild profiles', contract)
       // console.log('changed schema', changed)
       // console.log('changed1 schema', changed1)
@@ -514,7 +519,39 @@ class Ceramic {
       const apiKeys = this.getAlias(APP_OWNER_ACCOUNT, 'apiKeys', appClient, apiKeysSchema, 'guild api keys', contract)
       const announcements = this.getAlias(APP_OWNER_ACCOUNT, 'announcements', appClient, announcementSchema, 'guild announcements', contract)
       const announcementList = this.getAlias(APP_OWNER_ACCOUNT, 'announcementList', appClient, announcementListSchema, 'list of all announcements', contract)
-     
+      const opportunities = this.getAlias(APP_OWNER_ACCOUNT, 'opportunities', appClient, opportunitiesSchema, 'opportunities', contract)
+      const daoProfile = this.getAlias(APP_OWNER_ACCOUNT, 'daoProfile', appClient, daoProfileSchema, 'dao profiles', contract)
+      const nearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, 'nearPriceHistory', appClient, nearPriceHistorySchema, 'near price history', contract)
+      
+      const November2020NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2020NovemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const December2020NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2020DecemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const January2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JanuaryNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const February2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021FebruaryNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const March2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021MarchNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const April2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021AprilNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const May2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021MayNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const June2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JuneNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const July2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JulyNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const August2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021AugustNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const September2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021SeptemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const October2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021OctoberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const November2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021NovemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const December2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021DecemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+
+      const January2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JanuaryNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const February2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022FebruaryNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const March2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022MarchNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const April2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022AprilNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const May2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022MayNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const June2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JuneNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const July2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JulyNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const August2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022AugustNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const September2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022SeptemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const October2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022OctoberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const November2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022NovemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const December2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022DecemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      
+      
       const done = await Promise.all([
         appDid, 
         definitions, 
@@ -526,7 +563,36 @@ class Ceramic {
         guildProfile,
         apiKeys,
         announcements,
-        announcementList
+        announcementList,
+        opportunities,
+        daoProfile,
+        nearPriceHistory,
+        November2020NearPriceHistory,
+        December2020NearPriceHistory,
+        January2021NearPriceHistory,
+        February2021NearPriceHistory,
+        March2021NearPriceHistory,
+        April2021NearPriceHistory,
+        May2021NearPriceHistory,
+        June2021NearPriceHistory,
+        July2021NearPriceHistory,
+        August2021NearPriceHistory,
+        September2021NearPriceHistory,
+        October2021NearPriceHistory,
+        November2021NearPriceHistory,
+        December2021NearPriceHistory,
+        January2022NearPriceHistory,
+        February2022NearPriceHistory,
+        March2022NearPriceHistory,
+        April2022NearPriceHistory,
+        May2022NearPriceHistory,
+        June2022NearPriceHistory,
+        July2022NearPriceHistory,
+        August2022NearPriceHistory,
+        September2022NearPriceHistory,
+        October2022NearPriceHistory,
+        November2022NearPriceHistory,
+        December2022NearPriceHistory
       ])
       
       let rootAliases = {
@@ -539,7 +605,10 @@ class Ceramic {
         guildProfile: done[7],
         apiKeys: done[8],
         announcements: done[9],
-        announcementList: done[10]
+        announcementList: done[10],
+        opportunities: done[11],
+        daoProfile: done[12],
+        nearPriceHistory: done[13]
       }
 
       // cache aliases
@@ -550,7 +619,7 @@ class Ceramic {
       const appIdx = new IDX({ ceramic: appClient, aliases: rootAliases})
 
       return appIdx
-     }
+    // }
   }
 
 
@@ -586,7 +655,8 @@ class Ceramic {
 
 
   // retrieve user identity
-  async getUserIdx(account, appIdx, near, factoryContract, registryContract){
+  async getUserIdx(account, appIdx, factoryContract, registryContract){
+     
       let seed = false
       set(KEY_REDIRECT, {action: false, link: ''})
 
@@ -609,6 +679,7 @@ class Ceramic {
         try{
           let oldAccountUserCeramicClient
           let did = await this.getDid(account.accountId, factoryContract, registryContract)
+          console.log('old account did', did)
           if(did){
             let part = did.split(':')[1]
             if(part == '3'){
@@ -636,6 +707,7 @@ class Ceramic {
         }
         try{
           let did = await this.getDid(account.accountId, factoryContract, registryContract)
+          console.log('new account did', did)
           let currentUserCeramicClient
           if(did){
             let part = did.split(':')[1]
@@ -664,6 +736,7 @@ class Ceramic {
         }
         try{
           let did = await this.getDid(account.accountId, factoryContract, registryContract)
+          console.log('local account did', did)
           let localAccountUserCeramicClient
           if(did){
             let part = did.split(':')[1]
@@ -695,14 +768,14 @@ class Ceramic {
     
     try{
       did = await registryContract.getDID({accountId: accountId})
-      if(did){
+      if(did != 'none'){
         return did
       }
     } catch (err) {
       console.log('error retrieving did from legacy', err)
     }
     
-    if (!did){
+    if (did == 'none'){
      try {
       dao = await factoryContract.getDaoByAccount({accountId: accountId})
       did = dao.did

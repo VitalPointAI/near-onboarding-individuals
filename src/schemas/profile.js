@@ -99,5 +99,8 @@ export const profileSchema = {
       neutrals: {
         type: 'array'
       },
+      validators: {
+        type: 'array'
+      }
     },
   }

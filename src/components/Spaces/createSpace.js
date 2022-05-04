@@ -105,6 +105,7 @@ export default function AddSpace(props) {
       currentTokensList,
       didRegistryContract,
       nftContract,
+      factoryContract,
       near,
       appIdx
     } = state
@@ -181,7 +182,7 @@ export default function AddSpace(props) {
           
           let curNFTIdx
           try{
-            curNFTIdx = await ceramic.getUserIdx(account, appIdx, didRegistryContract)
+            curNFTIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract)
             setCurNFTIdx(curNFTIdx)
             console.log('curNFTIdx', curNFTIdx)
           } catch (err) {

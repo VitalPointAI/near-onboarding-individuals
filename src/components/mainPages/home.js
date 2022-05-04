@@ -5,6 +5,7 @@ import { flexClass } from '../../App'
 import SeedSetup from '../SeedSetup/seedSetup'
 import IndivProfile from '../Profiles/indivProfile'
 import GuildProfile from '../Profiles/guildProfile'
+import Dashboard from '../../components/mainPages/dashboard'
 import UnregisteredProfile from '../Profiles/unregisteredProfile'
 import RandomPhrase from '../../components/common/RandomPhrase/randomPhrase'
 import Landing from './landing'
@@ -65,8 +66,8 @@ export const Home = ({ children }) => {
         {finished ? 
             wallet && wallet.signedIn ?  
                 key ? (<SeedSetup />) : 
-                    accountType == 'individual' ? (<IndivProfile />) :
-                        accountType == 'guild' ? (<GuildProfile/>) : (<UnregisteredProfile />)
+                    accountType == 'individual' ? (<Dashboard />) :
+                        accountType == 'guild' ? (<Dashboard/>) : (<UnregisteredProfile />)
             :  (<Landing state={state} />)
             : state.accountData ? ({children}) 
             : (<>

@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
-import { ceramic } from '../../utils/ceramic'
-import { MAIL_URL } from '../../state/near'
-import qs from 'qs'
 import Social from '../common/Social/social'
 
 // Material UI components
@@ -30,47 +27,15 @@ import VerifiedIcon from '@mui/icons-material/Verified'
 import MailIcon from '@mui/icons-material/Mail'
 import { Button, LinearProgress, Divider } from '@mui/material'
 
-
-const axios = require('axios').default
-
 // CSS Styles
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-      maxWidth: 800,
-      minWidth: 325,
-      minHeight: 325,
-      
-    },
-    card: {
-      margin: 'auto',
-    },
     progress: {
         display: 'flex',
         justifyContent: 'center',
         height: '200px',
         width: '200px',
         alignItems: 'center',
-    },
-    actionsContainer: {
-      marginBottom: '20px',
-    },
-    large: {
-        width: '100px',
-        height: 'auto',
-        textAlign: 'center',
-        marginRight: '15px',
-    },
-    centered: {
-        textAlign: 'center'
-    },
-    accHeading: {
-      fontSize: '18px',
-      fontWeight: 'bold',
-    },
-    heading: {
-      fontSize: 18,
-      marginLeft: '10px'
     },
     }));
 
@@ -136,46 +101,7 @@ export default function GuildProfile(props) {
         guildDid,
         registered
     }= props
-  
-    
-    useEffect(
-        () => {
-            async function getEmailStatus(){
-                if(email){
-                    let emailStatus
-                    let data = {
-                        api_key: process.env.SENDY_API,
-                        email: email,
-                        list_id: process.env.NP_SENDY_LIST_ID
-                    }
-                    let url = `${MAIL_URL}/api/subscribers/subscription-status.php`
-                    try{
-                        emailStatus = await axios.post(url,
-                            qs.stringify(data),
-                            {
-                                headers: {
-                                    'content-type': 'application/x-www-form-urlencoded'
-                                }
-                            })
-                        console.log('emailstatus', emailStatus)
-                        if(emailStatus.data == 'Subscribed') {
-                            setEmailNotifications(true)
-                        }
-                        if(emailStatus.data == 'Email does not exist in list' || emailStatus.data == 'Unsubscribed' || emailStatus.data == 'Unconfirmed' || emailStatus.data == 'Bounced'){
-                            setEmailNotifications(false)
-                        }
-                    } catch (err) {
-                        console.log('error getting email status', err)
-                    }
-                }
-            }
 
-            getEmailStatus()
-            .then((res) => {
-
-            })
-
-        }, [email])
 
     useEffect(
         () => {
@@ -213,6 +139,7 @@ export default function GuildProfile(props) {
                 }
             } else {
                 if(did && appIdx){
+                    console.log('guildprofile did', did)
                     let result = await appIdx.get('guildProfile', did)
                     console.log('result', result)
                         if(result) {
@@ -253,60 +180,6 @@ export default function GuildProfile(props) {
     }, [did, appIdx, isUpdated]
     )
 
-
-
-    async function optin() {
-        setEmailFinished(false)
-        let subscribeUrl = `${MAIL_URL}/subscribe`
-        let data = {
-            api_key: process.env.SENDY_API, 
-            email: email,
-            name: name,
-            list: process.env.NP_SENDY_LIST_ID,
-            boolean: true
-        }
-        try{
-            axiosCall = await axios.post(subscribeUrl,
-                qs.stringify(data),
-                {
-                    headers: {
-                        'content-type': 'application/x-www-form-urlencoded'
-                    }
-                })
-        console.log('axioscall', axiosCall)
-        setEmailNotifications(true)
-        setEmailFinished(true)
-       
-        } catch (err) {
-            console.log('error subscribing', err)
-        }
-    }
-
-    async function optout() {
-        setEmailFinished(false)
-        let deleteUrl = `${MAIL_URL}/api/subscribers/delete.php`
-        let data = {
-            api_key: process.env.SENDY_API, 
-            email: email,
-            list_id: process.env.NP_SENDY_LIST_ID
-        }
-        try{
-            axiosCall = await axios.post(deleteUrl,
-                qs.stringify(data),
-                {
-                    headers: {
-                        'content-type': 'application/x-www-form-urlencoded'
-                    }
-                })
-        console.log('axiosCalldelete', axiosCall)
-        setEmailNotifications(false)
-        setEmailFinished(true)
-        } catch (err) {
-            console.log('error subscribing', err)
-        }
-    }
-
-
     const languages = language.map((item, i) => {
       if (i == language.length -1){
         item = item
@@ -324,16 +197,7 @@ export default function GuildProfile(props) {
             {finished ? (<>
               
                 <Grid container justifyContent="space-evenly" spacing={1} style={{marginTop:'20px', padding:'10px'}}>
-                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                    {summoner == accountId ? 
-                            emailFinished ? 
-                                emailNotifications ?
-                                    <Chip icon={<MailIcon />} label="Email Notifications: ON" variant="outlined" onClick={optout}/>
-                                : <Chip icon={<MailIcon />} label="Email Notifications: OFF" variant="outlined" onClick={optin}/>
-                            : <LinearProgress/>
-                    : null
-                    }
-                    </Grid>
+                    
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
                         <Avatar src={logo} style={{width:'25%', height:'auto', marginBottom:'10px'}}  />
                         <Typography variant="h5">

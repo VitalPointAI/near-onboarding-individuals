@@ -61,15 +61,6 @@ const useStyles = makeStyles((theme) => ({
       minWidth: 100,
       maxWidth: 400,
     },
-    heading: {
-      fontSize: '15px',
-      flexBasis: '33.33%',
-      flexShrink: 0,
-    },
-    secondaryHeading: {
-      fontSize: '15px',
-      color: "#000000",
-    },
     square: {
       width: '175px',
       height: 'auto'
@@ -198,6 +189,14 @@ export default function EditProfileForm(props) {
      name: "personaWork",
      control
     })
+
+    const {
+      fields: personaValidatorFields,
+      append: personaValidatorAppend,
+      remove: personaValidatorRemove} = useFieldArray({
+     name: "personaValidators",
+     control
+    })
     
     const personaInterests = watch('personaInterests', personaInterestsFields)
     const personaLearn = watch('personaLearn', personaLearnFields)
@@ -205,7 +204,8 @@ export default function EditProfileForm(props) {
     const personaValues = watch('personaValues', personaValuesFields)
     const personaSkills = watch('personaSkills', personaSkillsFields)
     const personaSpecificSkills = watch('personaSpecificSkills', personaSpecificSkillsFields)
-    
+    const personaValidators = watch('personaValidators', personaValidatorFields)
+
     const {
         handleEditProfileClickState,
         curUserIdx,
@@ -255,12 +255,6 @@ export default function EditProfileForm(props) {
           if(data.metadata.media.substr(0,4) == "http"){
             setPfpAvatar(data.metadata.media)
           }
-          // let data = await axios.post(`${nodeUrl}/view_nft/${nftTokenId}`, 
-          //   {
-          //   "token_id": nftTokenId,
-          //   "contract": nftContract
-          //   })
-          console.log('nft data', data)
         }
       }
       
@@ -311,6 +305,7 @@ export default function EditProfileForm(props) {
                 result.personaSkills? setValue('personaSkills', result.personaSkills): setValue('personaSkills', {name: ''})
                 result.personaSpecificSkills? setValue('personaSpecificSkills', result.personaSpecificSkills): setValue('personaSpecificSkills', {name: ''})
                 result.values && result.values.length > 0 ? setValue('personaValues', result.values) : null
+                result.validators && result.validators.length > 0 ? setValue('personaValidators', result.validators) : null
                 result.interests && result.interests.length > 0 ? setValue('personaInterests', result.interests) : null
                 result.learningGoals && result.learningGoals.length > 0 ? setValue('personaLearn', result.learningGoals) : null
                 result.workDesires && result.workDesires.length > 0 ? setValue('personaWork', result.workDesires) : null
@@ -320,6 +315,7 @@ export default function EditProfileForm(props) {
                 result.nftContract ? setNftContract(result.nftContract) : setNftContract('')
                 result.nftTokenId ? setNftTokenId(result.nftTokenId) : setNftTokenId('')
                 result.profileNft ? setPfpAvatar(result.profileNft) : setPfpAvatar(imageName)
+                
               }
               return true
            }
@@ -463,7 +459,8 @@ export default function EditProfileForm(props) {
             neutrals: currentNeutrals,
             nftContract: nftContract,
             nftTokenId: nftTokenId,
-            profileNft: pfpAvatar
+            profileNft: pfpAvatar,
+            validators: personaValidators
         }
      
       try {
@@ -1030,6 +1027,73 @@ export default function EditProfileForm(props) {
                     </Grid>              
                 </Grid>
                 </Grid>
+                </AccordionDetails>
+            </Accordion>
+                        
+            <Accordion>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel5bh-content"
+                  id="panel5bh-header"
+                >
+                <Typography variant="h6">Staking Validators</Typography>
+                </AccordionSummary>
+                  <AccordionDetails>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                  
+                      
+                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        <Grid container justifyContent="space-between" alignItems="flex-end" spacing={1}>
+                        <Typography variant="body1" style={{fontSize: 'large', fontWeight:'400', marginTop: '10px', marginBottom:'10px'}}>Validators</Typography>
+                        {
+                          personaValidatorFields.map((field, index) => {
+                          
+                          return(
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} key={field.id}>
+                            <TextField
+                              
+                              margin="dense"
+                              id={`personaValidators[${index}].name`}
+                              variant="outlined"
+                              name={`personaValidators[${index}].name`}
+                              defaultValue={field.name}
+                              label="Validators:"
+                              InputProps={{
+                                endAdornment: <div>
+                                <Tooltip TransitionComponent={Zoom} title="Validator contract Id -eg. epic.poolv1.near">
+                                    <InfoIcon fontSize="small" style={{marginLeft:'5px', marginTop:'-3px'}} />
+                                </Tooltip>
+                                </div>
+                              }}
+                              inputRef={register({
+                                  required: true                              
+                              })}
+                            />
+                            {errors[`personaValidators${index}.name`] && <p style={{color: 'red', fontSize:'80%'}}>You must provide a validator contract name.</p>}
+                            
+                            <Button type="button" onClick={() => personaValidatorRemove(index)} style={{float: 'right', marginLeft:'10px'}}>
+                              <DeleteForeverIcon />
+                            </Button>
+                            </Grid>
+                            
+                          )
+                        }) 
+                        }
+                        {!personaValidatorFields || personaValidatorFields.length == 0 ?
+                          <Typography variant="body1" style={{marginLeft: '5px'}}>No validators defined yet.</Typography>
+                        : null }
+                          <Button
+                            type="button"
+                            onClick={() => personaValidatorAppend({name: ''})}
+                            startIcon={<AddBoxIcon />}
+                          >
+                            Add Validator
+                          </Button>
+                        </Grid>
+                      </Grid>
+                      </Grid>
+                   </Grid>
                 </AccordionDetails>
             </Accordion>
 

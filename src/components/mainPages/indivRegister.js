@@ -39,8 +39,7 @@ export default function IndivRegister(props) {
       didRegistryContract,
       accountId,
       did,
-      accountType,
-      pKey
+      accountType
     } = state
 
     useEffect(

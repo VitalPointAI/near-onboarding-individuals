@@ -119,7 +119,7 @@ export default function VerifierCard(props) {
             let thisCurUserIdx
             try{
               let personAccount = new nearAPI.Account(near.connection, personId.accountId)
-              thisCurUserIdx = await ceramic.getUserIdx(personAccount, appIdx, near, didRegistryContract)
+              thisCurUserIdx = await ceramic.getUserIdx(personAccount, appIdx, factoryContract, didRegistryContract)
               setCurUserIdx(thisCurUserIdx)
               } catch (err) {
                 console.log('problem getting curuseridx', err)

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 import { appStore, onAppMount } from '../../../state/app'
 import EditProfileForm from '../../EditProfile/editProfile'
+import GoToGuilds from '../../Cards/GoToGuilds/goToGuilds'
 
 // Material UI
 import { makeStyles, useTheme } from '@mui/styles'
@@ -58,7 +59,7 @@ const matches = useMediaQuery('(max-width:500px)')
 
 const [anchorEl, setAnchorEl] = useState(null);
 const [editProfileClicked, setEditProfileClicked] = useState(false)
-const [editGuildProfileClicked, setEditGuildProfileClicked] = useState(false)
+const [editGuildClicked, setEditGuildClicked] = useState(false)
 const [notificationsClicked, setNotificationsClicked] = useState(false)
 const [newNotifications, setNewNotifications] = useState(0)
 
@@ -152,11 +153,11 @@ const editProfileClick = (event) => {
 }
 
 function handleEditGuildClickState(property){
-  setEditGuildProfileClicked(property)
+  setEditGuildClicked(property)
 }
 
-const editGuildProfileClick = (event) => {
-  setEditGuildProfileClicked(true)
+const editGuildClick = (event) => {
+  setEditGuildClicked(true)
   handleClick(event)
 }
 
@@ -186,10 +187,10 @@ const list = (anchor) => (
     onClick={toggleDrawer(anchor, false)}
     onKeyDown={toggleDrawer(anchor, false)}
 >
-{!matches ? (
+{!matches && wallet.signedIn ? (
   <div className='toolbar'>
   <List>
-    <Link to='/'>
+    <Link to='/dashboard'>
         <ListItem button key={1}>
         <ListItemIcon><PieChartIcon /></ListItemIcon>
         <ListItemText primary='Dashboard'/>
@@ -200,7 +201,7 @@ const list = (anchor) => (
 
   <Typography variant='h6'>Account</Typography>
   <List>
-    <ListItem button key={2} onClick={(e) => editProfileClick(e)}>
+    <ListItem button key={2} onClick={accountType == 'guild' ? (e) =>  editGuildClick(e) : (e) => editProfileClick(e)}>
         <ListItemIcon><EditIcon /></ListItemIcon>
         <ListItemText primary='Edit Profile'/>
     </ListItem>
@@ -266,7 +267,7 @@ const list = (anchor) => (
     wallet.signedIn ? (
       <>
         <List>
-            <Link to='/'>
+            <Link to='/dashboard'>
                 <ListItem button key={1}>
                 <ListItemIcon><PieChartIcon /></ListItemIcon>
                 <ListItemText primary='Dashboard'/>
@@ -368,9 +369,9 @@ const list = (anchor) => (
 
 return (
     <React.Fragment key={'left'}>
-        <IconButton edge="start" className={classes.menuButton} style={{marginTop: '5px', paddingLeft: 3, color: 'white', padding: 5}} aria-label="menu" onClick={toggleDrawer('left', true)}>
-        <MenuIcon style={{fontSize: 35}}/>
-        </IconButton>
+        
+        <MenuIcon style={{fontSize: 35, color: 'white'}} onClick={toggleDrawer('left', true)}/>
+  
   
         <Drawer anchor={'left'} open={drawerState['left']} onClose={toggleDrawer('left', false)}>
         {list('left')}
@@ -383,6 +384,11 @@ return (
           did={did}
           curUserIdx={curUserIdx}
         /> : null }
+
+        {editGuildClicked ? <GoToGuilds
+          handleEditGuildClickState={handleEditGuildClickState}
+        /> : null }
+
 
         {notificationsClicked ? 
         <NotificationCard

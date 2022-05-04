@@ -54,6 +54,7 @@ const Registration = () => {
     const matches = useMediaQuery('(max-width:500px)')
     const [loaded, setLoaded] = useState(false)
     const [isAdmin, setIsAdmin] = useState()
+    const [isGuild, setIsGuild] = useState()
     const { state, dispatch, update } = useContext(appStore)
     const {
         accountType,
@@ -74,6 +75,11 @@ useEffect(
                 setIsAdmin(true)
             } else {
                 setIsAdmin(false)
+            }
+            if(accountType == 'guild'){
+                setIsGuild(true)
+            } else {
+                setIsGuild(false)
             }
         }
 
@@ -113,7 +119,7 @@ async function unregister(){
                 await freeContract.contract.deleteDID({
                     accountId: accountId
                 })
-                update('', {accountType: 'not registered'})
+                update('', {accountType: 'none'})
             } catch (err) {
             console.log('error unregistering', err)
             }
@@ -133,7 +139,7 @@ async function unregister(){
                 </Typography>
             </Grid>
     
-            {accountType != 'not registered' ? <>
+            {accountType != 'none' ? <>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginBottom:'20px'}}>
                     <Typography variant="h5" align="center">
                         This account is registered as a/an:<br></br>
@@ -147,12 +153,18 @@ async function unregister(){
                             This account is an admin, it cannot unregister.
                         </Typography><br></br></>
                     : null}
+                    {isGuild ?<> 
+                        <Typography variant="overline">
+                            Please manage it's registration at <a href="https://nearguilds.live">NEAR Guilds</a>.
+                        </Typography><br></br></>
+                    : null}
+
                     <Button
                         variant="contained"
                         color="primary"
                         className={classes.button}
                         onClick={unregister}
-                        disabled={isAdmin}
+                        disabled={isAdmin || isGuild ? true : false}
                     >
                         <Typography variant="body1" style={{fontSize: '40px'}}>
                             Unregister
@@ -231,7 +243,7 @@ async function unregister(){
             </Typography>
         </Grid>
 
-        {accountType != 'not registered' ? <>
+        {accountType != 'none' ? <>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginBottom:'20px'}}>
                 <Typography variant="h5" align="center">
                 This account is registered as/an:<br></br>
@@ -245,12 +257,17 @@ async function unregister(){
                         This account is an admin, it cannot unregister.
                     </Typography><br></br></>
                 : null}
+                {isGuild ?<> 
+                    <Typography variant="overline">
+                        Please manage it's registration at <a href="https://nearguilds.live">NEAR Guilds</a>.
+                    </Typography><br></br></>
+                : null}
                 <Button
                     variant="contained"
                     color="primary"
                     className={classes.button}
                     onClick={unregister}
-                    disabled={isAdmin}
+                    disabled={isAdmin || isGuild ? true : false}
                 >
                     <Typography variant="body1" style={{fontSize: '40px'}}>
                         Unregister

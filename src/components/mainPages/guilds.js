@@ -75,13 +75,17 @@ export default function ExploreGuilds(props) {
     const matches = useMediaQuery('(max-width:500px)')
 
     let sortedGuilds
-
     useEffect(
         () => {
             async function fetchData() {
-                if(isUpdated){await updateCurrentGuilds()}
+                let theseGuilds = await updateCurrentGuilds()
+                update('', {currentGuilds: theseGuilds})
+                if(isUpdated){
+                    let theseGuilds = await updateCurrentGuilds()
+                    update('', {currentGuilds: theseGuilds})
+                }
                 console.log('currentGuilds', currentGuilds)
-                if(currentGuilds && near){
+                if(currentGuilds && appIdx){
                     setGuildCount(currentGuilds.length)
                     sortedGuilds = _.sortBy(currentGuilds, 'registered').reverse()
                     console.log('sortedGuilds', sortedGuilds)
@@ -99,33 +103,6 @@ export default function ExploreGuilds(props) {
                     setGuilds(sortedGuilds)                
                 }
 
-                // if(currentGuildsList && currentGuildsList.data.putDIDs.length > 0){
-                //     let i = 0
-                //     let balance = 0
-                //     while (i < currentGuildsList.data.putDIDs.length){
-                //         let account
-                //         let guildDid = currentGuildsList.data.putDIDs[i].did
-                //         let guildInfo = await appIdx.get('guildProfile', guildDid)
-                //         if(guildInfo.contractId){
-                //             setContractId(guildInfo.contractId)
-                //             try {
-                //                 account = await near.connection.provider.query({
-                //                     request_type: "view_account",
-                //                     finality: "final",
-                //                     account_id: guildInfo.contractId,
-                //                 })
-                //             } catch (err) {
-                //                 console.log('problem retrieving account', err)
-                //             }
-                //         }
-                //         if(account){
-                //             let formatted = utils.format.formatNearAmount(account.amount, 0)
-                //             balance = balance + parseFloat(formatted)
-                //         }
-                //         i++
-                //     }
-                //     setResources(balance)
-                // }
             }
 
         let mounted = true
@@ -137,82 +114,13 @@ export default function ExploreGuilds(props) {
         return () => mounted = false
         }
 
-    }, [currentGuilds, near, isUpdated]
+    }, [appIdx, isUpdated]
     )
 
     function handleExpanded() {
         setAnchorEl(null)
     }
 
-    // const handleMembersOnlyChange = async (event) => {
-    //     setMembersOnly(event.target.checked)
-     
-    //     if(event.target.checked){
-    //         let contract
-    //         let memberGuilds = []
-    //         let i = 0
-           
-    //         while (i < guilds.length){
-    //             try{
-    //                 contract = await dao.initDaoContract(state.wallet.account(), daos[i].contractId)
-    //             } catch (err) {
-    //                 console.log('problem initializing dao contract', err)
-    //             }
-
-    //             let thisMemberStatus
-    //             let thisMemberInfo
-    //             try {
-    //             thisMemberInfo = await contract.getMemberInfo({member: accountId})
-    //             thisMemberStatus = await contract.getMemberStatus({member: accountId})
-    //             if(thisMemberStatus && thisMemberInfo[0].active){
-    //                 memberDaos.push(daos[i])
-    //             } 
-    //             } catch (err) {
-    //             console.log('no member info yet')
-    //             }
-    //         i++
-    //         }
-    //         setDaos(memberDaos)
-    //     } else {
-    //         let memberDaos = []
-    //         setDaos(memberDaos)
-    //         let i = 0
-         
-    //         let sortedDaos = _.sortBy(currentDaosList, 'created').reverse()
-    //         while (i < sortedDaos.length){
-    //             memberDaos.push(sortedDaos[i])
-    //             i++
-    //         }
-    //         setDaos(memberDaos)
-    //     }
-    // }
-
-    // const handleStatusChange = async (event) => {
-    //     setActiveOnly(event.target.checked)
-        
-    //     if(event.target.checked){
-    //         let contract
-    //         let statusCommunity = []
-    //         let i = 0
-    //         while (i < daos.length){
-    //             if(daos[i].status == 'active'){
-    //                 statusCommunity.push(daos[i])
-    //             } 
-    //         i++
-    //         }
-    //         setDaos(statusCommunity)
-    //     } else {
-    //         let statusCommunity = []
-    //         setDaos(statusCommunity)
-    //         let i = 0
-    //         let sortedDaos = _.sortBy(currentDaosList, 'created').reverse()
-    //         while (i < sortedDaos.length){
-    //             statusCommunity.push(sortedDaos[i])
-    //             i++
-    //         }
-    //         setDaos(statusCommunity)
-    //     }
-    // }
 
     function makeSearchGuilds(guild){
        let i = 0
@@ -334,7 +242,7 @@ export default function ExploreGuilds(props) {
                             contractId={accountId}
                             created={blockTime}
                             summoner={owner}
-                            did={did}
+                            guildDid={did}
                             link={''}
                             state={state}
                             makeSearchGuilds={makeSearchGuilds}

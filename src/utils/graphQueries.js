@@ -3,7 +3,8 @@ import { config } from '../state/config'
 
 const {
   GRAPH_FACTORY_API_URL,
-  GRAPH_REGISTRY_API_URL
+  GRAPH_REGISTRY_API_URL,
+  VALIDATORS_API_URL
 } = config
 
 const FACTORY_QUERY=`
@@ -53,7 +54,6 @@ query {
     }
 }
 `
-
 
 const INDIVIDUAL_REGISTRATIONS = `
 query {
@@ -141,41 +141,204 @@ query{
 
 const ALL_ALIASES = `
 query{
-    storeAliases(where: {verified_in: [true]})
+    storeAliases(first:1000){
+        aliasOwner
+        alias
+        definition
+        description
+      }
+}
+`
+
+const VALIDATORS = `
+query{
+    stakingPools(first: 1000)
     {
-        accountId
-        time
-        verified
-        changedBy
+        stakingPool
     }
 }
 `
 
-// const ALL_MINTS = `
-// query GetMints($lastId: String!){
-//     ftmints(first: 1000, where: { id_gt: $lastID}){
-//         id
-//         blockTime
-//         action
-//         amount
-//         token
-//         to
-//     }
-// }
-// `
+const VALIDATOR_ACTIVITY = `
+query{
+    pings(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+        blockHeight
+        blockTime
+        epoch
+        rewardsReceived
+        newContractStakedBalance
+        newContractTotalShares
+    }
+    depositAndStakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+        blockHeight
+        blockTime
+        epoch
+        rewardsReceived
+        newContractStakedBalance
+        newContractTotalShares
+    }
+    deposits(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+        blockHeight
+        blockTime
+        epoch
+        rewardsReceived
+        newContractStakedBalance
+        newContractTotalShares
+    }
+    withdrawAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+        blockHeight
+        blockTime
+        epoch
+        rewardsReceived
+        newContractStakedBalance
+        newContractTotalShares
+    }
+    withdraws(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+        blockHeight
+        blockTime
+        epoch
+        rewardsReceived
+        newContractStakedBalance
+        newContractTotalShares
+    }
+    unstakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+        blockHeight
+        blockTime
+        epoch
+        rewardsReceived
+        newContractStakedBalance
+        newContractTotalShares
+    }
+    unstakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+        blockHeight
+        blockTime
+        epoch
+        rewardsReceived
+        newContractStakedBalance
+        newContractTotalShares
+    }
+    stakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+        blockHeight
+        blockTime
+        epoch
+        rewardsReceived
+        newContractStakedBalance
+        newContractTotalShares
+    }
+    stakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+        blockHeight
+        blockTime
+        epoch
+        rewardsReceived
+        newContractStakedBalance
+        newContractTotalShares
+    }
+}
+`
 
-// const ALL_TRANSFERS = `
-// query{
-//     transfers{
-//         id
-//         blockTime
-//         action
-//         amount
-//         transferFrom
-//         transferTo
-//     }
-// }
-// `
+
+const ACCOUNT_VALIDATOR_ACTIVITY = gql`
+query account_activity($accountId: String!){
+    depositAndStakes(first: 1000, where: {accountIdStaking: $accountId}) {
+        id
+        blockTime
+        blockHeight
+        totalRewardsFee
+        accountIdDepositing
+        deposit
+        newUnstakedBalance
+        accountIdStaking
+        staking
+        receivedStakingShares
+        unstakedBalance
+        stakingShares
+        contractTotalStakedBalance
+        contractTotalShares
+    }
+    deposits(first: 1000, where: {accountIdDepositing: $accountId}) {
+        id
+        blockTime
+        blockHeight
+        totalRewardsFee
+        accountIdDepositing
+        deposit
+        newUnstakedBalance
+    }
+    withdrawAlls(first: 1000, where: {accountId: $accountId}) {
+        id
+        blockTime
+        blockHeight
+        accountId
+        amount
+        newUnstakedBalance
+    }
+    withdraws(first: 1000, where: {accountId: $accountId}) {
+        id
+        blockTime
+        blockHeight
+        accountId
+        amount
+        newUnstakedBalance
+    }
+    unstakeAlls(first: 1000, where: {accountId: $accountId}) {
+        id
+        blockTime
+        blockHeight
+        totalRewardsFee
+        accountId
+        amount
+        spentStakingShareAmount
+        totalUnstakedBalance
+        totalStakingShares
+        contractTotalStakedBalance
+        contractTotalShares
+    }
+    unstakes(first: 1000, where: {accountId: $accountId}) {
+        id
+        blockTime
+        blockHeight
+        totalRewardsFee
+        accountId
+        amount
+        spentStakingShareAmount
+        totalUnstakedBalance
+        totalStakingShares
+        contractTotalStakedBalance
+        contractTotalShares
+    }
+    stakes(first: 1000, where: {accountIdDepositing: $accountId}, or: {where: {accountIdStaking: $accountId}}){
+        id
+        blockTime
+        blockHeight
+        accountIdDepositing
+        deposit
+        newUnstakedBalance
+        accountIdStaking
+        staking
+        receivedStakingShares
+        unstakedBalance
+        stakingShares
+        contractTotalStakedBalance
+        contractTotalShares
+    }
+    stakeAlls(first: 1000, where: {accountIdDepositing: $accountId}, or: {where: {accountIdStaking: $accountId}}){
+        id
+        blockTime
+        blockHeight
+        accountIdDepositing
+        deposit
+        newUnstakedBalance
+        accountIdStaking
+        staking
+        receivedStakingShares
+        unstakedBalance
+        stakingShares
+        contractTotalStakedBalance
+        contractTotalShares
+    }
+    
+}
+`
 
 const factoryClient = new ApolloClient({
     uri: GRAPH_FACTORY_API_URL,
@@ -186,11 +349,11 @@ const registryClient = new ApolloClient({
     uri: GRAPH_REGISTRY_API_URL,
     cache: new InMemoryCache(),
 })
-    
-// const cheddarClient = new ApolloClient({
-//     uri: GRAPH_CHEDDAR_API_URL,
-//     cache: new InMemoryCache(),
-// })
+
+const validatorClient = new ApolloClient({
+    uri: VALIDATORS_API_URL,
+    cache: new InMemoryCache(),
+})
 
 export default class Queries {
 
@@ -202,6 +365,11 @@ export default class Queries {
     async getGuilds(){
         const guilds = await registryClient.query({query: gql(GUILD_REGISTRATIONS)})
         return guilds
+    }
+
+    async getAliases(){
+        const aliases = await registryClient.query({query: gql(ALL_ALIASES)})
+        return aliases
     }
 
     async getDeletedGuilds(){
@@ -239,17 +407,50 @@ export default class Queries {
         return verifiedGuilds
     }
 
-    // async getAllMints(lastId){
-    //     const allMints = await cheddarClient.query({query: ALL_MINTS, variables: {
-    //         lastId: lastId
-    //     }})
-    //     return allMints
-    // }
+    async getValidators(){
+        const validators = await validatorClient.query({query: gql(VALIDATORS)})
+        return validators
+    }
 
-    // async getAllTransfers(){
-    //     const allTransfers = await cheddarClient.query({query: gql(ALL_TRANSFERS)})
-    //     return allTransfers
-    // }
+    async getValidatorActivity(validatorUris){
+        let activity = []
+       for(let x = 0; x < validatorUris.length; x++){
+            let validatorClient = new ApolloClient({
+                uri: validatorUris[x],
+                cache: new InMemoryCache(),
+            })
+          
+            try{
+                let validatorActivity = await validatorClient.query({query: gql(VALIDATOR_ACTIVITY)})
+                console.log('validatorActivity', validatorActivity)
+                activity.push([validatorUris[x], validatorActivity])
+            } catch (err) {
+                console.log('error retrieving validator data: ', err)
+            }
+        }
+        return activity
+    }
+
+    async getAccountValidatorActivity(validatorUris, account){
+        let activity = []
+       for(let x = 0; x < validatorUris.length; x++){
+            let validatorClient = new ApolloClient({
+                uri: validatorUris[x],
+                cache: new InMemoryCache(),
+            })
+           
+            try{
+                let validatorActivity = await validatorClient.query({query: ACCOUNT_VALIDATOR_ACTIVITY, variables: {
+                    accountId: account
+                }})
+                console.log('accountvalidatorActivity', validatorActivity)
+                activity.push([validatorUris[x], validatorActivity])
+            } catch (err) {
+                console.log('error retrieving validator data: ', err)
+            }
+        }
+        return activity
+    }
 
 }
 

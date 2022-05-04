@@ -23,6 +23,7 @@ import Pledge from './components/mainPages/pledge'
 import Announcements from './components/mainPages/announcements'
 import Leaderboards from './components/mainPages/leaderboards'
 import Rewards from './components/mainPages/rewards'
+import Dashboard from './components/mainPages/dashboard'
 import { Home } from './components/mainPages/home'
 
 
@@ -158,6 +159,13 @@ const App = () => {
                 >
                 { children }
             </Admin>
+            </Route>
+            <Route exact path="/dashboard">
+            <Dashboard
+                state={state}
+                >
+                { children }
+            </Dashboard>
             </Route>
             <Route exact path="/guilds">
                 <ExploreGuilds
