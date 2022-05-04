@@ -249,6 +249,7 @@ class Ceramic {
       }
     })
     console.log('retrieveseed', retrieveSeed)
+    console.log('retrieve data', retrieveSeed.data.seed)
     const ceramic = new CeramicClient(CERAMIC_API_URL)
   
     let authSecret = retrieveSeed.data.seed
