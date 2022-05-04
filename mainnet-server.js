@@ -51,22 +51,6 @@ app.post('/appseed', cors(), verifyToken, async (req, res) => {
 
 });
 
-app.post('/appseed', cors(), verifyToken, async (req, res) => {
-  let latestTokenResponse = await client.getSecret(secretKey)
-  jwt.verify(req.token, latestTokenResponse.value, async (err, authData) => {
-    if(err) {
-      res.sendStatus(403);
-    } else {
-      const latestSecret = await client.getSecret(secretSeed)
-      const seed = (latestSecret.value).slice(0, 32)
-      res.json({
-        seed: seed,
-        authData
-      });
-    }
-  })
-});
-
 app.post('/funding-seed', cors(), verifyToken, async (req, res) => {
   let latestTokenResponse = await client.getSecret(secretKey)
   jwt.verify(req.token, latestTokenResponse.value, async (err, authData) => {

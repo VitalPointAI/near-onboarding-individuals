@@ -236,6 +236,7 @@ class Ceramic {
       accountId: accountId
       }    
     )
+    console.log('token', token)
     
     set(AUTH_TOKEN, token.data.token)
   
