@@ -17,12 +17,12 @@ const sendyAPI = process.env.SENDY_API
 
 module.exports = async function (context, req) {
     const accountId = req.body.accountId
-    console.log('account', accountId)
+    console.log('account in token', accountId)
     if(!accountId) res.sendStatus(403)
     const latestTokenSecret = await client.getSecret(secretKey)
     jwt.sign({ accountId: accountId }, latestTokenSecret.value, (err, token) => {
-        context.res = {
-        body: token
-        }
+        context.res.json({
+        token
+        })
     })
 }
