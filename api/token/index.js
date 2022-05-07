@@ -19,8 +19,7 @@ const secretKey = process.env["SECRET_KEY"]
 // const sendyAPI = process.env.SENDY_API
 
 async function secret() {
-    const latestSecret = await client.getSecret(secretName);
-    console.log(`Latest version of the secret ${secretName}: `, latestSecret);
+    const latestSecret = await client.getSecret(secretKey)
     return latestSecret
 }
 
@@ -28,6 +27,7 @@ module.exports = async function (context, req) {
     // const accountId = req.body.accountId
     // console.log('account in token', accountId)
     // if(!accountId) res.sendStatus(403)
+
     const latestTokenSecret = await secret()
     context.res.json({
         secret: latestTokenSecret

@@ -41,8 +41,8 @@
   "dependencies": {
     "3id-did-provider": "^1.1.1",
     "@apollo/client": "^3.4.17",
-    "@azure/identity": "^1.5.2",
-    "@azure/keyvault-secrets": "^4.3.0",
+    "@azure/identity": "^2.0.4",
+    "@azure/keyvault-secrets": "^4.4.0",
     "@ceramicnetwork/3id-did-resolver": "^1.4.16",
     "@ceramicnetwork/http-client": "^1.5.7",
     "@ceramicnetwork/stream-tile": "^1.5.7",

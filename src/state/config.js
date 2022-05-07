@@ -112,7 +112,7 @@ if (process.env.ENV === 'prod') {
         APP_OWNER_ACCOUNT: 'aaron.near',
         fundingContractName: 'funding.vitalpointai.near',
         PLATFORM_SUPPORT_ACCOUNT: 'catalystsp.near',
-        TOKEN_CALL: 'https://happy-sea-0f8841c0f.1.azurestaticapps.net/api/token',
+        TOKEN_CALL: 'https://vitalpointai-api.azurewebsites.net/api/token',
         APPSEED_CALL: 'https://happy-sea-0f8841c0f.1.azurestaticapps.net/api/seed',
         FUNDING_SEED_CALL: 'https://happy-sea-0f8841c0f.1.azurestaticapps.net/api/funding-seed',
         SENDY_API_KEY_CALL: 'https://happy-sea-0f8841c0f.1.azurestaticapps.net/api/sendy',
