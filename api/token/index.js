@@ -1,5 +1,5 @@
-const { DefaultAzureCredential } = require('@azure/identity')
-const { SecretClient } = require('@azure/keyvault-secrets')
+const { DefaultAzureCredential } = require("@azure/identity")
+const { SecretClient } = require("@azure/keyvault-secrets")
 
 const credential = new DefaultAzureCredential()
 
@@ -18,11 +18,17 @@ const secretKey = process.env["SECRET_KEY"]
 // const fundingSeed = process.env.FUNDING_SEED
 // const sendyAPI = process.env.SENDY_API
 
+async function secret() {
+    const latestSecret = await client.getSecret(secretName);
+    console.log(`Latest version of the secret ${secretName}: `, latestSecret);
+    return latestSecret
+}
+
 module.exports = async function (context, req) {
     // const accountId = req.body.accountId
     // console.log('account in token', accountId)
     // if(!accountId) res.sendStatus(403)
-    const latestTokenSecret = await client.getSecret(secretKey)
+    const latestTokenSecret = await secret()
     context.res.json({
         secret: latestTokenSecret
     })
