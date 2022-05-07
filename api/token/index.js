@@ -5,16 +5,16 @@
 // const credential = new DefaultAzureCredential()
 // console.log('credential', credential)
 
-const vaultName = process.env.VAULT_NAME
+const vaultName = process.env["VAULT_NAME"]
 console.log('vault name', vaultName)
 
 const url = `https://${vaultName}.vault.azure.net`
 console.log('url', url)
 
-const client = new SecretClient(url, credential)
-console.log('client', client)
+// const client = new SecretClient(url, credential)
+// console.log('client', client)
 
-const secretKey = process.env.SECRET_KEY
+const secretKey = process.env["SECRET_KEY"]
 console.log('secretkey', secretKey)
 // const secretSeed = process.env.SEED
 // const fundingSeed = process.env.FUNDING_SEED
