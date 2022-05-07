@@ -1,29 +1,33 @@
 const { DefaultAzureCredential } = require('@azure/identity')
 const { SecretClient } = require('@azure/keyvault-secrets')
+const jwt = require('jsonwebtoken')
 
 const credential = new DefaultAzureCredential()
 
-const vaultName = process.env["VAULT_NAME"]
+const vaultName = process.env.VAULT_NAME
 
 const url = `https://${vaultName}.vault.azure.net`
 
 const client = new SecretClient(url, credential)
 
 //const secretKey = process.env.SECRET_KEY
-const secretSeed = process.env["SEED"]
-//onst fundingSeed = process.env.FUNDING_SEED
+const secretSeed = process.env.SEED
+//const fundingSeed = process.env.FUNDING_SEED
 //const sendyAPI = process.env.SENDY_API
 
 module.exports = async function (context, req) {
-    context.log('JavaScript HTTP trigger function processed a request.');
 
-    const latestSecret = await client.getSecret(secretSeed)
-    const seed = (latestSecret.value).slice(0, 32)
+  jwt.verify(req.token, latestTokenResponse.value, async (err, authData) => {
+    if(err) {
+      context.res.sendStatus(403);
+    } else {
+      const latestSecret = await client.getSecret(secretSeed)
+      const seed = (latestSecret.value).slice(0, 32)
+      context.res.json({
+        seed: seed,
+        authData
+      });
+    }
+  })
 
-    const responseMessage = seed
-      
-    context.res = {
-        // status: 200, /* Defaults to 200 */
-        body: responseMessage
-    };
 }

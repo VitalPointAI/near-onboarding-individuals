@@ -1,5 +1,6 @@
 const { DefaultAzureCredential } = require("@azure/identity")
 const { SecretClient } = require("@azure/keyvault-secrets")
+const jwt = require('jsonwebtoken')
 
 const credential = new DefaultAzureCredential()
 
@@ -14,25 +15,21 @@ const client = new SecretClient(url, credential)
 // const sendyAPI = process.env.SENDY_API
 
 async function secret() {
-    //const secretKey = process.env["SECRET_KEY"]
     const secretKey = process.env.SECRET_KEY
-   
     const latestSecret = await client.getSecret(secretKey)
     return latestSecret
 }
 
 module.exports = async function (context, req) {
-    // const accountId = req.body.accountId
-    // console.log('account in token', accountId)
-    // if(!accountId) res.sendStatus(403)
+    const accountId = req.body.accountId
+    
+    if(!accountId) context.res.sendStatus(403)
 
     const latestTokenSecret = await secret()
-    context.res.json({
-        secret: latestTokenSecret
+    
+    jwt.sign({ accountId: accountId }, latestTokenSecret.value, (err, token) => {
+        context.res.json({
+        token
+        })
     })
-    // jwt.sign({ accountId: accountId }, latestTokenSecret.value, (err, token) => {
-    //     context.res.json({
-    //     token
-    //     })
-    // })
 }
