@@ -3,7 +3,8 @@ const { SecretClient } = require("@azure/keyvault-secrets")
 
 const credential = new DefaultAzureCredential()
 
-const vaultName = process.env["VAULT_NAME"]
+//const vaultName = process.env["VAULT_NAME"]
+const vaultName = process.env.VAULT_NAME
 const url = `https://${vaultName}.vault.azure.net`
 
 const client = new SecretClient(url, credential)
@@ -13,7 +14,9 @@ const client = new SecretClient(url, credential)
 // const sendyAPI = process.env.SENDY_API
 
 async function secret() {
-    const secretKey = process.env["SECRET_KEY"]
+    //const secretKey = process.env["SECRET_KEY"]
+    const secretKey = process.env.SECRET_KEY
+   
     const latestSecret = await client.getSecret(secretKey)
     return latestSecret
 }
