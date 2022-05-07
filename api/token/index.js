@@ -1,6 +1,5 @@
-
-import { DefaultAzureCredential } from '@azure/identity'
-import { SecretClient } from '@azure/keyvault-secrets'
+const { DefaultAzureCredential } = require('@azure/identity')
+const { SecretClient } = require('@azure/keyvault-secrets')
 
 const credential = new DefaultAzureCredential()
 
@@ -19,7 +18,7 @@ const secretKey = process.env["SECRET_KEY"]
 // const fundingSeed = process.env.FUNDING_SEED
 // const sendyAPI = process.env.SENDY_API
 
-export default async function (context, req) {
+module.exports = async function (context, req) {
     // const accountId = req.body.accountId
     // console.log('account in token', accountId)
     // if(!accountId) res.sendStatus(403)
