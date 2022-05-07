@@ -3,16 +3,16 @@ const { SecretClient } = require("@azure/keyvault-secrets")
 
 const credential = new DefaultAzureCredential()
 
-const vaultName = process.env.VAULT_NAME
+const vaultName = process.env["VAULT_NAME"]
 
 const url = `https://${vaultName}.vault.azure.net`
 
 const client = new SecretClient(url, credential)
 
-const secretKey = process.env.SECRET_KEY
-const secretSeed = process.env.SEED
-const fundingSeed = process.env.FUNDING_SEED
-const sendyAPI = process.env.SENDY_API
+//const secretKey = process.env.SECRET_KEY
+const secretSeed = process.env["SEED"]
+//onst fundingSeed = process.env.FUNDING_SEED
+//const sendyAPI = process.env.SENDY_API
 
 module.exports = async function (context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
