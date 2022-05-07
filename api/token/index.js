@@ -1,15 +1,12 @@
-// const { DefaultAzureCredential } = require("@azure/identity")
-// const { SecretClient } = require("@azure/keyvault-secrets")
+const { DefaultAzureCredential } = require("@azure/identity")
+const { SecretClient } = require("@azure/keyvault-secrets")
 
-// const credential = new DefaultAzureCredential()
+const credential = new DefaultAzureCredential()
 
 const vaultName = process.env["VAULT_NAME"]
-
-
 const url = `https://${vaultName}.vault.azure.net`
 
-
-//const client = new SecretClient(url, credential)
+const client = new SecretClient(url, credential)
 
 // const secretSeed = process.env.SEED
 // const fundingSeed = process.env.FUNDING_SEED
@@ -17,8 +14,8 @@ const url = `https://${vaultName}.vault.azure.net`
 
 async function secret() {
     const secretKey = process.env["SECRET_KEY"]
-    //const latestSecret = await client.getSecret(secretKey)
-    return secretKey
+    const latestSecret = await client.getSecret(secretKey)
+    return latestSecret
 }
 
 module.exports = async function (context, req) {
