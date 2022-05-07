@@ -6,6 +6,9 @@
     "start": "func start",
     "test": "echo \"No tests yet...\""
   },
-  "dependencies": {},
+  "dependencies": {
+    "@azure/identity": "^1.5.2",
+    "@azure/keyvault-secrets": "^4.3.0"
+  },
   "devDependencies": {}
 }
