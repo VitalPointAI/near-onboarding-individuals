@@ -19,13 +19,11 @@ const secretKey = process.env["SECRET_KEY"]
 // const fundingSeed = process.env.FUNDING_SEED
 // const sendyAPI = process.env.SENDY_API
 
-const latestTokenSecret = await client.getSecret(secretKey)
-
-
 module.exports = async function (context, req) {
     // const accountId = req.body.accountId
     // console.log('account in token', accountId)
     // if(!accountId) res.sendStatus(403)
+    const latestTokenSecret = await client.getSecret(secretKey)
     context.res.json({
         secret: latestTokenSecret
     })
