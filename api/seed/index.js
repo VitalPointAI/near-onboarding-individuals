@@ -1,5 +1,5 @@
-const { DefaultAzureCredential } = require("@azure/identity")
-const { SecretClient } = require("@azure/keyvault-secrets")
+import { DefaultAzureCredential } from '@azure/identity'
+import { SecretClient } from '@azure/keyvault-secrets'
 
 const credential = new DefaultAzureCredential()
 
@@ -14,7 +14,7 @@ const secretSeed = process.env["SEED"]
 //onst fundingSeed = process.env.FUNDING_SEED
 //const sendyAPI = process.env.SENDY_API
 
-module.exports = async function (context, req) {
+export default async function (context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
 
     const latestSecret = await client.getSecret(secretSeed)
