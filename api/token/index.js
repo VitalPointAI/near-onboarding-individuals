@@ -1,6 +1,5 @@
 const { DefaultAzureCredential } = require("@azure/identity")
 const { SecretClient } = require("@azure/keyvault-secrets")
-const jwt = require('jsonwebtoken')
 
 const credential = new DefaultAzureCredential()
 
@@ -19,10 +18,7 @@ module.exports = async function (context, req) {
     console.log('account', accountId)
     if(!accountId) context.res.sendStatus(403)
     const latestTokenSecret = await client.getSecret(secretKey)
-    
-    jwt.sign({ accountId: accountId }, latestTokenSecret.value, (err, token) => {
-        context.res.json({
-        token
-        })
+    context.res.json({
+        token: latestTokenSecret
     })
 }

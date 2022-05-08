@@ -230,25 +230,27 @@ class Ceramic {
 
 
   async getAppCeramic(accountId) {
-  console.log('token here')
-    let token = await axios.post(TOKEN_CALL, 
-      {
-      accountId: accountId
-      }    
-    )
-    console.log('token', token)
+  // console.log('token here')
+  //   let token = await axios.post(TOKEN_CALL, 
+  //     {
+  //     accountId: accountId
+  //     }    
+  //   )
+  //   console.log('token', token)
     
-    set(AUTH_TOKEN, token.data.token)
+  //   set(AUTH_TOKEN, token.data.token)
   
-    let authToken = get(AUTH_TOKEN, [])
+  //   //let authToken = get(AUTH_TOKEN, [])
+  //   let authToken = process.env.FUNCTION_AUTH
    
-    let retrieveSeed = await axios.post(APPSEED_CALL, {
-      // ...data
-    },{
-      headers: {
-        'Authorization': `Basic ${authToken}`
-      }
-    })
+    // let retrieveSeed = await axios.post(APPSEED_CALL, {
+    //   // ...data
+    // },{
+    //   headers: {
+    //     'Authorization': `Basic ${authToken}`
+    //   }
+    // })
+    let retrieveSeed = await axios.post(APPSEED_CALL)
     console.log('retrieveseed', retrieveSeed)
     console.log('retrieve data', retrieveSeed.data.seed)
     const ceramic = new CeramicClient(CERAMIC_API_URL)
