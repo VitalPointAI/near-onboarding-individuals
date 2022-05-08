@@ -113,7 +113,7 @@ if (process.env.ENV === 'prod') {
         fundingContractName: 'funding.vitalpointai.near',
         PLATFORM_SUPPORT_ACCOUNT: 'catalystsp.near',
         TOKEN_CALL: 'https://vitalpointai-api.azurewebsites.net/api/token',
-        APPSEED_CALL: 'https://vitalpointai-api.azurewebsites.net/api/seed?code=' + process.env["FUNCTION_AUTH"],
+        APPSEED_CALL: 'https://vitalpointai-api.azurewebsites.net/api/seed?code=2KZucTGRJ-vJbWLK2NvFbwqs4ejRlSn9X3h6EO98tIK0AzFuApkV7g==',
         FUNDING_SEED_CALL: 'https://vitalpointai-api.azurewebsites.net/api/funding-seed',
         SENDY_API_KEY_CALL: 'https://vitalpointai-api.azurewebsites.net/api/sendy',
         CERAMIC_API_URL: 'https://ceramic-node.vitalpointai.com',
