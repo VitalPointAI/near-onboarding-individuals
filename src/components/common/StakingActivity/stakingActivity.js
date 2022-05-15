@@ -400,7 +400,8 @@ export default function StakingActivity(props) {
             let thisReward =  x > 0 ? currentReward.minus(lastReward) : new Decimal(0)
             let fixedOne = parseFloat(thisReward).toLocaleString('fullwide', {useGrouping: false})
             console.log('this reward 0', fixedOne)
-            let thisRewardFormatted = formatNearAmount(fixedOne, 5)
+            let thisRewardFormatted
+            fixedOne != "NaN" ? thisRewardFormatted = formatNearAmount(fixedOne, 5) : thisRewardFormatted = '0'
             console.log('this reward formatted 1', thisRewardFormatted)
             console.log('this reward formatted', parseFloat(thisRewardFormatted))
             totalRewards = totalRewards + parseFloat(thisRewardFormatted)
@@ -608,7 +609,7 @@ export default function StakingActivity(props) {
                   </Typography>
                 </Grid>
                   <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
-                    <CSVLink data={csvExport} filename={"near-staking-quickbooks.csv"} headers={headers}>
+                    <CSVLink data={csvExport} filename={`${accountId.split('.')[0]}-staking-quickbooks.csv`} headers={headers}>
                       <img src={qbIcon} style={{width:'30px', height:'auto'}}/>
                       <Typography variant="body1" style={{marginTop: '-5px'}}>
                         Quickbooks
@@ -624,7 +625,7 @@ export default function StakingActivity(props) {
                     </Button>
                   </Grid>
                   <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
-                    <CSVLink data={csvSingleExport} filename={"near-staking.csv"} headers={stakingDataHeaders}>
+                    <CSVLink data={csvSingleExport} filename={`${accountId.split('.')[0]}-staking.csv`} headers={stakingDataHeaders}>
                       <img src={csvIcon} style={{width:'30px', height:'auto'}}/>
                       <Typography variant="body1" style={{marginTop: '-5px'}}>
                         CSV
