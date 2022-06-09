@@ -95,6 +95,8 @@ export default function IndivProfile(props) {
     const {
       indivDid
     }= props
+
+    
     
     useEffect(
         () => {
