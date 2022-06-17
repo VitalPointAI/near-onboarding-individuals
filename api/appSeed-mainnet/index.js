@@ -20,7 +20,10 @@ function verifyToken(req, res, next){
 
 module.exports = async function (context, req) {
     context.log('AppSeed mainnet trigger function processed a request.');
+    context.log('context', context)
+    context.log('req', req)
     const token = verifyToken(req)
+    context.log('token', token)
     if(token){
     jwt.verify(token, process.env["PERSONAS_MAINNET_SECRET_KEY"], async (err, authData) => {
         if(err) {
