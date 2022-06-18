@@ -1100,12 +1100,12 @@ async function wakeValidators(account) {
         let whitelisted = await account.viewFunction(
             'lockup-whitelist.near', 
             'is_whitelisted', 
-            {staking_pool_account_id: accountValidators[y].name}
+            {staking_pool_account_id: validators[i].name}
         )
         
         let apiUrl
         if(whitelisted){
-            let first = accountValidators[y].name.split('.')[0]
+            let first = validators[i].name.split('.')[0]
             let stripped = first.replace(/[^a-zA-Z]/g, '')
             apiUrl = `https://api.thegraph.com/subgraphs/name/vitalpointai/${stripped}validator`
             console.log('apiurl', apiUrl)
