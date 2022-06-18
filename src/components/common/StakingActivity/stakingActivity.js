@@ -420,7 +420,7 @@ export default function StakingActivity(props) {
             let credit = (parseFloat(thisRewardFormatted) * price).toFixed(2)
 
             if(debit > 0 && credit > 0){
-              
+
               csvDownload.push({
                 JournalNo: journalNo,
                 JournalDate: date,

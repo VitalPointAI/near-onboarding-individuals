@@ -172,6 +172,11 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         const account = wallet.account()
         const accountId = account.accountId
 
+        // Function to wake validators on hosted service every 30 days
+        let woke = await wakeValidators(account)
+        console.log('woke', woke)
+        //
+
         // ********* Initialize Registry/Funding Contract****************
         // let thisAllowance = parseNearAmount('2')
         // await didRegistryContract.init({
@@ -1084,6 +1089,35 @@ function sleep(milliseconds) {
         break;
       }
     }
+}
+
+async function wakeValidators(account) {
+      // get all validators
+      let validators = queries.getValidators()
+
+      for(let i = 0; i < validators.length; i++){
+        // check whitelisted
+        let whitelisted = await account.viewFunction(
+            'lockup-whitelist.near', 
+            'is_whitelisted', 
+            {staking_pool_account_id: accountValidators[y].name}
+        )
+        
+        let apiUrl
+        if(whitelisted){
+            let first = accountValidators[y].name.split('.')[0]
+            let stripped = first.replace(/[^a-zA-Z]/g, '')
+            apiUrl = `https://api.thegraph.com/subgraphs/name/vitalpointai/${stripped}validator`
+            console.log('apiurl', apiUrl)
+            try {
+                await queries.getValidatorActivity([apiUrl])
+                console.log('wake success')
+            } catch (err) {
+                console.log('issue waking', err)
+            }
+        }
+      }     
+      return true
 }
 
 
