@@ -1095,17 +1095,17 @@ async function wakeValidators(account) {
       // get all validators
       let validators = await queries.getValidators()
       console.log('validators', validators)
-      for(let i = 0; i < validators.length; i++){
+      for(let i = 0; i < validators.data.stakingPools.length; i++){
         // check whitelisted
         let whitelisted = await account.viewFunction(
             'lockup-whitelist.near', 
             'is_whitelisted', 
-            {staking_pool_account_id: validators[i].name}
+            {staking_pool_account_id: validators.data.stakingPools[i].stakingPool}
         )
         
         let apiUrl
         if(whitelisted){
-            let first = validators[i].name.split('.')[0]
+            let first = validators.data.stakingPools[i].stakingPool.split('.')[0]
             let stripped = first.replace(/[^a-zA-Z]/g, '')
             apiUrl = `https://api.thegraph.com/subgraphs/name/vitalpointai/${stripped}validator`
             console.log('apiurl', apiUrl)
