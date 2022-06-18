@@ -424,7 +424,7 @@ export default function StakingActivity(props) {
               csvDownload.push({
                 JournalNo: journalNo,
                 JournalDate: date,
-                Currency: currency,
+                Currency: currency.toUpperCase(),
                 Memo: '',
                 AccountName: debitAccountName,
                 Debits: debit,
@@ -438,7 +438,7 @@ export default function StakingActivity(props) {
               csvDownload.push({
                 JournalNo: journalNo,
                 JournalDate: date,
-                Currency: currency,
+                Currency: currency.toUpperCase(),
                 Memo: '',
                 AccountName: creditAccountName,
                 Debits: '',
@@ -451,7 +451,7 @@ export default function StakingActivity(props) {
             
               csvSingle.push({
                 Date: date,
-                Currency: currency,
+                Currency: currency.toUpperCase(),
                 Reward: thisRewardFormatted,
                 Price: price,
                 Value: (parseFloat(thisRewardFormatted) * price).toFixed(2),
