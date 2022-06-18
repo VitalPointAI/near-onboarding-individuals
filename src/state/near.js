@@ -173,8 +173,8 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         const accountId = account.accountId
 
         // Function to wake validators on hosted service every 30 days
-        let woke = await wakeValidators(account)
-        console.log('woke', woke)
+        // let woke = await wakeValidators(account)
+        // console.log('woke', woke)
         //
 
         // ********* Initialize Registry/Funding Contract****************
