@@ -345,7 +345,7 @@ export default function StakingActivity(props) {
         }
         let count = 0
         let journalNo = journalStartNo
-        
+
         for(let y = 0; y < accountValidators.length; y++){
           let tempArray = finalArray.filter(function(validator) {
             return (validator.validator == accountValidators[y].name && validator.currentStakingShares > 0)
@@ -416,47 +416,53 @@ export default function StakingActivity(props) {
             let readyForCardValue = totalValue.toFixed(2)
             setCardTotalValue(readyForCardValue)
 
-            csvDownload.push({
-              JournalNo: journalNo,
-              JournalDate: date,
-              Currency: currency,
-              Memo: '',
-              AccountName: debitAccountName,
-              Debits: (parseFloat(thisRewardFormatted) * price).toFixed(2),
-              Credits: '',
-              Description: `Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`,
-              Name: sortedTempArray[x].validator,
-              Location: '',
-              Class: ''
-            })
+            let debit = (parseFloat(thisRewardFormatted) * price).toFixed(2)
+            let credit = (parseFloat(thisRewardFormatted) * price).toFixed(2)
 
-            csvDownload.push({
-              JournalNo: journalNo,
-              JournalDate: date,
-              Currency: currency,
-              Memo: '',
-              AccountName: creditAccountName,
-              Debits: '',
-              Credits: (parseFloat(thisRewardFormatted) * price).toFixed(2),
-              Description: `Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`,
-              Name: sortedTempArray[x].validator,
-              Location: '',
-              Class: ''
-            })
-            console.log('blocktime here', sortedTempArray[x].blockTime)
-            csvSingle.push({
-              Date: date,
-              Currency: currency,
-              Reward: thisRewardFormatted,
-              Price: price,
-              Value: (parseFloat(thisRewardFormatted) * price).toFixed(2),
-              Block: sortedTempArray[x].blockHeight,
-              Epoch: sortedTempArray[x].epoch,
-              BlockTime: sortedTempArray[x].blockTime,
-              Validator: sortedTempArray[x].validator
-            })
+            if(debit > 0 && credit > 0){
+              
+              csvDownload.push({
+                JournalNo: journalNo,
+                JournalDate: date,
+                Currency: currency,
+                Memo: '',
+                AccountName: debitAccountName,
+                Debits: debit,
+                Credits: '',
+                Description: `Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`,
+                Name: sortedTempArray[x].validator,
+                Location: '',
+                Class: ''
+              })
 
-            journalNo ++
+              csvDownload.push({
+                JournalNo: journalNo,
+                JournalDate: date,
+                Currency: currency,
+                Memo: '',
+                AccountName: creditAccountName,
+                Debits: '',
+                Credits: credit,
+                Description: `Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`,
+                Name: sortedTempArray[x].validator,
+                Location: '',
+                Class: ''
+              })
+            
+              csvSingle.push({
+                Date: date,
+                Currency: currency,
+                Reward: thisRewardFormatted,
+                Price: price,
+                Value: (parseFloat(thisRewardFormatted) * price).toFixed(2),
+                Block: sortedTempArray[x].blockHeight,
+                Epoch: sortedTempArray[x].epoch,
+                BlockTime: sortedTempArray[x].blockTime,
+                Validator: sortedTempArray[x].validator
+              })
+
+              journalNo ++
+            }
           }
           validators.push(ultimateArray)
           setValidatorData(validators)
