@@ -1094,7 +1094,7 @@ function sleep(milliseconds) {
 async function wakeValidators(account) {
       // get all validators
       let validators = queries.getValidators()
-
+      console.log('validators', validators)
       for(let i = 0; i < validators.length; i++){
         // check whitelisted
         let whitelisted = await account.viewFunction(
