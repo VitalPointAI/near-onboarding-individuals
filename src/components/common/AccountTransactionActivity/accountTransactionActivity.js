@@ -150,7 +150,7 @@ export default function AccountTransactionActivity(props) {
 
       })
     },[appIdx])
-console.log('accountId', accountId)
+
     const transactionDataHeaders = [
       {label: "Date", key: "Date"},
       {label: "TransactionType", key: "TransactionType"},

@@ -3,7 +3,8 @@ import { appStore } from '../../../state/app'
 import { queries } from '../../../utils/graphQueries'
 import { 
   generateId, 
-  formatDate, 
+  formatDate,
+  formatKoinlyDate,
   formatGeckoDate, 
   getPrice, 
   buildPriceTable,
@@ -35,6 +36,7 @@ import InfoIcon from '@mui/icons-material/Info'
 
 import qbIcon from '../../../img/qb-icon.png'
 import csvIcon from '../../../img/csv-icon.png'
+import koinlyIcon from '../../../img/koinly-icon.png'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -57,6 +59,7 @@ export default function StakingActivity(props) {
     const [currency, setCurrency] = useState('cad')
     const [csvExport, setCsvExport] = useState([])
     const [csvSingleExport, setCsvSingleExport] = useState([])
+    const [koinlyExport, setKoinlyExport] = useState([])
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
     const [priceTable, setPriceTable] = useState([])
@@ -201,6 +204,20 @@ export default function StakingActivity(props) {
       {label: "Epoch", key: "Epoch"},
       {label: "BlockTime", key: "BlockTime"},
       {label: "Validator", key: "Validator"}
+    ]
+
+    const koinlyDataHeaders = [
+      {label: "Date", key: "Date"},
+      {label: "Sent Amount", key: "SentAmount"},
+      {label: "Sent Currency", key: "SentCurrency"},
+      {label: "Received Amount", key: "Received Currency"},
+      {label: "Fee Amount", key: "FeeAmount"},
+      {label: "Fee Currency", key: "FeeCurrency"},
+      {label: "Net Worth Amount", key: "NetWorthAmount"},
+      {label: "Net Worth Currency", key: "NetWorthCurrency"},
+      {label: "Label", key: "Label"},
+      {label: "Description", key: "Description"},
+      {label: "TxHash", key: "TxHash"}
     ]
 
     const handleCurrencyChange = (event) => {
@@ -385,6 +402,8 @@ export default function StakingActivity(props) {
             })
 
             let date = formatDate(sortedTempArray[x].blockTime)
+
+            let koinlyDate = formatKoinlyDate(sortedTempArray[x].blockTime)
             
             let price= getPrice(priceArray, date, currency)
             console.log('this price', price)
@@ -459,6 +478,21 @@ export default function StakingActivity(props) {
                 Epoch: sortedTempArray[x].epoch,
                 BlockTime: sortedTempArray[x].blockTime,
                 Validator: sortedTempArray[x].validator
+              })
+
+              koinly.push({
+                Date: koinlyDate,
+                SentAmount: '',
+                SentCurrency: currency.toUpperCase(),
+                ReceivedAmount: credit,
+                ReceivedCurrency: currency.toUpperCase(),
+                FeeAmount: '',
+                FeeCurrency: currency.toUpperCase(),
+                NetWorthAmount: '',
+                NetWorthCurrency: '',
+                Label: 'reward',
+                Description:  `Validator: ${sortedTempArray[x].validator}, Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`,
+                TxHash: sortedTempArray[x].blockHeight
               })
 
               journalNo ++
@@ -625,12 +659,12 @@ export default function StakingActivity(props) {
                     </CSVLink>
                   </Grid>
                   <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
-                    <Button 
-                      variant="outlined"
-                      onClick={handleReset}
-                    >
-                    Reset
-                    </Button>
+                    <CSVLink data={koinlyExport} filename={`${accountId.split('.')[0]}-activity-koinly.csv`} headers={koinlyDataHeaders}>
+                      <img src={koinlyIcon} style={{width:'30px', height:'auto'}}/>
+                      <Typography variant="body1" style={{marginTop: '-5px'}}>
+                        Koinly
+                      </Typography>
+                    </CSVLink>
                   </Grid>
                   <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
                     <CSVLink data={csvSingleExport} filename={`${accountId.split('.')[0]}-staking.csv`} headers={stakingDataHeaders}>
@@ -639,6 +673,14 @@ export default function StakingActivity(props) {
                         CSV
                       </Typography>
                     </CSVLink>
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+                    <Button 
+                      variant="outlined"
+                      onClick={handleReset}
+                    >
+                    Reset
+                    </Button>
                   </Grid>
                 </Grid>
               }
