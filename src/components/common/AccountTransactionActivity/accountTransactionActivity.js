@@ -421,7 +421,7 @@ console.log('accountId', accountId)
                   </Typography>
                 </Grid>
                   <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
-                    <CSVLink data={koinlyExport} filename={`${accountId.split('.')[0]}-activity-koinly.csv`} headers={headers}>
+                    <CSVLink data={koinlyExport} filename={`${accountId.split('.')[0]}-activity-koinly.csv`} headers={koinlyDataHeaders}>
                       <img src={koinlyIcon} style={{width:'30px', height:'auto'}}/>
                       <Typography variant="body1" style={{marginTop: '-5px'}}>
                         Koinly
