@@ -727,7 +727,7 @@ export function formatDate(timestamp){
 export function formatKoinlyDate(timestamp){
     let intDate = parseInt(timestamp)
     let options = {timeZone: 'UTC', timeZoneName: 'short', hour12: false, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}
-    return new Date.UTC(intDate).toLocaleString('en-US', options)
+    return new Date(intDate).toLocaleString('en-US', options)
 }
 
 export function formatGeckoDate(timestamp){
