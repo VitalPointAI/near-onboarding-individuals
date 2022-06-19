@@ -503,6 +503,7 @@ export default function StakingActivity(props) {
           setValidatorData(validators)
           setCsvExport(csvDownload)
           setCsvSingleExport(csvSingle)
+          setKoinlyExport(koinly)
           count++
         }
       }
