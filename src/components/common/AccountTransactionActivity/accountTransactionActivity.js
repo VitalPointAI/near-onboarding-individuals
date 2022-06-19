@@ -270,11 +270,11 @@ export default function AccountTransactionActivity(props) {
         let sent = ''
         let received = ''
         if(sortedArray[x].transaction.from == accountId){
-          sent = (parseFloat(cleanValue) * price).toFixed(2)
+          sent = cleanValue
           received = ''
         }
         if(sortedArray[x].transaction.to == accountId){
-          received = (parseFloat(cleanValue) * price).toFixed(2)
+          received = cleanValue
           sent = ''
         }
 
@@ -304,11 +304,11 @@ export default function AccountTransactionActivity(props) {
         koinly.push({
           Date: koinlyDate,
           SentAmount: sent,
-          SentCurrency: currency.toUpperCase(),
+          SentCurrency: 'NEAR',
           ReceivedAmount: received,
-          ReceivedCurrency: currency.toUpperCase(),
-          FeeAmount: (parseFloat(thisFeeFormatted) * price).toFixed(2),
-          FeeCurrency: currency.toUpperCase(),
+          ReceivedCurrency: 'NEAR',
+          FeeAmount: thisFeeFormatted,
+          FeeCurrency: 'NEAR',
           NetWorthAmount: '',
           NetWorthCurrency: '',
           Label: label,
