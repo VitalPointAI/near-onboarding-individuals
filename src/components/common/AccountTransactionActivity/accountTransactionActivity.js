@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore } from '../../../state/app'
 import { 
-  formatDate, 
+  formatDate,
+  formatKoinlyDate,
   getPrice,
   buildPriceTable,
   buildTransactionTable,
@@ -32,6 +33,7 @@ import Tooltip from '@mui/material/Tooltip'
 import InfoIcon from '@mui/icons-material/Info'
 
 import csvIcon from '../../../img/csv-icon.png'
+import koinlyIcon from '../../../img/koinly-icon.png'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -47,6 +49,7 @@ export default function AccountTransactionActivity(props) {
     const [activity, setActivity] = useState([])
     const [currency, setCurrency] = useState('cad')
     const [csvSingleExport, setCsvSingleExport] = useState([])
+    const [koinlyExport, setKoinlyExport] = useState([])
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
     const [transactionTable, setTransactionTable] = useState([])
@@ -163,6 +166,20 @@ console.log('accountId', accountId)
       {label: "TransactionFeeValue", key: "TransactionFeeValue"}
     ]
 
+    const koinlyDataHeaders = [
+      {label: "Date", key: "Date"},
+      {label: "Sent Amount", key: "SentAmount"},
+      {label: "Sent Currency", key: "SentCurrency"},
+      {label: "Received Amount", key: "Received Currency"},
+      {label: "Fee Amount", key: "FeeAmount"},
+      {label: "Fee Currency", key: "FeeCurrency"},
+      {label: "Net Worth Amount", key: "NetWorthAmount"},
+      {label: "Net Worth Currency", key: "NetWorthCurrency"},
+      {label: "Label", key: "Label"},
+      {label: "Description", key: "Description"},
+      {label: "TxHash", key: "TxHash"}
+    ]
+
     const handleCurrencyChange = (event) => {
       let value = event.target.value
       setCurrency(value)
@@ -208,6 +225,7 @@ console.log('accountId', accountId)
       console.log('transaction array', transactionArray)
       
       let csvSingle = [] 
+      let koinly = []
 
       let totalFees = 0
       
@@ -223,6 +241,9 @@ console.log('accountId', accountId)
 
         let date = formatDate(sortedArray[x].transaction.block_timestamp/1000000)
         console.log('datehere', date)
+
+        let koinlyDate = formatKoinlyDate(sortedArray[x].transaction.block_timestamp/1000000)
+        console.log('koinlydate', koinlyDate)
 
         let price= getPrice(priceArray, date, currency)
         console.log('this price', price)
@@ -245,6 +266,25 @@ console.log('accountId', accountId)
         totalFees = totalFees + parseFloat(thisFee)
         setFeesPaid(totalFees.toFixed(2))
 
+        let sent = ''
+        let received = ''
+        if(sortedArray[x].transaction.from == accountId){
+          sent = (parseFloat(cleanValue) * price).toFixed(2)
+          received = ''
+        }
+        if(sortedArray[x].transaction.to == accountId){
+          received = (parseFloat(cleanValue) * price).toFixed(2)
+          sent = ''
+        }
+
+        let label
+        switch(sortedArray[x].transaction.type){
+          case 'Deposit And Stake':
+            label = 'stake'
+          default:
+            label = ''
+        }
+
         csvSingle.push({
           Date: date,
           TransactionType: sortedArray[x].transaction.type,
@@ -252,7 +292,7 @@ console.log('accountId', accountId)
           BlockHash: sortedArray[x].transaction.included_in_block_hash,
           From: sortedArray[x].transaction.from,
           To: sortedArray[x].transaction.to,
-          Currency: currency,
+          Currency: currency.toUpperCase(),
           Quantity: cleanValue,
           Value: (parseFloat(cleanValue) * price).toFixed(2),
           Price: price,
@@ -260,9 +300,25 @@ console.log('accountId', accountId)
           TransactionFeeValue: (parseFloat(thisFeeFormatted) * price).toFixed(2)
         })
 
+        koinly.push({
+          Date: koinlyDate,
+          SentAmount: sent,
+          SentCurrency: currency.toUpperCase(),
+          ReceivedAmount: received,
+          ReceivedCurrency: currency.toUpperCase(),
+          FeeAmount: (parseFloat(thisFeeFormatted) * price).toFixed(2),
+          FeeCurrency: currency.toUpperCase(),
+          NetWorthAmount: '',
+          NetWorthCurrency: '',
+          Label: label,
+          Description: `Block: ${sortedArray[x].transaction.height}, Quantity: ${cleanValue}`,
+          TxHash: sortedArray[x].transaction.transaction_hash
+        })
+
       }
               
       setCsvSingleExport(csvSingle)
+      setKoinlyExport(koinly)
       setDownloadReady(true)
       return true
     }
@@ -363,9 +419,16 @@ console.log('accountId', accountId)
                   <Typography variant="h6">
                     Downloads
                   </Typography>
-                  <Typography variant="caption" color="textSecondary">Powered by Nearblocks.io APIs</Typography>
                 </Grid>
-                  <Grid item xs={6} sm={6} md={6} lg={6} xl={6} align="center">
+                  <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
+                    <CSVLink data={koinlyExport} filename={`${accountId.split('.')[0]}-activity-koinly.csv`} headers={headers}>
+                      <img src={koinlyIcon} style={{width:'30px', height:'auto'}}/>
+                      <Typography variant="body1" style={{marginTop: '-5px'}}>
+                        Koinly
+                      </Typography>
+                    </CSVLink>
+                  </Grid>
+                  <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
                     <Button 
                       variant="outlined"
                       onClick={handleReset}
@@ -373,7 +436,7 @@ console.log('accountId', accountId)
                     Reset
                     </Button>
                   </Grid>
-                  <Grid item xs={6} sm={6} md={6} lg={6} xl={6} align="center">
+                  <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
                     <CSVLink data={csvSingleExport} filename={`${accountId.split('.')[0]}-activity.csv`} headers={transactionDataHeaders}>
                       <img src={csvIcon} style={{width:'30px', height:'auto'}}/>
                       <Typography variant="body1" style={{marginTop: '-5px'}}>
