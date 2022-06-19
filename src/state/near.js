@@ -729,7 +729,7 @@ export function formatKoinlyDate(timestamp){
     let options = {timeZone: 'UTC', timeZoneName: 'short', hour12: false, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}
     let interim = new Date(intDate).toLocaleString('en-US', options)
     let d = new Date(interim)
-    let datestring = d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + " UTC"
+    let datestring = d.getFullYear() + "-" + ((d.getMonth()+1) < 10 ? "0"+(d.getMonth()+1) : (d.getMonth()+1)) + "-" + (d.getDate() < 10 ? "0"+d.getDate() : d.getDate()) + " " + (d.getHours() < 10 ? "0"+ d.getHours() : d.getHours()) + ":" + (d.getMinutes() < 10 ? "0"+d.getMinutes() : d.getMinutes()) + " UTC"
     return datestring
 }
 
