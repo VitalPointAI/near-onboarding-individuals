@@ -726,7 +726,7 @@ export function formatDate(timestamp){
 
 export function formatKoinlyDate(timestamp){
     let intDate = parseInt(timestamp)
-    let options = {hour12: false, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}
+    let options = {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}
     let interim = new Date(intDate).toLocaleString('en-US', options)
     let d = new Date(interim)
     let datestring = d.getUTCFullYear() + "-" + ((d.getUTCMonth()+1) < 10 ? "0"+(d.getUTCMonth()+1) : (d.getUTCMonth()+1)) + "-" + (d.getUTCDate() < 10 ? "0"+d.getUTCDate() : d.getUTCDate()) + " " + (d.getUTCHours() < 10 ? "0"+ d.getUTCHours() : d.getUTCHours()) + ":" + (d.getMinutes() < 10 ? "0"+d.getUTCMinutes() : d.getUTCMinutes()) + " UTC"
