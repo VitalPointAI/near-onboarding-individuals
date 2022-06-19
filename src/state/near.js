@@ -726,12 +726,10 @@ export function formatDate(timestamp){
 
 export function formatKoinlyDate(timestamp){
     let intDate = parseInt(timestamp)
-    let options = {timeZone: 'UTC', timeZoneName: 'short', hour12: false, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}
+    let options = {hour12: false, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}
     let interim = new Date(intDate).toLocaleString('en-US', options)
     let d = new Date(interim)
-    console.log('timestamp', timestamp)
-    console.log('d', d)
-    let datestring = d.getFullYear() + "-" + ((d.getMonth()+1) < 10 ? "0"+(d.getMonth()+1) : (d.getMonth()+1)) + "-" + (d.getDate() < 10 ? "0"+d.getDate() : d.getDate()) + " " + (d.getHours() < 10 ? "0"+ d.getHours() : d.getHours()) + ":" + (d.getMinutes() < 10 ? "0"+d.getMinutes() : d.getMinutes()) + " UTC"
+    let datestring = d.getUTCFullYear() + "-" + ((d.getUTCMonth()+1) < 10 ? "0"+(d.getUTCMonth()+1) : (d.getUTCMonth()+1)) + "-" + (d.getUTCDate() < 10 ? "0"+d.getUTCDate() : d.getUTCDate()) + " " + (d.getUTCHours() < 10 ? "0"+ d.getUTCHours() : d.getUTCHours()) + ":" + (d.getMinutes() < 10 ? "0"+d.getUTCMinutes() : d.getUTCMinutes()) + " UTC"
     return datestring
 }
 
