@@ -274,6 +274,7 @@ export default function StakingActivity(props) {
       let validators = []
       let csvDownload = []
       let csvSingle = []
+      let koinly = []
 
       let totalRewards = 0
       let totalValue = 0
