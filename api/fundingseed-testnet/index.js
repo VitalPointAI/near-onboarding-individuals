@@ -18,15 +18,14 @@ function verifyToken(req, res, next){
     }
 }
 
-
 module.exports = async function (context, req) {
-  context.log('Sendy mainnet trigger function processed a request.');
+  context.log('Fundingseed testnet trigger function processed a request.');
   const token = verifyToken(req)
   if(token){
     try{
-      let verified = jwt.verify(token, process.env["PERSONAS_MAINNET_SECRET_KEY"])
+      let verified = jwt.verify(token, process.env["PERSONAS_TESTNET_SECRET_KEY"])
       if(verified){
-        const appSeed = process.env["SENDY_API_KEY"];
+        const appSeed = process.env["PERSONAS_TESTNET_FUNDINGSEED"];
         const seed = appSeed.slice(0, 32)
         context.res.json({
           seed: seed
