@@ -3,15 +3,18 @@ name: Azure Static Web Apps CI/CD
 on:
   push:
     branches:
-      - main
+      - testnet
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - main
+      - testnet
+  merge:
+    branches:
+      - testnet
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed') || github.event_name == 'merge'
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
@@ -32,7 +35,7 @@ jobs:
           output_location: "dist" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
         env:
-          ENV: prod
+          ENV=test
           NP_SENDY_LIST_ID: BY8892H4x7639GsJzX892ju9cwTQ
           NP_BRAND_ID: 5
           NG_SENDY_LIST_ID: hE2V0TyYWmcEKb5kGwNo1w
