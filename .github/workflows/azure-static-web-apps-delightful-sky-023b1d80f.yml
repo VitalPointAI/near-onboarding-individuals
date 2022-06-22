@@ -35,7 +35,7 @@ jobs:
           output_location: "dist" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
         env:
-          ENV=test
+          ENV: test
           NP_SENDY_LIST_ID: BY8892H4x7639GsJzX892ju9cwTQ
           NP_BRAND_ID: 5
           NG_SENDY_LIST_ID: hE2V0TyYWmcEKb5kGwNo1w
