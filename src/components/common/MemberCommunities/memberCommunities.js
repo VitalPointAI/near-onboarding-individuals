@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore } from '../../../state/app'
+import MemberOfGuildCard from '../../Cards/MemberOfGuildCard/memberOfGuildCard'
 
 // Material UI components
 import { makeStyles } from '@material-ui/core/styles'
@@ -70,7 +71,7 @@ export default function MemberCommunities(props) {
                 <Grid container alignItems="center" justifyContent="center" spacing={3} style={{padding: '20px'}}>
                 
                 {daos.map(({ contractId, status }, i) =>
-                    <MemberOfDaoCard
+                    <MemberOfGuildCard
                         key={i}
                         contractId={contractId}
                         status={status}
