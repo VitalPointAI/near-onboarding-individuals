@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { appStore, onAppMount } from '../../../state/app'
 import { dao } from '../../../utils/catalystDao'
 import { ceramic } from '../../../utils/ceramic'
+import { daoRootName } from '../../../state/near'
 
 // Material UI Components
 import { makeStyles } from '@mui/styles'
@@ -27,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
-const imageName = require('../../img/default_logo.png') // default no-image avatar
+const imageName = require('../../../img/default_logo.png') // default no-image avatar
 
 export default function MemberOfGuildCard(props) {
 
@@ -102,7 +103,7 @@ export default function MemberOfGuildCard(props) {
           (
             <Card className={classes.card}>
               <CardContent align="center">
-              <Link to={`/dao/${contractId}`}>
+              <Link to={`${daoRootName}/dao/${contractId}`}>
                 <div style={{width: '100%', 
                 height: '50px',
                 backgroundImage: `url(${slogo})`, 
