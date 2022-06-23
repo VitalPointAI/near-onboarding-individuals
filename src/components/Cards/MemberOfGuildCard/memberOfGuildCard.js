@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { appStore, onAppMount } from '../../../state/app'
-import { dao } from '../../../utils/dao'
+import { dao } from '../../../utils/catalystDao'
 import { ceramic } from '../../../utils/ceramic'
 
 // Material UI Components
