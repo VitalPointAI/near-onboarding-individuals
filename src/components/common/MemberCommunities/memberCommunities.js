@@ -54,6 +54,7 @@ export default function MemberCommunities(props) {
     useEffect(
       () => {
        if(memberDaos && memberDaos.length > 0){
+        console.log('memberdaos', memberDaos)
          setDaos(memberDaos)
        }
       }, [memberDaos]
@@ -70,10 +71,10 @@ export default function MemberCommunities(props) {
                   
                 <Grid container alignItems="center" justifyContent="center" spacing={3} style={{padding: '20px'}}>
                 
-                {daos.map(({ contractId, status }, i) =>
+                {daos.map(({ accountId, status }, i) =>
                     <MemberOfGuildCard
                         key={i}
-                        contractId={contractId}
+                        contractId={accountId}
                         status={status}
                     />            
                     )}
