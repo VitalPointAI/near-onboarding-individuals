@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { appStore, onAppMount } from '../../state/app'
-import { dao } from '../../utils/dao'
-import { ceramic } from '../../utils/ceramic'
+import { appStore, onAppMount } from '../../../state/app'
+import { dao } from '../../../utils/dao'
+import { ceramic } from '../../../utils/ceramic'
 
 // Material UI Components
-import { makeStyles } from '@material-ui/core/styles'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import Typography from '@material-ui/core/Typography'
-import { LinearProgress } from '@material-ui/core'
-import Chip from '@material-ui/core/Chip'
-import PauseCircleFilledIcon from '@material-ui/icons/PauseCircleFilled'
-import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled'
+import { makeStyles } from '@mui/styles'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import Typography from '@mui/material/Typography'
+import { LinearProgress } from '@mui/material/'
+import Chip from '@mui/material/Chip'
+import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled'
+import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled'
 
 const useStyles = makeStyles((theme) => ({
     card: {
