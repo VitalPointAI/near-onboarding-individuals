@@ -37,6 +37,7 @@ import InfoIcon from '@mui/icons-material/Info'
 import qbIcon from '../../../img/qb-icon.png'
 import csvIcon from '../../../img/csv-icon.png'
 import koinlyIcon from '../../../img/koinly-icon.png'
+import quickenIcon from '../../../img/quicken-icon.png'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -60,6 +61,7 @@ export default function StakingActivity(props) {
     const [csvExport, setCsvExport] = useState([])
     const [csvSingleExport, setCsvSingleExport] = useState([])
     const [koinlyExport, setKoinlyExport] = useState([])
+    const [csvToQuickenExport, setCsvToQuickenExport] = useState([])
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
     const [priceTable, setPriceTable] = useState([])
@@ -221,6 +223,16 @@ export default function StakingActivity(props) {
       {label: "TxHash", key: "TxHash"}
     ]
 
+    const csvToQuickenDataHeaders = [
+      {label: "date", key: "Date"},
+      {label: "amount", key: "Amount"},
+      {label: "price", key: "Price"},
+      {label: "quantity", key: "Quantity"},
+      {label: "full security name", key: "FullSecurityName"},
+      {label: "investment action", key: "InvestmentAction"},
+      {label: "commission", key: "Commission"}
+    ]
+
     const handleCurrencyChange = (event) => {
       let value = event.target.value
       setCurrency(value)
@@ -276,6 +288,7 @@ export default function StakingActivity(props) {
       let csvDownload = []
       let csvSingle = []
       let koinly = []
+      let csvToQuicken = []
 
       let totalRewards = 0
       let totalValue = 0
@@ -469,6 +482,16 @@ export default function StakingActivity(props) {
                 Location: '',
                 Class: ''
               })
+
+              csvToQuicken.push({
+                Date: date,
+                Amount: (parseFloat(thisRewardFormatted) * price).toFixed(2),
+                Price: price,
+                Quantity: thisRewardFormatted,
+                FullSecurityName: 'NEAR',
+                InvestmentAction: 'BUY',
+                Commission: ''
+              })
             
               csvSingle.push({
                 Date: date,
@@ -505,6 +528,7 @@ export default function StakingActivity(props) {
           setCsvExport(csvDownload)
           setCsvSingleExport(csvSingle)
           setKoinlyExport(koinly)
+          setCsvToQuickenExport(csvToQuicken)
           count++
         }
       }
@@ -653,7 +677,7 @@ export default function StakingActivity(props) {
                     Downloads
                   </Typography>
                 </Grid>
-                  <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
+                  <Grid item xs={3} sm={3} md={3} lg={3} xl={3} align="center">
                     <CSVLink data={csvExport} filename={`${accountId.split('.')[0]}-staking-quickbooks.csv`} headers={headers}>
                       <img src={qbIcon} style={{width:'30px', height:'auto'}}/>
                       <Typography variant="body1" style={{marginTop: '-5px'}}>
@@ -661,7 +685,7 @@ export default function StakingActivity(props) {
                       </Typography>
                     </CSVLink>
                   </Grid>
-                  <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
+                  <Grid item xs={3} sm={3} md={3} lg={3} xl={3} align="center">
                     <CSVLink data={koinlyExport} filename={`${accountId.split('.')[0]}-activity-koinly.csv`} headers={koinlyDataHeaders}>
                       <img src={koinlyIcon} style={{width:'30px', height:'auto'}}/>
                       <Typography variant="body1" style={{marginTop: '-5px'}}>
@@ -669,7 +693,15 @@ export default function StakingActivity(props) {
                       </Typography>
                     </CSVLink>
                   </Grid>
-                  <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
+                  <Grid item xs={3} sm={3} md={3} lg={3} xl={3} align="center">
+                    <CSVLink data={csvSingleExport} filename={`${accountId.split('.')[0]}-staking.csv`} headers={stakingDataHeaders}>
+                      <img src={csvIcon} style={{width:'30px', height:'auto'}}/>
+                      <Typography variant="body1" style={{marginTop: '-5px'}}>
+                        CSV
+                      </Typography>
+                    </CSVLink>
+                  </Grid>
+                  <Grid item xs={3} sm={3} md={3} lg={3} xl={3} align="center">
                     <CSVLink data={csvSingleExport} filename={`${accountId.split('.')[0]}-staking.csv`} headers={stakingDataHeaders}>
                       <img src={csvIcon} style={{width:'30px', height:'auto'}}/>
                       <Typography variant="body1" style={{marginTop: '-5px'}}>
