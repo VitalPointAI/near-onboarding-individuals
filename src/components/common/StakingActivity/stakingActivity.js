@@ -694,10 +694,10 @@ export default function StakingActivity(props) {
                     </CSVLink>
                   </Grid>
                   <Grid item xs={3} sm={3} md={3} lg={3} xl={3} align="center">
-                    <CSVLink data={csvSingleExport} filename={`${accountId.split('.')[0]}-staking.csv`} headers={stakingDataHeaders}>
-                      <img src={csvIcon} style={{width:'30px', height:'auto'}}/>
+                    <CSVLink data={csvToQuickenExport} filename={`quicken-${accountId.split('.')[0]}-staking.csv`} headers={csvToQuickenDataHeaders}>
+                      <img src={quickenIcon} style={{width:'30px', height:'auto'}}/>
                       <Typography variant="body1" style={{marginTop: '-5px'}}>
-                        CSV
+                        Quicken
                       </Typography>
                     </CSVLink>
                   </Grid>
