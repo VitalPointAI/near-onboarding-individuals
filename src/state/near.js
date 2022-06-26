@@ -1740,5 +1740,5 @@ export async function allAccountActivity(accountId){
       )
       console.log('retrieveActivity', retrieveActivity)
 
-      return retrieveActivity.activity
+      return retrieveActivity.data.activity
 }

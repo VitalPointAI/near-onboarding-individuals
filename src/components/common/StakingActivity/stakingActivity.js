@@ -8,7 +8,8 @@ import {
   formatGeckoDate, 
   getPrice, 
   buildPriceTable,
-  populateNearPriceAPI, 
+  populateNearPriceAPI,
+  allAccountActivity,
   formatNearAmount, 
   updateNearPriceAPI } from '../../../state/near'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
@@ -51,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
 export default function StakingActivity(props) {
    
     const [activity, setActivity] = useState([])
+    const [allActivity, setAllActivity] = useState([])
     const [validatorData, setValidatorData] = useState([])
     const [accountValidators, setAccountValidators] = useState([])
     const [journalStartNo, setJournalStartNo] = useState(1)
@@ -164,6 +166,22 @@ export default function StakingActivity(props) {
 
       })
     },[appIdx])
+
+    useEffect(() => {
+      async function activityUpdate(){
+        console.log('here activity')
+        if(accountId){
+          let update = await allAccountActivity(accountId)
+          console.log('update', update)
+          setAllActivity(update)
+        }
+      }
+
+      activityUpdate()
+      .then(() => {
+
+      })
+    }, [accountId])
 
     useEffect(() => {
       async function fetchPersona(){
@@ -427,8 +445,6 @@ export default function StakingActivity(props) {
             }
 
             console.log('blocktime', sortedTempArray[x].blockTime)
-
-            
             console.log('currentreward', parseFloat(sortedTempArray[x].currentReward).toLocaleString('fullwide', {useGrouping: false}))
 
             let currentReward = new Decimal(sortedTempArray[x].currentReward)

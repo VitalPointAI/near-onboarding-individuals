@@ -35,6 +35,7 @@ import InfoIcon from '@mui/icons-material/Info'
 
 import csvIcon from '../../../img/csv-icon.png'
 import koinlyIcon from '../../../img/koinly-icon.png'
+import quickenIcon from '../../../img/quicken-icon.png'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -52,6 +53,7 @@ export default function AccountTransactionActivity(props) {
     const [currency, setCurrency] = useState('cad')
     const [csvSingleExport, setCsvSingleExport] = useState([])
     const [koinlyExport, setKoinlyExport] = useState([])
+    const [csvToQuickenExport, setCsvToQuickenExport] = useState([])
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
     const [transactionTable, setTransactionTable] = useState([])
@@ -201,6 +203,16 @@ export default function AccountTransactionActivity(props) {
       {label: "TxHash", key: "TxHash"}
     ]
 
+    const csvToQuickenDataHeaders = [
+      {label: "date", key: "Date"},
+      {label: "amount", key: "Amount"},
+      {label: "price", key: "Price"},
+      {label: "quantity", key: "Quantity"},
+      {label: "full security name", key: "FullSecurityName"},
+      {label: "investment action", key: "InvestmentAction"},
+      {label: "commission", key: "Commission"}
+    ]
+
     const handleCurrencyChange = (event) => {
       let value = event.target.value
       setCurrency(value)
@@ -242,28 +254,33 @@ export default function AccountTransactionActivity(props) {
       setDownloadReady(false)
 
       let priceArray = await fetchPriceTable(fromDate, toDate, accountId)
-      let transactionArray = await fetchTransactionTable(fromDate, toDate, accountId, account, factoryContract, didRegistryContract)
+     // let transactionArray = await fetchTransactionTable(fromDate, toDate, accountId, account, factoryContract, didRegistryContract)
+      let transactionArray = allActivity 
       console.log('transaction array', transactionArray)
       
       let csvSingle = [] 
       let koinly = []
+      let csvToQuicken = []
 
       let totalFees = 0
       
       setDownloadReady(false)
       setClicked(true)
                
-      let sortedArray = _.sortBy(transactionArray, 'block_timestamp')
+      //let sortedArray = _.sortBy(transactionArray, 'block_timestamp')
+      let sortedArray = _.sortBy(transactionArray, 'receipt_included_in_block_timestamp')
       console.log('sorted Array', sortedArray)    
       setActivity(sortedArray)                  
       setTransactionCount(sortedArray.length)
 
       for(let x = 0; x < sortedArray.length; x++){
 
-        let date = formatDate(sortedArray[x].transaction.block_timestamp/1000000)
+        //let date = formatDate(sortedArray[x].transaction.block_timestamp/1000000)
+        let date = formatDate(sortedArray[x].receipt_included_in_block_timestamp/1000000)
         console.log('datehere', date)
 
-        let koinlyDate = formatKoinlyDate(sortedArray[x].transaction.block_timestamp/1000000)
+        //let koinlyDate = formatKoinlyDate(sortedArray[x].transaction.block_timestamp/1000000)
+        let koinlyDate = formatKoinlyDate(sortedArray[x].receipt_included_in_block_timestamp/1000000)
         console.log('koinlydate', koinlyDate)
 
         let price= getPrice(priceArray, date, currency)
@@ -272,74 +289,93 @@ export default function AccountTransactionActivity(props) {
           price = 0
         }
 
-        console.log('blocktime here', sortedArray[x].transaction.block_timestamp)
-        
-        let re = /,/gi
-        let fee = parseFloat(sortedArray[x].transaction.transaction_fee).toLocaleString('fullwide', {useGrouping: false})
-        let thisFeeFormatted = formatNearAmount(fee, 6)
-        let cleanFee = thisFeeFormatted.replace(re, '')
+        //console.log('blocktime here', sortedArray[x].transaction.block_timestamp)
+        console.log('blocktime here', sortedArray[x].receipt_included_in_block_timestamp)
 
-        let value = parseFloat(sortedArray[x].transaction.deposit_value).toLocaleString('fullwide', {useGrouping: false})
+        // let re = /,/gi
+        // let fee = parseFloat(sortedArray[x].transaction.transaction_fee).toLocaleString('fullwide', {useGrouping: false})
+        // let thisFeeFormatted = formatNearAmount(fee, 6)
+        // let cleanFee = thisFeeFormatted.replace(re, '')
+
+        //let value = parseFloat(sortedArray[x].transaction.deposit_value).toLocaleString('fullwide', {useGrouping: false})
+        let value = parseFloat(sortedArray[x].args.deposit).toLocaleString('fullwide', {useGrouping: false})
         let valueFormatted = formatNearAmount(value, 6)
         let cleanValue = valueFormatted.replace(re,'')
 
-        let thisFee = (parseFloat(cleanFee) * price).toFixed(2)
-        totalFees = totalFees + parseFloat(thisFee)
-        setFeesPaid(totalFees.toFixed(2))
+        // let thisFee = (parseFloat(cleanFee) * price).toFixed(2)
+        // totalFees = totalFees + parseFloat(thisFee)
+        // setFeesPaid(totalFees.toFixed(2))
 
         let sent = ''
         let received = ''
-        if(sortedArray[x].transaction.from == accountId){
+        // if(sortedArray[x].transaction.from == accountId){
+        if(sortedArray[x].receipt_predecessor_account_id == accountId){
           sent = cleanValue
           received = ''
         }
-        if(sortedArray[x].transaction.to == accountId){
+        //if(sortedArray[x].transaction.to == accountId){
+        if(sortedArray[x].receipt_receiver_account_id == accountId){
           received = cleanValue
           sent = ''
         }
 
         let label
-        switch(sortedArray[x].transaction.type){
-          case 'Deposit And Stake':
+        //switch(sortedArray[x].transaction.type){
+        switch(sortedArray[x].args.method_name){
+          case 'deposit_and_stake':
             label = 'stake'
           default:
             label = ''
         }
 
-        csvSingle.push({
-          Date: date,
-          TransactionType: sortedArray[x].transaction.type,
-          Block: sortedArray[x].transaction.height,
-          BlockHash: sortedArray[x].transaction.included_in_block_hash,
-          From: sortedArray[x].transaction.from,
-          To: sortedArray[x].transaction.to,
-          Currency: currency.toUpperCase(),
-          Quantity: cleanValue,
-          Value: (parseFloat(cleanValue) * price).toFixed(2),
-          Price: price,
-          TransactionFee: thisFeeFormatted,
-          TransactionFeeValue: (parseFloat(thisFeeFormatted) * price).toFixed(2)
-        })
+        // csvSingle.push({
+        //   Date: date,
+        //   TransactionType: sortedArray[x].transaction.type,
+        //   Block: sortedArray[x].transaction.height,
+        //   BlockHash: sortedArray[x].transaction.included_in_block_hash,
+        //   From: sortedArray[x].transaction.from,
+        //   To: sortedArray[x].transaction.to,
+        //   Currency: currency.toUpperCase(),
+        //   Quantity: cleanValue,
+        //   Value: (parseFloat(cleanValue) * price).toFixed(2),
+        //   Price: price,
+        //   TransactionFee: thisFeeFormatted,
+        //   TransactionFeeValue: (parseFloat(thisFeeFormatted) * price).toFixed(2)
+        // })
 
-        koinly.push({
-          Date: koinlyDate,
-          SentAmount: sent,
-          SentCurrency: 'NEAR',
-          ReceivedAmount: received,
-          ReceivedCurrency: 'NEAR',
-          FeeAmount: thisFeeFormatted,
-          FeeCurrency: 'NEAR',
-          NetWorthAmount: '',
-          NetWorthCurrency: '',
-          Label: label,
-          Description: `Block: ${sortedArray[x].transaction.height}, Quantity: ${cleanValue}`,
-          TxHash: sortedArray[x].transaction.transaction_hash
-        })
+        // koinly.push({
+        //   Date: koinlyDate,
+        //   SentAmount: sent,
+        //   SentCurrency: 'NEAR',
+        //   ReceivedAmount: received,
+        //   ReceivedCurrency: 'NEAR',
+        //   FeeAmount: thisFeeFormatted,
+        //   FeeCurrency: 'NEAR',
+        //   NetWorthAmount: '',
+        //   NetWorthCurrency: '',
+        //   Label: label,
+        //   Description: `Block: ${sortedArray[x].transaction.height}, Quantity: ${cleanValue}`,
+        //   TxHash: sortedArray[x].transaction.transaction_hash
+        // })
+
+        if(label != 'stake'){
+          csvToQuicken.push({
+            Date: date,
+            Amount: (parseFloat(cleanValue) * price).toFixed(2),
+            Price: price,
+            Quantity: cleanValue,
+            FullSecurityName: 'NEAR',
+            InvestmentAction: sent != '' ? 'BUY' : 'SELL',
+            Commission: '',
+            Memo: sortedArray[x].receipt_id
+          })
+        }
 
       }
               
-      setCsvSingleExport(csvSingle)
-      setKoinlyExport(koinly)
+      // setCsvSingleExport(csvSingle)
+      // setKoinlyExport(koinly)
+      setCsvToQuickenExport(csvToQuicken)
       setDownloadReady(true)
       return true
     }
@@ -450,12 +486,12 @@ export default function AccountTransactionActivity(props) {
                     </CSVLink>
                   </Grid>
                   <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
-                    <Button 
-                      variant="outlined"
-                      onClick={handleReset}
-                    >
-                    Reset
-                    </Button>
+                    <CSVLink data={csvToQuickenExport} filename={`quicken-${accountId.split('.')[0]}-activity.csv`} headers={csvToQuickenDataHeaders}>
+                      <img src={quickenIcon} style={{width:'30px', height:'auto'}}/>
+                      <Typography variant="body1" style={{marginTop: '-5px'}}>
+                        Quicken
+                      </Typography>
+                    </CSVLink>
                   </Grid>
                   <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
                     <CSVLink data={csvSingleExport} filename={`${accountId.split('.')[0]}-activity.csv`} headers={transactionDataHeaders}>
@@ -464,6 +500,14 @@ export default function AccountTransactionActivity(props) {
                         CSV
                       </Typography>
                     </CSVLink>
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+                    <Button 
+                      variant="outlined"
+                      onClick={handleReset}
+                    >
+                    Reset
+                    </Button>
                   </Grid>
                 </Grid>
               }
