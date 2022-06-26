@@ -155,23 +155,23 @@ export default function AccountTransactionActivity(props) {
       })
     },[appIdx])
 
-    useEffect(() => {
-      async function activityUpdate(){
-        console.log('here activity')
-        if(accountId){
-          let update = await allAccountActivity(accountId)
-          console.log('update', update)
-          setAllActivity(update)
-        }
-      }
+    // useEffect(() => {
+    //   async function activityUpdate(){
+    //     console.log('here activity')
+    //     if(accountId){
+    //       let update = await allAccountActivity(accountId)
+    //       console.log('update', update)
+    //       setAllActivity(update)
+    //     }
+    //   }
 
-      activityUpdate()
-      .then(() => {
+    //   activityUpdate()
+    //   .then(() => {
 
-      })
-    }, [accountId])
+    //   })
+    // }, [accountId])
 
-    console.log('all Activity', allActivity)
+    // console.log('all Activity', allActivity)
 
     const transactionDataHeaders = [
       {label: "Date", key: "Date"},
@@ -255,7 +255,7 @@ export default function AccountTransactionActivity(props) {
 
       let priceArray = await fetchPriceTable(fromDate, toDate, accountId)
      // let transactionArray = await fetchTransactionTable(fromDate, toDate, accountId, account, factoryContract, didRegistryContract)
-      let transactionArray = allActivity 
+      let transactionArray = await allAccountActivity(accountId)
       console.log('transaction array', transactionArray)
       
       let csvSingle = [] 
