@@ -298,10 +298,11 @@ export default function AccountTransactionActivity(props) {
         // let cleanFee = thisFeeFormatted.replace(re, '')
 
         //let value = parseFloat(sortedArray[x].transaction.deposit_value).toLocaleString('fullwide', {useGrouping: false})
-        let value = parseFloat(sortedArray[x].args.deposit).toLocaleString('fullwide', {useGrouping: false})
         let valueFormatted
         let cleanValue
-        if(value){
+        if(sortedArray[x].args.deposit){
+          let value = parseFloat(sortedArray[x].args.deposit).toLocaleString('fullwide', {useGrouping: false})
+          console.log('value', value)
           valueFormatted = formatNearAmount(value, 6)
           cleanValue = valueFormatted.replace(re,'')
         } else {
