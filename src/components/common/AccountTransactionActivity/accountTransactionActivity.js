@@ -229,7 +229,8 @@ export default function AccountTransactionActivity(props) {
       {label: "full security name", key: "FullSecurityName"},
       {label: "investment action", key: "InvestmentAction"},
       {label: "commission", key: "Commission"},
-      {label: "memo", key: "Memo"}
+      {label: "memo", key: "Memo"},
+      {label: "category", key: "Category"}
     ]
 
     const handleCurrencyChange = (event) => {
@@ -335,15 +336,18 @@ export default function AccountTransactionActivity(props) {
 
         let sent = ''
         let received = ''
+        let name = ''
         // if(sortedArray[x].transaction.from == accountId){
         if(sortedArray[x].receipt_predecessor_account_id == accountId){
           sent = cleanValue
           received = ''
+          name = sortedArray[x].receipt_receiver_account_id
         }
         //if(sortedArray[x].transaction.to == accountId){
         if(sortedArray[x].receipt_receiver_account_id == accountId){
           received = cleanValue
           sent = ''
+          name = sortedArray[x].receipt_predecessor_account_id
         }
 
         let isValidator = false
@@ -354,6 +358,12 @@ export default function AccountTransactionActivity(props) {
             break
           }
         }
+
+        let isSystem = false
+        if(sortedArray[x].receipt_predecessor_account_id == 'system'){
+            isSystem = true
+        }
+        
 
         let label = ''
         //switch(sortedArray[x].transaction.type){
@@ -397,9 +407,10 @@ export default function AccountTransactionActivity(props) {
         //   Description: `Block: ${sortedArray[x].transaction.height}, Quantity: ${cleanValue}`,
         //   TxHash: sortedArray[x].transaction.transaction_hash
         // })
+
         let amount = (parseFloat(cleanValue) * price).toFixed(2)
         console.log('amount', amount)
-        if(label != 'stake' && !isValidator && amount != '0.00' && new Date(date).getTime() >= new Date(fromDate).getTime() && new Date(date).getTime() <= new Date(toDate).getTime()){
+        if(label != 'stake' && !isValidator && !isSystem && amount != '0.00' && new Date(date).getTime() >= new Date(fromDate).getTime() && new Date(date).getTime() <= new Date(toDate).getTime()){
           csvToQuicken.push({
             Date: date,
             Amount: amount,
@@ -408,7 +419,9 @@ export default function AccountTransactionActivity(props) {
             FullSecurityName: 'NEAR',
             InvestmentAction: sortedArray[x].receipt_receiver_account_id == accountId ? 'BUY' : 'SELL',
             Commission: '',
-            Memo: `${sortedArray[x].receipt_id}, from: ${sortedArray[x].receipt_predecessor_account_id}, to: ${sortedArray[x].receipt_receiver_account_id}, kind: ${sortedArray[x].action_kind}` 
+            Memo: sortedArray[x].receipt_id, 
+            Name: name,
+            Category: sortedArray[x].action_kind
           })
         }
 
