@@ -8,7 +8,7 @@ import {
   buildTransactionTable,
   formatNearAmount,
   updateNearPriceAPI,
-  allActivity,
+  allAccountActivity,
   updateNearTransactionAPI } from '../../../state/near'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { CSVLink, CSVDownload } from 'react-csv'
@@ -157,7 +157,7 @@ export default function AccountTransactionActivity(props) {
       async function activityUpdate(){
         console.log('here activity')
         if(accountId){
-          let update = await allActivity(accountId)
+          let update = await allAccountActivity(accountId)
           console.log('update', update)
           setAllActivity(update)
         }

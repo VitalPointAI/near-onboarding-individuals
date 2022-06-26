@@ -1717,7 +1717,7 @@ export async function populateNearTransactionAPI(from, to, accountId, appIdx, fa
     }
 }
 
-export async function allActivity(accountId){
+export async function allAccountActivity(accountId){
     console.log('here token')
     let token = await axios.post(TOKEN_CALL, 
         {
