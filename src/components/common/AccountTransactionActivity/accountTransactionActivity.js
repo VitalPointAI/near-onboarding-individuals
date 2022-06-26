@@ -357,8 +357,7 @@ export default function AccountTransactionActivity(props) {
 
         let label = ''
         //switch(sortedArray[x].transaction.type){
-        if(sortedArray[x].args.method_name == 'deposit_and_stake'
-        || sortedArray[x].args.method_name == ''){
+        if(sortedArray[x].args.method_name == 'deposit_and_stake'){
           label = 'stake'
         }
         // switch(sortedArray[x].args.method_name){
