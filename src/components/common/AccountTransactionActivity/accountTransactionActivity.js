@@ -299,8 +299,15 @@ export default function AccountTransactionActivity(props) {
 
         //let value = parseFloat(sortedArray[x].transaction.deposit_value).toLocaleString('fullwide', {useGrouping: false})
         let value = parseFloat(sortedArray[x].args.deposit).toLocaleString('fullwide', {useGrouping: false})
-        let valueFormatted = formatNearAmount(value, 6)
-        let cleanValue = valueFormatted.replace(re,'')
+        let valueFormatted
+        let cleanValue
+        if(value){
+          valueFormatted = formatNearAmount(value, 6)
+          cleanValue = valueFormatted.replace(re,'')
+        } else {
+          valueFormatted = '0'
+          cleanValue = '0'
+        }
 
         // let thisFee = (parseFloat(cleanFee) * price).toFixed(2)
         // totalFees = totalFees + parseFloat(thisFee)
