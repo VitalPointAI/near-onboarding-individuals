@@ -507,7 +507,7 @@ class Ceramic {
     // } else {
 
     // uncomment below to change a definition
-       let changed = await this.changeDefinition(APP_OWNER_ACCOUNT, 'profile', appClient, profileSchema, 'persona profiles', contract)
+       let changed = await this.changeDefinition(APP_OWNER_ACCOUNT, 'profile', legacyAppClient, profileSchema, 'persona profiles', contract)
       // let changed1 = await this.changeDefinition(APP_OWNER_ACCOUNT, 'guildProfile', appClient, guildProfileSchema, 'guild profiles', contract)
        console.log('changed schema', changed)
       // console.log('changed1 schema', changed1)
