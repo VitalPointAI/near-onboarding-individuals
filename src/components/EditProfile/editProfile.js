@@ -1123,7 +1123,10 @@ export default function EditProfileForm(props) {
                       
                       <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         <Grid container justifyContent="space-between" alignItems="flex-end" spacing={1}>
-                        <Typography variant="body1" style={{fontSize: 'large', fontWeight:'400', marginTop: '10px', marginBottom:'10px'}}>Related Accounts (will exclude transactions from them for tax reports)</Typography>
+                        <Typography variant="body1" style={{fontSize: 'large', fontWeight:'400', marginTop: '10px', marginBottom:'10px'}}>Related Accounts</Typography>
+                        <Typography variant="body1">Accounts you enter here will exclude them from capital gain/loss reports under assumption you are 
+                        transferring between accounts you own.  For corporations they will form a report detailing shareholder notes payable/loans.</Typography>
+                        <Typography variant="body1">If entering an implicit account, do not include .near at the end (e.g. 0a5145978ce8cc966539a60ee645d8fff23e38319543f8535d607091b517b81e).  If it's a named account, include the full account name (e.g. bob.near)</Typography>
                         {
                           relatedAccountsFields.map((field, index) => {
                           
