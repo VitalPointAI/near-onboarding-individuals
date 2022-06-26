@@ -36,8 +36,7 @@ module.exports = async function (context, req) {
       if(verified){
         client.connect()
         context.log('req', req)
-        context.log('req account', req.accountId)
-        const { rows } = await client.query(`SELECT * FROM action_receipt_actions WHERE (receipt_predecessor_account_id=${req.accountId} OR receipt_receiver_account_id=${req.accountId})`)
+        const { rows } = await client.query(`SELECT * FROM action_receipt_actions WHERE (receipt_predecessor_account_id=${req.body.accountId} OR receipt_receiver_account_id=${req.body.accountId})`)
         context.res.json({
           activity: rows
         });
