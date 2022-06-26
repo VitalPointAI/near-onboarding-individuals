@@ -292,7 +292,7 @@ export default function AccountTransactionActivity(props) {
         //console.log('blocktime here', sortedArray[x].transaction.block_timestamp)
         console.log('blocktime here', sortedArray[x].receipt_included_in_block_timestamp)
 
-        // let re = /,/gi
+        let re = /,/gi
         // let fee = parseFloat(sortedArray[x].transaction.transaction_fee).toLocaleString('fullwide', {useGrouping: false})
         // let thisFeeFormatted = formatNearAmount(fee, 6)
         // let cleanFee = thisFeeFormatted.replace(re, '')
@@ -304,7 +304,7 @@ export default function AccountTransactionActivity(props) {
           let value = parseFloat(sortedArray[x].args.deposit).toLocaleString('fullwide', {useGrouping: false})
           console.log('value', value)
           valueFormatted = formatNearAmount(value, 6)
-          cleanValue = valueFormatted.replace(re,'')
+          cleanValue = valueFormatted.replace(re, '')
         } else {
           valueFormatted = '0'
           cleanValue = '0'
