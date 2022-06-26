@@ -230,6 +230,7 @@ export default function AccountTransactionActivity(props) {
       {label: "investment action", key: "InvestmentAction"},
       {label: "commission", key: "Commission"},
       {label: "memo", key: "Memo"},
+      {label: "name", key: "Name"},
       {label: "category", key: "Category"}
     ]
 

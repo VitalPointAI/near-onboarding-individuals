@@ -248,7 +248,10 @@ export default function StakingActivity(props) {
       {label: "quantity", key: "Quantity"},
       {label: "full security name", key: "FullSecurityName"},
       {label: "investment action", key: "InvestmentAction"},
-      {label: "commission", key: "Commission"}
+      {label: "commission", key: "Commission"},
+      {label: "memo", key: "Memo"},
+      {label: "name", key: "Name"},
+      {label: "category", key: "Category"}
     ]
 
     const handleCurrencyChange = (event) => {
@@ -506,7 +509,10 @@ export default function StakingActivity(props) {
                 Quantity: thisRewardFormatted,
                 FullSecurityName: 'NEAR',
                 InvestmentAction: 'BUY',
-                Commission: ''
+                Commission: '',
+                Memo: `Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`, 
+                Name: sortedTempArray[x].validator,
+                Category: 'Staking Reward'
               })
             
               csvSingle.push({
