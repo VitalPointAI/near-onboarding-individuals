@@ -36,6 +36,7 @@ import InfoIcon from '@mui/icons-material/Info'
 import csvIcon from '../../../img/csv-icon.png'
 import koinlyIcon from '../../../img/koinly-icon.png'
 import quickenIcon from '../../../img/quicken-icon.png'
+import { validators } from 'near-api-js'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -54,6 +55,7 @@ export default function AccountTransactionActivity(props) {
     const [csvSingleExport, setCsvSingleExport] = useState([])
     const [koinlyExport, setKoinlyExport] = useState([])
     const [csvToQuickenExport, setCsvToQuickenExport] = useState([])
+    const [accountValidators, setAccountValidators] = useState([])
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
     const [transactionTable, setTransactionTable] = useState([])
@@ -151,6 +153,22 @@ export default function AccountTransactionActivity(props) {
 
       update()
       .then(() => {
+
+      })
+    },[appIdx])
+
+    useEffect(() => {
+      async function fetchPersona(){
+        if(appIdx){
+          let accountPersona = await appIdx.get('profile', did)
+          if(accountPersona && accountPersona.validators){
+              setAccountValidators(accountPersona.validators)
+          }          
+        }
+      }
+
+      fetchPersona()
+      .then((res) => {
 
       })
     },[appIdx])
@@ -328,9 +346,19 @@ export default function AccountTransactionActivity(props) {
           sent = ''
         }
 
+        let isValidator = false
+        for(let i = 0; i < accountValidators.length; i++){
+          console.log('accountValidators', accountValidators)
+          if(sortedArray[x].receipt_predecessor_account_id == accountValidators[i]){
+            isValidator = true
+            break
+          }
+        }
+
         let label = ''
         //switch(sortedArray[x].transaction.type){
-        if(sortedArray[x].args.method_name == 'deposit_and_stake'){
+        if(sortedArray[x].args.method_name == 'deposit_and_stake'
+        || sortedArray[x].args.method_name == ''){
           label = 'stake'
         }
         // switch(sortedArray[x].args.method_name){
@@ -372,7 +400,7 @@ export default function AccountTransactionActivity(props) {
         // })
         let amount = (parseFloat(cleanValue) * price).toFixed(2)
         console.log('amount', amount)
-        if(label != 'stake' && amount != '0.00' && new Date(date).getTime() >= new Date(fromDate).getTime() && new Date(date).getTime() <= new Date(toDate).getTime()){
+        if(label != 'stake' && !isValidator && amount != '0.00' && new Date(date).getTime() >= new Date(fromDate).getTime() && new Date(date).getTime() <= new Date(toDate).getTime()){
           csvToQuicken.push({
             Date: date,
             Amount: amount,
