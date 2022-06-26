@@ -328,7 +328,7 @@ export default function AccountTransactionActivity(props) {
           sent = ''
         }
 
-        let label
+        let label = ''
         //switch(sortedArray[x].transaction.type){
         switch(sortedArray[x].args.method_name){
           case 'deposit_and_stake':
@@ -336,6 +336,7 @@ export default function AccountTransactionActivity(props) {
           default:
             label = ''
         }
+        console.log('label', label)
 
         // csvSingle.push({
         //   Date: date,
