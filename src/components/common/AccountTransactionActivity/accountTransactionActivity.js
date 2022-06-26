@@ -330,13 +330,16 @@ export default function AccountTransactionActivity(props) {
 
         let label = ''
         //switch(sortedArray[x].transaction.type){
-        switch(sortedArray[x].args.method_name){
-          case 'deposit_and_stake':
-            label = 'stake'
-          default:
-            label = ''
+        if(sortedArray[x].args.method_name == 'deposit_and_stake'){
+          label = 'stake'
         }
-        console.log('label', label)
+        // switch(sortedArray[x].args.method_name){
+        //   case 'deposit_and_stake':
+        //     label = 'stake'
+        //   default:
+        //     label = ''
+        // }
+         console.log('label', label)
 
         // csvSingle.push({
         //   Date: date,
