@@ -1,14 +1,6 @@
 const jwt = require('jsonwebtoken')
 const { Client } = require('pg')
 
-const client = new Client({
-  host: "mainnet.db.explorer.indexer.near.dev",
-  user: "public_readonly",
-  port: 5432,
-  password: "nearprotocol",
-  database: "mainnet_explorer",
-});
-
 // Verify Token
 function verifyToken(req, res, next){
     // Get auth header value
@@ -34,12 +26,23 @@ module.exports = async function (context, req) {
     try{
       let verified = jwt.verify(token, process.env["PERSONAS_MAINNET_SECRET_KEY"])
       if(verified){
-        client.connect()
-        context.log('req', req)
-        const { rows } = await client.query(`SELECT * FROM action_receipt_actions WHERE (receipt_predecessor_account_id=${req.body.accountId} OR receipt_receiver_account_id=${req.body.accountId})`)
+
+        const client = new Client({
+          host: "mainnet.db.explorer.indexer.near.dev",
+          user: "public_readonly",
+          port: 5432,
+          password: "nearprotocol",
+          database: "mainnet_explorer",
+        })
+
+        await client.connect()
+      
+        const { rows } = await client.query('SELECT * FROM action_receipt_actions WHERE (receipt_predecessor_account_id=$1 OR receipt_receiver_account_id=$1)', [req.body.accountId])
         context.res.json({
           activity: rows
         });
+
+        await client.end()
       } else {
         context.res.sendStatus(403);
       }
