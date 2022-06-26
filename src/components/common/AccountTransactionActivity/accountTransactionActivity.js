@@ -210,7 +210,8 @@ export default function AccountTransactionActivity(props) {
       {label: "quantity", key: "Quantity"},
       {label: "full security name", key: "FullSecurityName"},
       {label: "investment action", key: "InvestmentAction"},
-      {label: "commission", key: "Commission"}
+      {label: "commission", key: "Commission"},
+      {label: "memo", key: "Memo"}
     ]
 
     const handleCurrencyChange = (event) => {
@@ -365,17 +366,17 @@ export default function AccountTransactionActivity(props) {
         //   Description: `Block: ${sortedArray[x].transaction.height}, Quantity: ${cleanValue}`,
         //   TxHash: sortedArray[x].transaction.transaction_hash
         // })
-
-        if(label != 'stake'){
+        let amount = (parseFloat(cleanValue) * price).toFixed(2)
+        if(label != 'stake' && amount != '0'){
           csvToQuicken.push({
             Date: date,
-            Amount: (parseFloat(cleanValue) * price).toFixed(2),
+            Amount: amount,
             Price: price,
             Quantity: cleanValue,
             FullSecurityName: 'NEAR',
             InvestmentAction: sent != '' ? 'BUY' : 'SELL',
             Commission: '',
-            Memo: sortedArray[x].receipt_id
+            Memo: `${sortedArray[x].receipt_id}, from: ${sortedArray[x].receipt_predecessor_account_id}, to: ${sortedArray[x].receipt_receiver_account_id}, kind: ${sortedArray[x].action_kind}` 
           })
         }
 
