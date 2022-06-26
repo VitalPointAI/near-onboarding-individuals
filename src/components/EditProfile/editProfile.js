@@ -197,6 +197,14 @@ export default function EditProfileForm(props) {
      name: "personaValidators",
      control
     })
+
+    const {
+      fields: relatedAccountsFields,
+      append: relatedAccountsAppend,
+      remove: relatedAccountsRemove} = useFieldArray({
+     name: "relatedAccountss",
+     control
+    })
     
     const personaInterests = watch('personaInterests', personaInterestsFields)
     const personaLearn = watch('personaLearn', personaLearnFields)
@@ -205,6 +213,7 @@ export default function EditProfileForm(props) {
     const personaSkills = watch('personaSkills', personaSkillsFields)
     const personaSpecificSkills = watch('personaSpecificSkills', personaSpecificSkillsFields)
     const personaValidators = watch('personaValidators', personaValidatorFields)
+    const relatedAccounts = watch('relatedAccounts', relatedAccountsFields)
 
     const {
         handleEditProfileClickState,
@@ -306,6 +315,7 @@ export default function EditProfileForm(props) {
                 result.personaSpecificSkills? setValue('personaSpecificSkills', result.personaSpecificSkills): setValue('personaSpecificSkills', {name: ''})
                 result.values && result.values.length > 0 ? setValue('personaValues', result.values) : null
                 result.validators && result.validators.length > 0 ? setValue('personaValidators', result.validators) : null
+                result.relatedAccounts && result.relatedAccounts.length > 0 ? setValue('relatedAccounts', result.relatedAccounts) : null
                 result.interests && result.interests.length > 0 ? setValue('personaInterests', result.interests) : null
                 result.learningGoals && result.learningGoals.length > 0 ? setValue('personaLearn', result.learningGoals) : null
                 result.workDesires && result.workDesires.length > 0 ? setValue('personaWork', result.workDesires) : null
@@ -460,7 +470,8 @@ export default function EditProfileForm(props) {
             nftContract: nftContract,
             nftTokenId: nftTokenId,
             profileNft: pfpAvatar,
-            validators: personaValidators
+            validators: personaValidators,
+            relatedAccounts: relatedAccounts
         }
      
       try {
@@ -1089,6 +1100,73 @@ export default function EditProfileForm(props) {
                             startIcon={<AddBoxIcon />}
                           >
                             Add Validator
+                          </Button>
+                        </Grid>
+                      </Grid>
+                      </Grid>
+                   </Grid>
+                </AccordionDetails>
+            </Accordion>
+
+            <Accordion>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel5bh-content"
+                  id="panel5bh-header"
+                >
+                <Typography variant="h6">Related Accounts</Typography>
+                </AccordionSummary>
+                  <AccordionDetails>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                  
+                      
+                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        <Grid container justifyContent="space-between" alignItems="flex-end" spacing={1}>
+                        <Typography variant="body1" style={{fontSize: 'large', fontWeight:'400', marginTop: '10px', marginBottom:'10px'}}>Related Accounts (will exclude transactions from them for tax reports)</Typography>
+                        {
+                          relatedAccountsFields.map((field, index) => {
+                          
+                          return(
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} key={field.id}>
+                            <TextField
+                              
+                              margin="dense"
+                              id={`relatedAccounts[${index}].name`}
+                              variant="outlined"
+                              name={`relatedAccounts[${index}].name`}
+                              defaultValue={field.name}
+                              label="Related Accounts:"
+                              InputProps={{
+                                endAdornment: <div>
+                                <Tooltip TransitionComponent={Zoom} title="Account name-eg. bob.near">
+                                    <InfoIcon fontSize="small" style={{marginLeft:'5px', marginTop:'-3px'}} />
+                                </Tooltip>
+                                </div>
+                              }}
+                              inputRef={register({
+                                  required: true                              
+                              })}
+                            />
+                            {errors[`relatedAccounts${index}.name`] && <p style={{color: 'red', fontSize:'80%'}}>You must provide an account name.</p>}
+                            
+                            <Button type="button" onClick={() => relatedAccountsRemove(index)} style={{float: 'right', marginLeft:'10px'}}>
+                              <DeleteForeverIcon />
+                            </Button>
+                            </Grid>
+                            
+                          )
+                        }) 
+                        }
+                        {!relatedAccountsFields || relatedAccountsFields.length == 0 ?
+                          <Typography variant="body1" style={{marginLeft: '5px'}}>No accounts defined yet.</Typography>
+                        : null }
+                          <Button
+                            type="button"
+                            onClick={() => relatedAccountsAppend({name: ''})}
+                            startIcon={<AddBoxIcon />}
+                          >
+                            Add Account
                           </Button>
                         </Grid>
                       </Grid>

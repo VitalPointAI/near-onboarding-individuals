@@ -507,9 +507,9 @@ class Ceramic {
     // } else {
 
     // uncomment below to change a definition
-       //let changed = await this.changeDefinition(APP_OWNER_ACCOUNT, 'nearPriceHistory', appClient, nearPriceHistorySchema, 'near price history', contract)
+       let changed = await this.changeDefinition(APP_OWNER_ACCOUNT, 'profile', appClient, profileSchema, 'persona profiles', contract)
       // let changed1 = await this.changeDefinition(APP_OWNER_ACCOUNT, 'guildProfile', appClient, guildProfileSchema, 'guild profiles', contract)
-      // console.log('changed schema', changed)
+       console.log('changed schema', changed)
       // console.log('changed1 schema', changed1)
 
       const definitions = this.getAlias(APP_OWNER_ACCOUNT, 'Definitions', appClient, definitionsSchema, 'alias definitions', contract)

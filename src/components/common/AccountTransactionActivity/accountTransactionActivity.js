@@ -56,6 +56,7 @@ export default function AccountTransactionActivity(props) {
     const [koinlyExport, setKoinlyExport] = useState([])
     const [csvToQuickenExport, setCsvToQuickenExport] = useState([])
     const [accountValidators, setAccountValidators] = useState([])
+    const [relatedAccounts, setRelatedAccounts] = useState([])
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
     const [transactionTable, setTransactionTable] = useState([])
@@ -163,6 +164,9 @@ export default function AccountTransactionActivity(props) {
           let accountPersona = await appIdx.get('profile', did)
           if(accountPersona && accountPersona.validators){
               setAccountValidators(accountPersona.validators)
+          }
+          if(accountPersona && accountPersona.relatedAccounts){
+            setRelatedAccounts(accountPersona.relatedAccounts)
           }          
         }
       }
@@ -360,6 +364,20 @@ export default function AccountTransactionActivity(props) {
           }
         }
 
+        let isRelated = false
+        for(let j = 0; j < relatedAccounts.length; j++){
+          console.log('relatedAccounts', relatedAccounts)
+          if(sortedArray[x].receipt_predecessor_account_id == relatedAccounts[j].name){
+            isRelated = true
+            break
+          }
+        }
+
+        let kind = sortedArray[x].action_kind
+        if(kind == 'FUNCTION_CALL'){
+          kind = sortedArray[x].args.method_name
+        }
+
         let isSystem = false
         if(sortedArray[x].receipt_predecessor_account_id == 'system'){
             isSystem = true
@@ -411,7 +429,7 @@ export default function AccountTransactionActivity(props) {
 
         let amount = (parseFloat(cleanValue) * price).toFixed(2)
         console.log('amount', amount)
-        if(label != 'stake' && !isValidator && !isSystem && amount != '0.00' && new Date(date).getTime() >= new Date(fromDate).getTime() && new Date(date).getTime() <= new Date(toDate).getTime()){
+        if(label != 'stake' && !isValidator && !isSystem && !isRelated && amount != '0.00' && new Date(date).getTime() >= new Date(fromDate).getTime() && new Date(date).getTime() <= new Date(toDate).getTime()){
           csvToQuicken.push({
             Date: date,
             Amount: amount,
@@ -422,7 +440,7 @@ export default function AccountTransactionActivity(props) {
             Commission: '',
             Memo: sortedArray[x].receipt_id, 
             Name: name,
-            Category: sortedArray[x].action_kind
+            Category: kind
           })
         }
 

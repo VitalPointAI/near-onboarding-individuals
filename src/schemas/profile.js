@@ -101,6 +101,9 @@ export const profileSchema = {
       },
       validators: {
         type: 'array'
-      }
+      },
+      relatedAccounts: {
+        type: 'array'
+      },
     },
   }

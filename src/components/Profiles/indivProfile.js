@@ -60,6 +60,7 @@ export default function IndivProfile(props) {
     const [personaSkillSet, setPersonaSkillSet] = useState([])
     const [personaValueSet, setPersonaValueSet] = useState([])
     const [personaValidators, setPersonaValidators] = useState([])
+    const [relatedAccounts, setRelatedAccounts] = useState([])
     const [personaSpecificSkillSet, setPersonaSpecificSkillSet] = useState([])
     const [interests, setInterests] = useState([])
     const [learningGoals, setLearningGoals] = useState([])
@@ -127,6 +128,7 @@ export default function IndivProfile(props) {
                   result.personaSpecificSkills ? setPersonaSpecificSkillSet(result.personaSpecificSkills) : setPersonaSpecificSkillSet([])
                   result.values ? setPersonaValueSet(result.values) : setPersonaValueSet([])
                   result.validators ? setPersonaValidators(result.validators) : setPersonaValidators([])
+                  result.relatedAccounts ? setRelatedAccounts(result.relatedAccounts) : setRelatedAccounts([])
                   result.interests ? setInterests(result.interests) : setInterests([])
                   result.learningGoals ? setLearningGoals(result.learningGoals) : setLearningGoals([])
                   result.workDesires ? setWorkDesires(result.workDesires) : setWorkDesires([])
@@ -160,6 +162,7 @@ export default function IndivProfile(props) {
                         result.personaSpecificSkills ? setPersonaSpecificSkillSet(result.personaSpecificSkills) : setPersonaSpecificSkillSet([])
                         result.values ? setPersonaValueSet(result.values) : setPersonaValueSet([])
                         result.validators ? setPersonaValidators(result.validators) : setPersonaValidators([])
+                        result.relatedAccounts ? setRelatedAccounts(result.relatedAccounts) : setRelatedAccounts([])
                         result.interests ? setInterests(result.interests) : setInterests([])
                         result.learningGoals ? setLearningGoals(result.learningGoals) : setLearningGoals([])
                         result.workDesires ? setWorkDesires(result.workDesires) : setWorkDesires([])
@@ -446,6 +449,45 @@ export default function IndivProfile(props) {
                                     <TableBody>
                                     {personaValidators && personaValidators.length > 0 ?
                                         personaValidators.map((values, index) => {
+                                        
+                                            return (
+                                            <TableRow key={values.name}>
+                                                <TableCell>{values.name}</TableCell>
+                                            </TableRow>
+                                            )
+                                        
+                                    })
+                                    : null
+                                    }
+                                             
+                                    </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Grid>
+                            </Grid>
+                            </AccordionDetails>
+                        </Accordion>
+                        <Accordion>
+                            <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                            >
+                            <Typography variant="body1" color="primary">Related Accounts</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                            <Grid container spacing={1} justifyContent="center">
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                <Typography variant="h6">Related Accounts</Typography>
+                                <Typography variant="body1">The accounts listed here will not be included in tax reports (assumed to be transfers between your accounts).</Typography>
+                                <TableContainer component={Paper}>
+                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <TableHead>
+                                    
+                                    </TableHead>
+                                    <TableBody>
+                                    {relatedAccounts && relatedAccounts.length > 0 ?
+                                        relatedAccounts.map((values, index) => {
                                         
                                             return (
                                             <TableRow key={values.name}>
