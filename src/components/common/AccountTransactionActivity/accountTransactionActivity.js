@@ -375,7 +375,7 @@ export default function AccountTransactionActivity(props) {
             Price: price,
             Quantity: cleanValue,
             FullSecurityName: 'NEAR',
-            InvestmentAction: sent != '' ? 'BUY' : 'SELL',
+            InvestmentAction: sortedArray[x].receipt_receiver_account_id == accountId ? 'BUY' : 'SELL',
             Commission: '',
             Memo: `${sortedArray[x].receipt_id}, from: ${sortedArray[x].receipt_predecessor_account_id}, to: ${sortedArray[x].receipt_receiver_account_id}, kind: ${sortedArray[x].action_kind}` 
           })
