@@ -367,7 +367,8 @@ export default function AccountTransactionActivity(props) {
         //   TxHash: sortedArray[x].transaction.transaction_hash
         // })
         let amount = (parseFloat(cleanValue) * price).toFixed(2)
-        if(label != 'stake' && amount != '0'){
+        console.log('amount', amount)
+        if(label != 'stake' && amount != '0' && date >= new Date(fromDate) && date <= new Date(toDate)){
           csvToQuicken.push({
             Date: date,
             Amount: amount,
