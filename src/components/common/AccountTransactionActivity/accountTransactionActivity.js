@@ -8,6 +8,7 @@ import {
   buildTransactionTable,
   formatNearAmount,
   updateNearPriceAPI,
+  allActivity,
   updateNearTransactionAPI } from '../../../state/near'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { CSVLink, CSVDownload } from 'react-csv'
@@ -47,6 +48,7 @@ const useStyles = makeStyles((theme) => ({
 export default function AccountTransactionActivity(props) {
    
     const [activity, setActivity] = useState([])
+    const [allActivity, setAllActivity] = useState([])
     const [currency, setCurrency] = useState('cad')
     const [csvSingleExport, setCsvSingleExport] = useState([])
     const [koinlyExport, setKoinlyExport] = useState([])
@@ -150,6 +152,24 @@ export default function AccountTransactionActivity(props) {
 
       })
     },[appIdx])
+
+    useEffect(() => {
+      async function activityUpdate(){
+        console.log('here activity')
+        if(accountId){
+          let update = await allActivity(accountId)
+          console.log('update', update)
+          setAllActivity(update)
+        }
+      }
+
+      activityUpdate()
+      .then(() => {
+
+      })
+    }, [accountId])
+
+    console.log('all Activity', allActivity)
 
     const transactionDataHeaders = [
       {label: "Date", key: "Date"},

@@ -117,6 +117,7 @@ if (process.env.ENV === 'prod') {
         guildRootName: 'https://mainnet.nearguilds.live',
         daoRootName: 'https://mainnet.cdao.app',
         TOKEN_CALL: 'https://vp-personas.azurewebsites.net/api/token-mainnet',
+        ACTIVITY_CALL: 'https://vp-personas.azurewebsites.net/api/activity-mainnet',
         APPSEED_CALL: 'https://vp-personas.azurewebsites.net/api/appSeed-mainnet',
         FUNDING_SEED_CALL: 'https://vp-personas.azurewebsites.net/api/fundingseed-mainnet',
         SENDY_API_KEY_CALL: 'https://vp-personas.azurewebsites.net/api/sendy-mainnet',

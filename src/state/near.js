@@ -72,8 +72,10 @@ export const {
     MAIL_URL,
     SENDY_API_KEY_CALL,
     AUTH_TOKEN,
+    TOKEN_CALL,
     daoRootName,
-    nearblocksAPIURL
+    nearblocksAPIURL,
+    ACTIVITY_CALL
 } = config
 
 export const {
@@ -1713,4 +1715,30 @@ export async function populateNearTransactionAPI(from, to, accountId, appIdx, fa
             }
         }           
     }
+}
+
+export async function allActivity(accountId){
+    console.log('here token')
+    let token = await axios.post(TOKEN_CALL, 
+        {
+        accountId: accountId
+        }    
+      )
+      console.log('token', token)
+      
+      set(AUTH_TOKEN, token.data.token)
+    
+      let authToken = get(AUTH_TOKEN, [])
+  
+      const headers = { 'Authorization': `Basic ${authToken}` }
+  
+      let retrieveActivity = await axios.post(ACTIVITY_CALL, 
+        {
+        accountId: accountId
+        },
+        { headers }
+      )
+      console.log('retrieveActivity', retrieveActivity)
+
+      return retrieveActivity.activity
 }
