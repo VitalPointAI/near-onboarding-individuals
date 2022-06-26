@@ -349,7 +349,7 @@ export default function AccountTransactionActivity(props) {
         let isValidator = false
         for(let i = 0; i < accountValidators.length; i++){
           console.log('accountValidators', accountValidators)
-          if(sortedArray[x].receipt_predecessor_account_id == accountValidators[i]){
+          if(sortedArray[x].receipt_predecessor_account_id == accountValidators[i].name){
             isValidator = true
             break
           }
