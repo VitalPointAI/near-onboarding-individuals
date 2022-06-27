@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
 export default function StakingActivity(props) {
    
     const [activity, setActivity] = useState([])
-    const [allActivity, setAllActivity] = useState([])
+    const [allOfActivity, setAllOfActivity] = useState([])
     const [validatorData, setValidatorData] = useState([])
     const [accountValidators, setAccountValidators] = useState([])
     const [journalStartNo, setJournalStartNo] = useState(1)
@@ -173,7 +173,7 @@ export default function StakingActivity(props) {
         if(accountId){
           let update = await allAccountActivity(accountId)
           console.log('update', update)
-          setAllActivity(update)
+          setAllOfActivity(update)
         }
       }
 
@@ -336,7 +336,7 @@ export default function StakingActivity(props) {
 
 
           let allValidatorActivity = []
-          allActivity = await queries.getValidatorActivity([apiUrl])
+          let allActivity = await queries.getValidatorActivity([apiUrl])
           
           let newActivity = allValidatorActivity.concat(
             allActivity[0][1].data.depositAndStakes, 
