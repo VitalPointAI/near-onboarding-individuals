@@ -367,7 +367,8 @@ export default function AccountTransactionActivity(props) {
         let isRelated = false
         for(let j = 0; j < relatedAccounts.length; j++){
           console.log('relatedAccounts', relatedAccounts)
-          if(sortedArray[x].receipt_predecessor_account_id == relatedAccounts[j].name){
+          if(sortedArray[x].receipt_predecessor_account_id == relatedAccounts[j].name
+            || sortedArray[x].receipt_receiver_account_id == relatedAccounts[j].name){
             isRelated = true
             break
           }
