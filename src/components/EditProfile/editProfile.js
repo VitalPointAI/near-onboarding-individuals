@@ -202,7 +202,7 @@ export default function EditProfileForm(props) {
       fields: relatedAccountsFields,
       append: relatedAccountsAppend,
       remove: relatedAccountsRemove} = useFieldArray({
-     name: "relatedAccountss",
+     name: "relatedAccounts",
      control
     })
     
