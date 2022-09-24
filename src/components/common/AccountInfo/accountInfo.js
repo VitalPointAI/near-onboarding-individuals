@@ -169,7 +169,7 @@ export default function PersonaInfo(props) {
                         )
                     :  ( <>
                         <a href={`https://nearpersonas.live/indiv-profiles/${did}`}>
-                            <Avatar src={pfpAvatar != imageName && pfpAvatar != '' ? pfpAvatar : avatar} style={{width: '100px', height:'100px'}} onClick={handleEditPersonaClick}/>
+                            <Avatar src={pfpAvatar != imageName && pfpAvatar != '' ? require(pfpAvatar) : require(avatar)} style={{width: '100px', height:'100px'}} onClick={handleEditPersonaClick}/>
                         </a>
                         </>)
                     }{name ? name : accountId}: {balance} Ⓝ
@@ -197,7 +197,7 @@ export default function PersonaInfo(props) {
                         )
                     :  ( <>
                         <a href={`https://nearpersonas.live/indiv-profiles/${did}`}>
-                            <Avatar src={pfpAvatar != imageName && pfpAvatar != '' ? pfpAvatar : avatar}  style={{width: '100px', height:'100px'}} onClick={handleEditPersonaClick}/>
+                            <Avatar src={pfpAvatar != imageName && pfpAvatar != '' ? require(pfpAvatar) : require(avatar)}  style={{width: '100px', height:'100px'}} onClick={handleEditPersonaClick}/>
                         </a>
                         </>)
                     }{name ? name : accountId}: {balance} Ⓝ
