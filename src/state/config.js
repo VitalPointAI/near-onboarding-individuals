@@ -44,7 +44,7 @@ let config = {
     SPACE_CREATED: '__SPACE_CREATED',
     APP_OWNER_ACCOUNT: 'vitalpointai.testnet',
     CERAMIC_API_URL: 'https://ceramic-node.vitalpointai.com',
-    IPFS_PROVIDER: 'https://cloudflare-ipfs.com/ipfs/',
+    IPFS_PROVIDER: 'https://vitalpointai.infura-ipfs.io/ipfs/',
     TOKEN_CALL: 'https://vp-personas.azurewebsites.net/api/token-testnet',
     APPSEED_CALL: 'https://vp-personas.azurewebsites.net/api/appSeed-testnet',
     FUNDING_SEED_CALL: 'https://vp-personas.azurewebsites.net/api/fundingseed-testnet',

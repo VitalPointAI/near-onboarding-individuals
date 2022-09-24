@@ -1,17 +1,65 @@
-import React, { useState } from 'react'
-const { create } = require('ipfs-http-client')
+import React, { useEffect, useState } from 'react'
+const ipfsClient = require('ipfs-http-client')
+import { IPFS_CALL, TOKEN_CALL } from '../../../utils/ceramic'
+
+const axios = require('axios').default
+
+const projectId = '2FEElgkMz1pYYPKTQZnKvXPDpRR'
 
 export default function FileUpload(props) {
 
     const[addedFileHash, setAddedFileHash] = useState('QmZsKcVEwj9mvGfA7w7wUS1f2fLqcfzqdCnEGtdq6MBR7P')
-    
+    const[ipfsApi, setIpfsApi] = useState()
+
     const {
         handleFileHash,
         handleAvatarLoaded,
-        register
+        register,
+        accountId
     } = props
 
-    const ipfsApi = create('https://infura-ipfs.io:5001')
+    useEffect(() => {
+        async function fetchIPFS(){
+            let ipfs = await createIPFS()
+            setIpfsApi(ipfs) 
+        }
+        fetchIPFS()
+        .then((res) => {
+
+        })
+    }, [])
+
+   
+    async function createIPFS() {
+        let token = await axios.post(TOKEN_CALL, 
+            {
+            accountId: accountId
+            }    
+          )
+        
+        let authToken = token.data.token
+         
+          let retrieveKey = await axios.post(IPFS_CALL, {
+            // ...data
+          },{
+            headers: {
+              'Authorization': `Basic ${authToken}`
+            }
+          })
+
+        const auth =
+        'Basic ' + Buffer.from(projectId + ':' + retrieveKey.data.seed).toString('base64');
+    
+        const client = ipfsClient.create({
+            host: 'ipfs.infura.io',
+            port: 5001,
+            protocol: 'https',
+            headers: {
+                authorization: auth,
+            },
+        });
+        return client
+    }
   
     const captureFile = (event) => {
         event.stopPropagation()
@@ -29,8 +77,7 @@ export default function FileUpload(props) {
       
         ipfsApi.add(buffer)
         .then((response) => {
-        ipfsId = response.path
-      
+        ipfsId = (response.path).toString('base32')
         setAddedFileHash(ipfsId)
         handleFileHash(ipfsId)
         }).catch((err) => {
