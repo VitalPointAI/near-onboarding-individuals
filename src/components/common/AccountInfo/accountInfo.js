@@ -143,6 +143,7 @@ export default function PersonaInfo(props) {
     setAnchorEl(null)
   }
   console.log('avatar', avatar)
+  console.log('pfpavatar', pfpAvatar)
 
     return (
             <>
