@@ -115,7 +115,7 @@ export default function PersonaInfo(props) {
              setFinished(true)
             })
         
-    }, [isUpdated, did, claimed, currentDaosList]
+    }, [isUpdated, did, currentDaosList]
     )
 
 
@@ -143,6 +143,7 @@ export default function PersonaInfo(props) {
   function handleExpanded() {
     setAnchorEl(null)
   }
+  console.log('avatar', avatar)
 
     return (
             <>
