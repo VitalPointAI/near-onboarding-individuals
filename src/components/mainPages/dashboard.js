@@ -88,6 +88,7 @@ export default function Dashboard(props) {
               if(currentGuilds && appIdx && account){
                 for(let x = 0; x < currentGuilds.length; x++){
                   let guildInfo = await appIdx.get('guildProfile', currentGuilds[x].did)
+                  console.log('guildInfo', guildInfo)
                   let thisMemberStatus = await getCommunityMemberStatus(guildInfo.platform, guildInfo.contractId, account)
                   if(thisMemberStatus){
                     memberDaos.push(currentGuilds[x])
