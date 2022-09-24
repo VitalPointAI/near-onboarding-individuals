@@ -45,6 +45,7 @@ let config = {
   APP_OWNER_ACCOUNT: 'vitalpointai.testnet',
   CERAMIC_API_URL: 'https://ceramic-node.vitalpointai.com',
   IPFS_PROVIDER: 'https://vitalpointai.infura-ipfs.io/ipfs/',
+  IPFS_CALL: 'https://vp-personas.azurewebsites.net/api/ipfs-key',
   TOKEN_CALL: 'https://vp-personas.azurewebsites.net/api/token-testnet',
   APPSEED_CALL: 'https://vp-personas.azurewebsites.net/api/appSeed-testnet',
   FUNDING_SEED_CALL: 'https://vp-personas.azurewebsites.net/api/fundingseed-testnet',
