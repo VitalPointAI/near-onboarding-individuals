@@ -16,26 +16,25 @@ function verifyToken(req, res, next){
       //Forbidden
       return false
     }
-}
+  }
 
 module.exports = async function (context, req) {
-    context.log('AppSeed testnet trigger function processed a request.');
-    const token = verifyToken(req)
-    if(token){
-      try{
-        let verified = jwt.verify(token, process.env["PERSONAS_TESTNET_SECRET_KEY"])
-        if(verified){
-          const appSeed = process.env["PERSONAS_TESTNET_APPSEED"];
-          const seed = appSeed.slice(0, 32)
-          context.res.json({
-            seed: seed
-          });
-        } else {
-          context.res.sendStatus(403);
-        }
-      } catch (err) {
-        context.log('error', err)
+  context.log('AppSeed testnet trigger function processed a request.');
+  const token = verifyToken(req)
+  if(token){
+    try{
+      let verified = jwt.verify(token, process.env["PERSONAS_TESTNET_SECRET_KEY"])
+      if(verified){
+        const appSeed = process.env["PERSONAS_IPFS_KEY"];
+        context.res.json({
+          seed: appSeed
+        });
+      } else {
         context.res.sendStatus(403);
       }
+    } catch (err) {
+      context.log('error', err)
+      context.res.sendStatus(403);
     }
+  }
 }

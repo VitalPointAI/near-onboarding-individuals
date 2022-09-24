@@ -239,6 +239,7 @@ class Ceramic {
       }    
     )
     
+    
     set(AUTH_TOKEN, token.data.token)
   
     let authToken = get(AUTH_TOKEN, [])
