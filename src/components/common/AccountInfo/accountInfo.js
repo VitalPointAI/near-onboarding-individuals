@@ -56,7 +56,6 @@ export default function PersonaInfo(props) {
   
         async function fetchData() {
             if(isUpdated){}
-            setFinished(false)
             if(did && accountType != 'guild') {
                 let result = await appIdx.get('profile', did)
                 console.log('indiv result', result)
@@ -169,7 +168,7 @@ export default function PersonaInfo(props) {
                         )
                     :  ( <>
                         <a href={`https://nearpersonas.live/indiv-profiles/${did}`}>
-                            <Avatar src={pfpAvatar != imageName && pfpAvatar != '' ? require(pfpAvatar) : require(avatar)} style={{width: '100px', height:'100px'}} onClick={handleEditPersonaClick}/>
+                            <Avatar src={pfpAvatar != imageName && pfpAvatar != '' ? pfpAvatar : avatar} style={{width: '100px', height:'100px'}} onClick={handleEditPersonaClick}/>
                         </a>
                         </>)
                     }{name ? name : accountId}: {balance} Ⓝ
@@ -197,7 +196,7 @@ export default function PersonaInfo(props) {
                         )
                     :  ( <>
                         <a href={`https://nearpersonas.live/indiv-profiles/${did}`}>
-                            <Avatar src={pfpAvatar != imageName && pfpAvatar != '' ? require(pfpAvatar) : require(avatar)}  style={{width: '100px', height:'100px'}} onClick={handleEditPersonaClick}/>
+                            <Avatar src={pfpAvatar != imageName && pfpAvatar != '' ? pfpAvatar : avatar}  style={{width: '100px', height:'100px'}} onClick={handleEditPersonaClick}/>
                         </a>
                         </>)
                     }{name ? name : accountId}: {balance} Ⓝ
