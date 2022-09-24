@@ -428,7 +428,7 @@ export default function EditGuildProfileForm(props) {
                             : null }
                         </Grid>
                         <Grid item xs={12} sm={12} md={10} lg={10} xl={10}>
-                            <FileUpload handleFileHash={handleFileHash} handleAvatarLoaded={handleAvatarLoaded}/>
+                            <FileUpload handleFileHash={handleFileHash} accountId={accountId} handleAvatarLoaded={handleAvatarLoaded}/>
                         </Grid>
                     </Grid>
                 </Paper>
