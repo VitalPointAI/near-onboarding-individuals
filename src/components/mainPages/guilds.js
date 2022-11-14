@@ -2,16 +2,15 @@ import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
 import Fuse from 'fuse.js'
 import GuildCard from '../Cards/GuildCard/guildCard'
-import SearchBar from '../common/SearchBar/search'
 import { updateCurrentGuilds } from '../../state/near'
-
+import theme from '../../theme'
 // Material UI components
 import { makeStyles } from '@mui/styles'
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Grid'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import List from '@mui/material/List'
-
+import { createTheme, ThemeProvider, styled } from '@mui/material/styles'
 const axios = require('axios').default
 
 const useStyles = makeStyles((theme) => ({
@@ -45,8 +44,7 @@ const useStyles = makeStyles((theme) => ({
   
 export default function ExploreGuilds(props) {
    
-    const [guilds, setGuilds] = useState([])
-    const [guildCount, setGuildCount] = useState(0)
+   
 
     const [membersOnly, setMembersOnly] = useState(false)
     const [activeOnly, setActiveOnly] = useState(true)
@@ -60,6 +58,11 @@ export default function ExploreGuilds(props) {
     const classes = useStyles()
 
     const { state, dispatch, update } = useContext(appStore)
+   
+   const {
+	guilds,
+	guildCount
+    } = props
 
     const {
       currentGuilds,
@@ -69,7 +72,8 @@ export default function ExploreGuilds(props) {
       did,
       didRegistryContract,
       nearPrice,
-      appIdx
+      appIdx,
+      page
     } = state
 
     const matches = useMediaQuery('(max-width:500px)')
@@ -77,8 +81,13 @@ export default function ExploreGuilds(props) {
     let sortedGuilds
     useEffect(
         () => {
+	   
             async function fetchData() {
-                let theseGuilds = await updateCurrentGuilds()
+                console.log("page is,", page)
+		update('', {page: 'guilds'})
+		console.log("page is, ", page)
+/**
+		let theseGuilds = await updateCurrentGuilds()
                 update('', {currentGuilds: theseGuilds})
                 if(isUpdated){
                     let theseGuilds = await updateCurrentGuilds()
@@ -100,8 +109,8 @@ export default function ExploreGuilds(props) {
                         }
                     }
                     console.log('sortedguilds2', sortedGuilds)
-                    setGuilds(sortedGuilds)                
-                }
+                    setGuilds(sortedGuilds)               
+               } **/
 
             }
 
@@ -122,23 +131,6 @@ export default function ExploreGuilds(props) {
     }
 
 
-    function makeSearchGuilds(guild){
-       let i = 0
-        let exists
-        let someGuilds = []
-        if(guild != false && searchGuilds.length > 0){
-            while(i < searchGuilds.length){
-                if(searchGuilds[i].contractId == guild.contractId){
-                    exists = true
-                }
-                i++
-            }
-            if(!exists){
-                someGuilds.push(guild)
-                setSearchGuilds(someGuilds)
-            }
-        }
-    }
 
     const searchData = async (pattern) => {
         if (!pattern) {
@@ -172,15 +164,15 @@ export default function ExploreGuilds(props) {
             setGuilds(matches)
         }
     }
-  
+ 	
 
     return (
-        <>
+        <ThemeProvider theme={theme}>
        
         {!matches ? (
-            <Grid container spacing={1}>
+            <Grid container style={{maxWidth: '100vw'}} spacing={1}>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                    <Typography variant="h4" style={{color:'#1341a4',fontWeight:'700', marginTop: '30px', lineHeight:'1em', verticalAlign:'middle'}}>
+                    <Typography variant="h4" style={{color: theme.palette.primary.main,fontWeight:'700', marginTop: '30px', lineHeight:'1em', verticalAlign:'middle'}}>
                         Explore {guilds ? guildCount : null} 
                         {guilds && guildCount > 1 ? ' Guilds': null} 
                         {guilds && guildCount == 1 ? ' Guild': null}
@@ -189,22 +181,12 @@ export default function ExploreGuilds(props) {
                 </Grid>
             
 
-                <Grid item xs={1} sm={1} md={3} lg={3} xl={3}>
-                </Grid>
-                <Grid item xs={10} sm={10} md={6} lg={6} xl={6}>
-                <SearchBar
-                    placeholder="Search"
-                    onChange={(e) => searchData(e.target.value)}
-                />
-                </Grid>
-                <Grid item xs={1} sm={1} md={3} lg={3} xl={3}>
-                </Grid>
            </Grid>
         
         ) : (
             <Grid container spacing={1}>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                    <Typography style={{color:'#1341a4', fontSize:'30px',fontWeight:'700', marginTop: '30px', lineHeight:'1em', verticalAlign:'middle'}}>
+                    <Typography style={{color: theme.palette.primary.main, fontSize:'30px',fontWeight:'700', marginTop: '30px', lineHeight:'1em', verticalAlign:'middle'}}>
                         Explore {guilds ? guildCount : null} 
                         {guilds && guildCount > 1 ? ' Guilds': null} 
                         {guilds && guildCount == 1 ? ' Guild': null}
@@ -213,16 +195,6 @@ export default function ExploreGuilds(props) {
                 </Grid>
  
          
-                <Grid item xs={1} sm={1} md={3} lg={3} xl={3}>
-                </Grid>
-                <Grid item xs={10} sm={10} md={6} lg={6} xl={6}>
-                <SearchBar
-                    placeholder="Search"
-                    onChange={(e) => searchData(e.target.value)}
-                />
-                </Grid>
-                <Grid item xs={1} sm={1} md={3} lg={3} xl={3}>
-                </Grid>
             </Grid>
             
 
@@ -230,7 +202,7 @@ export default function ExploreGuilds(props) {
         
         
 
-        <List sx={{ bgcolor: 'background.paper', paddingLeft: '10px', paddingRight: '10px' }}>
+        <List justifyContent='center' alignitems='center' sx={{  marginBottom: '40px', bgcolor: '#2e2e30'}}>
           {guilds && guildCount > 0 ? 
             (<>
               
@@ -245,7 +217,6 @@ export default function ExploreGuilds(props) {
                             guildDid={did}
                             link={''}
                             state={state}
-                            makeSearchGuilds={makeSearchGuilds}
                             status={'active'}
                             registered={true}
                             category={category}
@@ -261,6 +232,6 @@ export default function ExploreGuilds(props) {
         </List>
        
        
-        </>
+        </ThemeProvider>
     )
 }

@@ -55,6 +55,7 @@ query {
 }
 `
 
+
 const INDIVIDUAL_REGISTRATIONS = `
 query {
     putDIDs(where: {type_in: ["individual"]})
@@ -135,6 +136,37 @@ query{
         time
         verified
         changedBy
+    }
+}
+`
+
+const DAO_CREATIONS = `
+query {
+    createDAOs(first: 1000)
+    {
+        event
+        blockTime
+        blockHeight
+        contractId
+        did
+        summoner
+        created
+        status
+        deposit
+    }
+}
+`
+
+const INACTIVATED_DAOS = `
+query {
+    inactivateDAOs(first: 1000)
+    {
+        event
+        blockTime
+        blockHeight
+        contractId
+        deactivated
+        status
     }
 }
 `
@@ -336,11 +368,21 @@ query account_activity($accountId: String!){
         contractTotalStakedBalance
         contractTotalShares
     }
-    
 }
 `
 
-const factoryClient = new ApolloClient({
+const defaultOptions = {
+    watchQuery: {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'ignore',
+    },
+    query: {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    },
+  }
+
+  const factoryClient = new ApolloClient({
     uri: GRAPH_FACTORY_API_URL,
     cache: new InMemoryCache(),
 })
@@ -357,24 +399,19 @@ const validatorClient = new ApolloClient({
 
 export default class Queries {
 
-    async getCommunities(){
-        const communities = await factoryClient.query({query: gql(FACTORY_QUERY)})
-        return communities
-    }
-
     async getGuilds(){
         const guilds = await registryClient.query({query: gql(GUILD_REGISTRATIONS)})
         return guilds
     }
 
-    async getAliases(){
-        const aliases = await registryClient.query({query: gql(ALL_ALIASES)})
-        return aliases
-    }
-
     async getDeletedGuilds(){
         const deletedGuilds = await registryClient.query({query: gql(GUILD_DELETIONS)})
         return deletedGuilds
+    }
+
+    async getAliases(){
+        const aliases = await registryClient.query({query: gql(ALL_ALIASES)})
+        return aliases
     }
 
     async getIndividuals(){
@@ -407,6 +444,16 @@ export default class Queries {
         return verifiedGuilds
     }
 
+    async getAllCommunities(){
+        const allCommunities = await factoryClient.query({query: gql(DAO_CREATIONS)})
+        return allCommunities
+    }
+
+    async getAllInactivatedCommunities(){
+        const allInactivatedCommunities = await factoryClient.query({query: gql(INACTIVATED_DAOS)})
+        return allInactivatedCommunities
+    }
+    
     async getValidators(){
         const validators = await validatorClient.query({query: gql(VALIDATORS)})
         return validators
@@ -451,7 +498,6 @@ export default class Queries {
         }
         return activity
     }
-
 }
 
 export const queries = new Queries();

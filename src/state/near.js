@@ -11,7 +11,6 @@ import { queries } from '../utils/graphQueries'
 import { catalystDao } from '../utils/catalystDao'
 import { yearPriceHistorySchema } from '../schemas/yearPriceHistory'
 import { yearTransactionHistorySchema } from '../schemas/yearTransactionHistory'
-
 const axios = require('axios').default
 
 export const {
@@ -70,8 +69,9 @@ export const {
     personaRootName,
     guildRootName,
     MAIL_URL,
-    SENDY_API_KEY_CALL,
     AUTH_TOKEN,
+    SENDY_API_KEY_CALL,
+    FUNDING_SEED_CALL,
     daoRootName,
     nearblocksAPIURL
 } = config
@@ -118,15 +118,15 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
     wallet.signIn = () => {
         wallet.requestSignIn({
             contractId: contractName,
-            title: 'NEAR Personas',
+            title: 'My NEAR Journey',
         })
         window.location.assign('/')
     }
-
+   
     wallet.signedIn = wallet.isSignedIn()
     if (wallet.signedIn) {
         wallet.balance = formatNearAmount((await wallet.account().getAccountBalance()).available, 2)
-        update('', {balance: wallet.balance})
+        update('',{balance: wallet.balance})
     }
 
     wallet.isAccountTaken = async (accountId) => {
@@ -175,8 +175,8 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         // ********* Initialize Registry/Funding Contract****************
         // let thisAllowance = parseNearAmount('2')
         // await didRegistryContract.init({
-        //     adminId: 'vitalpointai.near',
-        //     fundingPublicKey: 'ed25519:8WdwHzc2DwNEUDmymCyoLtKy6KTtA1wz42kD3nLhtTtZ',
+        //     adminId: 'vitalpointai.testnet',
+        //     fundingPublicKey: '',
         //     allowance: thisAllowance})
         //await fundingContract.init({adminId: 'vitalpointai.testnet'})
 
@@ -224,95 +224,9 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         let curUserIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract)
         console.log('curuseridx', curUserIdx)
 
-        // let date = formatGeckoDate('1587528000000')
-        // console.log('start date', date)
-        
-        // let formatDate = date.replace(/-/g, '/')
-        // console.log('formatDate', formatDate)
-        // let today = new Date(formatDate)
-        // console.log('today', today)
-        // let tomorrow = new Date()
-        // tomorrow.setDate(today.getDate() +1)
-        // console.log('tomorrow', tomorrow)
-        // let stamp = Date.parse(tomorrow)
-        // console.log('stamp', stamp)
-        // let nextDate = formatGeckoDate(stamp)
-        // console.log('next date', nextDate)
-
-        
-        // const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-
-        // // let currencyData = await appIdx.get('nearPriceHistory', appIdx.id)    
-        // // console.log('currencyData', currencyData)
-
-        // // // get relevant year's data
-        // // function getPriceData(date){
-        // //     // get date year
-        // //     let year = new Date(date).getFullYear
-
-        // //     // get relevant year's data
-
-        // //     let priceData = await appIdx.get(year+'PriceHistory', appIdx.id)
-        // //     let latestYearsData = await appIdx.
-        // // }
-        
-        
-      
-        // let count = 0
-        
-        // // populate the full data array of prices in the time period
-        // // loop for every day
-        // console.log('from', from)
-        // console.log('to', to)
-    
-        //await populateNearPriceAPI(new Date(2020,10,01), new Date(2022,03,24), accountId, appIdx, didRegistryContract)
-        let currencyData = await appIdx.get('nearPriceHistory', appIdx.id)    
-        console.log('currencyData', currencyData)
-
-        // let today = new Date()
-        // let year = today.getFullYear()
-        // let monthIndex = today.getMonth()
-        // let day = today.getDate()
-        // let combinedToday = year.toString()+monthIndex.toString()+day.toString()
-        // month = months[monthIndex]
-        // let key = year+month+'NearPriceHistory'
-        // let aliasExists = false
-        // let yearMonthAlias
-        // for(let q = 0; q < allAliases.data.storeAliases.length; q++){
-        //     if(allAliases.data.storeAliases[q].alias == key){
-        //         yearMonthAlias = allAliases.data.storeAliases[q].definition
-        //         aliasExists = true
-        //         console.log('inside alias', yearMonthAlias)
-        //         break
-        //     }
-        // }
-        // let exists
-        // if(aliasExists){
-        //     let current = await appIdx.get(yearMonthAlias, appIdx.id)
-        //     let lastDate = new Date(current.history[-1].date)
-        //     let ldYear = lastDate.getFullYear()
-        //     let ldMonth = lastDate.getMonth()
-        //     let ldDay = lastDate.getDate()
-        //     let combinedDate = ldYear.toString()+ldMonth.toString()+ldDay.toString()
-        //     let dateExists
-        //     if(combinedDate != combinedToday){
-        //         await populateNearPriceAPI(lastDate + 1, today)
-        //     }
-        // }
-        // if(!aliasExists){
-            
-        // }
-        // for(let x = 0; x < currencyData.history.length; x++){
-        //     let exists
-        //     if(currencyData.history[x].alias == key){
-        //         exists = true
-        //     }
-        // }
-
-        
         // ********* All Announcements ****************
         try{
-            let announcements = await ceramic.downloadKeysSecret(appIdx, 'announcementList')
+            let announcements = await appIdx.get('announcements', appIdx.id)
             update('', {announcements: announcements})
             console.log('announcements', announcements)
         } catch (err) {
@@ -323,9 +237,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         if (curUserIdx) {
             did = curUserIdx.id
         }
-
         console.log('near did', did)
-
         let accountType
         try{
             accountType = await didRegistryContract.getType({accountId: accountId})
@@ -342,20 +254,23 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
             console.log('problem getting verification status', err)
         }
 
-        // graphQL queries
-        let currentGuilds = await updateCurrentGuilds()
-        update('',{currentGuilds})
-
-        // let allMints = await queries.getAllMints()
-        // console.log('allMints', allMints)
-        // let allTransfers = await queries.getAllTransfers()
-        // console.log('allTransfers', allTransfers)
-
-        // determine list of current guilds (take into account those that have been deleted)
-       
-
         
-        // for(let ii = 0; ii < currentGuildsList.data.putDIDs.length; ii++){
+
+        // graphQL queries
+        
+        // determine list of current guilds (take into account those that have been deleted)
+        let currentGuildsList = await queries.getGuilds()
+        console.log('currentguildslist', currentGuildsList)
+        let deletedGuildsList = await queries.getDeletedGuilds()
+        console.log('deletedguildslist', deletedGuildsList)
+
+        let currentActiveDaos = await updateCurrentCommunities()
+        console.log('active daos', currentActiveDaos)
+
+        let currentGuilds = await updateCurrentGuilds()
+        update('',{currentGuilds, currentActiveDaos})
+        
+        // for(let ii = 0; ii < sortedGuilds.length; ii++){
         //     for(let jj = 0; jj < deletedGuildsList.data.deleteDIDs.length; jj++){
         //         if(currentGuildsList.data.putDIDs[ii].accountId == deletedGuildsList.data.deleteDIDs[jj].accountId){
         //             guildExists = true
@@ -468,11 +383,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         //         currentVerifiers.push(addedVerifiers.data.addVerifiers[mm])
         //     }
         // }
-        let currentGuildsList = await queries.getGuilds()
-        console.log('currentguildslist', currentGuildsList)
-        let deletedGuildsList = await queries.getDeletedGuilds()
-        console.log('deletedguildslist', deletedGuildsList)
-    
+
         // determine list of guilds awaiting verification
         let verifiedGuilds = await queries.getVerifiedGuilds()
         console.log('verifiedguilds', verifiedGuilds)
@@ -508,8 +419,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
             didRegistryContract,
             fundingContract,
             accountType, 
-            appIdx,
-            currencyData,
+            appIdx, 
             account, 
             accountId,
             curUserIdx })
@@ -532,7 +442,7 @@ export async function login() {
         networkId, nodeUrl, walletUrl, deps: { keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore() },
     })
     const connection = new nearAPI.WalletConnection(near)
-    connection.requestSignIn(contractName, 'Near Personas', personaRootName)
+    connection.requestSignIn(contractName, 'Near Guilds', guildRootName)
 }
 
 
@@ -739,54 +649,52 @@ export function formatDateString(timestamp){
 }
 
 export async function signalCounter(signalType, contractId, accountId, proposalType, near, appIdx, didRegistryContract, guildDid, factoryContract){
-      let currentProperties
-      let stream
-      console.log('contractId here', contractId)
-        console.log('guild did here', guildDid)
-        console.log('accountId here', accountId)
-      let guildAccount = new nearAPI.Account(near.connection, contractId)
-      console.log('guildaccount', guildAccount)
-      let curDaoIdx = await ceramic.getUserIdx(guildAccount, appIdx, factoryContract, didRegistryContract)
-      console.log('this curdaoidx here', curDaoIdx)
-      switch(proposalType){
-          case 'guild':
-              try{
-                  currentProperties = await curDaoIdx.get('guildProfile', guildDid)
-                  console.log('currentproperties', currentProperties)
-                  stream = 'guildProfile'
-                  break
-              } catch (err) {
-                  console.log('problem retrieving guild signal details', err)
-              }
-          case 'individual':
-              try{
-                  currentProperties = await curDaoIdx.get('profile', curDaoIdx.id)
-                  stream = 'profile'
-                  break
-              } catch (err) {
-                  console.log('problem retrieving individual signal details', err)
-              }
-          default:
-              break
-      }   
-    
-      let hasLiked = false
-      hasLiked = currentProperties.likes.includes(accountId)
-     
-      if(signalType == 'like' && !hasLiked){
-          currentProperties.likes.push(accountId)
-      }
+    let currentProperties
+    let stream
+    console.log('contractId here', contractId)
+      console.log('guild did here', guildDid)
+    let guildAccount = new nearAPI.Account(near.connection, contractId)
+    let curDaoIdx = await ceramic.getUserIdx(guildAccount, appIdx, factoryContract, didRegistryContract)
+    console.log('this curdaoidx here', curDaoIdx)
+    switch(proposalType){
+        case 'guild':
+            try{
+                currentProperties = await curDaoIdx.get('guildProfile', guildDid)
+                console.log('currentproperties', currentProperties)
+                stream = 'guildProfile'
+                break
+            } catch (err) {
+                console.log('problem retrieving guild signal details', err)
+            }
+        case 'individual':
+            try{
+                currentProperties = await curDaoIdx.get('profile', curDaoIdx.id)
+                stream = 'profile'
+                break
+            } catch (err) {
+                console.log('problem retrieving individual signal details', err)
+            }
+        default:
+            break
+    }   
+  
+    let hasLiked = false
+    hasLiked = currentProperties.likes.includes(accountId)
+   
+    if(signalType == 'like' && !hasLiked){
+        currentProperties.likes.push(accountId)
+    }
 
-      if(signalType == 'like' && hasLiked){
-        let index = currentProperties.likes.indexOf(accountId)
-        currentProperties.likes.splice(index, 1)
-      }
-      
-      try{
-          await curDaoIdx.set(stream, currentProperties)
-      } catch (err) {
-          console.log('error with signalling', err)
-      }
+    if(signalType == 'like' && hasLiked){
+      let index = currentProperties.likes.indexOf(accountId)
+      currentProperties.likes.splice(index, 1)
+    }
+    
+    try{
+        await curDaoIdx.set(stream, currentProperties)
+    } catch (err) {
+        console.log('error with signalling', err)
+    }
 }
 
 export async function signal(signalType, curDaoIdx, accountId, proposalType){
@@ -903,6 +811,7 @@ export async function signal(signalType, curDaoIdx, accountId, proposalType){
     }
 }
 
+
 export async function spaceMint(metadata, owner) {
     let tokenId = generateId()
 
@@ -916,12 +825,8 @@ export async function spaceMint(metadata, owner) {
 export async function updateCurrentGuilds() {
     let currentGuildsList = await queries.getGuilds()
     let sortedGuilds = _.sortBy(currentGuildsList.data.putDIDs, 'registered')
-    console.log('currentguildslist', currentGuildsList)
-    console.log('sortedGuilds', sortedGuilds)
     let deletedGuildsList = await queries.getDeletedGuilds()
     let sortedDeletedGuilds = _.sortBy(deletedGuildsList.data.deleteDIDs, 'time')
-    console.log('deletedguildslist', deletedGuildsList)
-    console.log('sorted deleted guilds', sortedDeletedGuilds)
 
     let currentGuilds = []
     let lastIndexAdd
@@ -929,7 +834,7 @@ export async function updateCurrentGuilds() {
 
     // first - start the loop to look through every one of the guild entries
     for(let k = 0; k < sortedGuilds.length; k++){
-        console.log('account', sortedGuilds[k].accountId)
+      
         // make sure it hasn't already been added to the current guilds list
         if(currentGuilds.filter(e => e.accountId == sortedGuilds[k].accountId).length == 0){
                 for(let n = 0; n < sortedGuilds.length; n++){
@@ -937,14 +842,14 @@ export async function updateCurrentGuilds() {
                         lastIndexAdd = n
                     }
                 }
-            console.log('lastIndexAdd', lastIndexAdd)
+         
             // step 2 - get index of the last time the accountId was deleted
             for(let x = 0; x < sortedDeletedGuilds.length; x++){
                 if(sortedGuilds[lastIndexAdd].accountId == sortedDeletedGuilds[x].accountId){
                     lastIndexDelete = x
                 }
             }
-            console.log('lastIndexDelete', lastIndexDelete)
+          
             //  step 3 - if there is a last index added, compare last added with 
             //  last deleted to see if it is still an active guild.  Push it to the
             //  list of current guilds.
@@ -1054,6 +959,11 @@ export async function synchAccountLinks(curUserIdx){
         z++
     }
     allAccounts = copyArray
+    console.log('copy array', copyArray)
+    console.log('didMakeChange', didMakeChange)
+    console.log('wasMissing', wasMissing)
+    console.log('wasDuplicate', wasDuplicate)
+    console.log('all accounts', allAccounts)
 
     if(didMakeChange || wasMissing || wasDuplicate){
         await ceramic.storeKeysSecret(curUserIdx, allAccounts, 'accountsKeys')
@@ -1073,19 +983,162 @@ export async function getCommunityMemberStatus(platform, contractId, account){
     }
 }
 
-export async function makeViewCall(account, contractName, method, args){
-    return await account.viewFunction(contractName, method, args);
-}
+export async function updateCurrentCommunities() {
+    let currentCommunitiesList = await queries.getAllCommunities()
+    let sortedCommunities = _.sortBy(currentCommunitiesList.data.createDAOs, 'created')
+    console.log('currentCommunitieslist', currentCommunitiesList)
+    console.log('sortedCommunities', sortedCommunities)
+    let inactivatedCommunitiesList = await queries.getAllInactivatedCommunities()
+    let sortedInactivatedCommunities = _.sortBy(inactivatedCommunitiesList.data.inactivateDAOs, 'deactivated')
+    console.log('inactivatedCommunitieslist', inactivatedCommunitiesList)
+    console.log('sorted inactivatedCommunities', sortedInactivatedCommunities)
 
-function sleep(milliseconds) {
-    var start = new Date().getTime();
-    for (var i = 0; i < 1e7; i++) {
-      if ((new Date().getTime() - start) > milliseconds){
-        break;
-      }
+    let currentCommunities = []
+    let lastIndexAdd
+    let lastIndexDelete
+
+    // first - start the loop to look through every one of the community entries
+    for(let k = 0; k < sortedCommunities.length; k++){
+        console.log('account', sortedCommunities[k].contractId)
+        // make sure it hasn't already been added to the current communities list
+        if(currentCommunities.filter(e => e.contractId == sortedCommunities[k].contractId).length == 0){
+                for(let n = 0; n < sortedCommunities.length; n++){
+                    if(sortedCommunities[k].contractId == sortedCommunities[n].contractId){
+                        lastIndexAdd = n
+                    }
+                }
+            console.log('lastIndexAdd', lastIndexAdd)
+            // step 2 - get index of the last time the contractId was deleted
+            for(let x = 0; x < sortedInactivatedCommunities.length; x++){
+                if(sortedCommunities[lastIndexAdd].contractId == sortedInactivatedCommunities[x].contractId){
+                    lastIndexDelete = x
+                }
+            }
+            console.log('lastIndexDelete', lastIndexDelete)
+            //  step 3 - if there is a last index added, compare last added with 
+            //  last deleted to see if it is still an active guild.  Push it to the
+            //  list of current guilds.
+            if(lastIndexAdd > 0 ){
+                console.log('comparison', parseFloat(sortedCommunities[lastIndexAdd].created) > parseFloat(sortedInactivatedCommunities[lastIndexDelete].deactivated))
+                if(parseFloat(sortedCommunities[lastIndexAdd].created) > parseFloat(sortedInactivatedCommunities[lastIndexDelete].deactivated)) {
+                    currentCommunities.push(sortedCommunities[lastIndexAdd])
+                }
+            }
+        }
     }
+
+console.log('currentCommunities', currentCommunities)
+return currentCommunities
 }
 
+export function getStatus(flags) {
+    console.log('flags', flags)
+    
+   /* flags [
+        0: sponsored, 
+        1: processed, 
+        2: didPass, 
+        3: cancelled,
+    ]
+    */
+    let sponsored = flags[0]
+    console.log('sponsored', sponsored)
+    let processed = flags[1]
+    console.log('processed', processed)
+    let passed = flags[2]
+    console.log('passed', passed)
+    let cancelled = flags[3]
+    console.log('cancelled', cancelled)
+
+    if(cancelled){
+        return 'Cancelled'
+    }
+    if(!sponsored && !processed && !passed && !cancelled){
+        return 'Submitted'
+    }
+    if(sponsored && !processed && !passed && !cancelled){
+         return 'Sponsored'
+    }
+    if(sponsored && processed && passed){
+        return 'Passed'
+    }
+    if(sponsored && processed && !passed){
+        return 'Not Passed'
+    }    
+}
+
+export function getCombinedSkills(accountType, persona){
+     let combinedPersonaSkills = []
+     if(accountType != 'guild'){
+    //    if(persona && Object.keys(persona).length > 0){
+    //        for (const [key, value] of Object.entries(persona.developerSkillSet)){
+    //        if(value){
+    //            combinedPersonaSkills.push(value)
+    //        }
+    //        }
+    //        for (const [key, value] of Object.entries(persona.skillSet)){
+    //        if(value){
+    //            combinedPersonaSkills.push(value)
+    //        }
+    //        }
+    //    }
+
+       if (persona && persona.personaSkills.length > 0){
+         persona.personaSkills.map((values, index) => {
+           if(values.name){
+             combinedPersonaSkills.push(values.name)
+           }
+         })
+       }
+
+       if (persona && persona.personaSpecificSkills.length > 0){
+         persona.personaSpecificSkills.map((values, index) => {
+           if(values.name){
+             combinedPersonaSkills.push(values.name)
+           }
+         })
+       }
+       console.log('combinedpersonaskills', combinedPersonaSkills)
+       return combinedPersonaSkills
+     } else {
+        // if(persona && Object.keys(persona).length > 0){
+        //     console.log('here0')
+        //     for (const [key, value] of Object.entries(persona.skills)){
+        //         console.log('key', key)
+        //         console.log('value', value)
+        //     if(value){
+        //         combinedPersonaSkills.push(value)
+        //     }
+        //     }
+        //     for (const [key, value] of Object.entries(persona.specificSkills)){
+        //     if(value){
+        //         combinedPersonaSkills.push(value)
+        //     }
+        //     }
+        // }
+ 
+        if (persona && persona.skills.length > 0){
+            console.log('here1')
+          persona.skills.map((values, index) => {
+            if(values.name){
+              combinedPersonaSkills.push(values.name)
+            }
+          })
+        }
+ 
+        if (persona && persona.specificSkills.length > 0){
+            console.log('here2')
+          persona.specificSkills.map((values, index) => {
+            if(values.name){
+              combinedPersonaSkills.push(values.name)
+            }
+          })
+        }
+        console.log('combinedpersonaskills guild', combinedPersonaSkills)
+        return combinedPersonaSkills
+     }
+
+}
 
 export function getPrice(priceArray, date, currency){
     console.log('passed in date', date)
@@ -1115,14 +1168,9 @@ export async function buildPriceTable(from, to, accountId){
     let allAliases = await queries.getAliases()
     const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"]
 
-    let everyDayAlias = [] 
-    
-    let adjustedFrom = new Date(from)
-    adjustedFrom.setDate(adjustedFrom.getDate()+1)
-    let adjustedTo = new Date(to)
-    adjustedTo.setDate(adjustedTo.getDate()+1)
-    for (let day = adjustedFrom; day <= adjustedTo; day.setDate(day.getDate() + 1)) {
-           let dayYear = new Date(day).getFullYear()
+    let everyDayAlias = []
+    for (let day = new Date(from); day <= new Date(to); day.setDate(day.getDate() + 1)) {
+        let dayYear = new Date(day).getFullYear()
         let dayD = new Date(day).getMonth()
         let dayMonth = uniqueMonthArray[dayD]
         everyDayAlias.push(dayYear+dayMonth+'NearPriceHistory')
@@ -1199,10 +1247,7 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
         from = new Date(endDate.setDate(endDate.getDate() + 1))
         console.log('from', from)
     }
-    if(!from){
-        from = new Date(todayYear, t, 1)
-    }
-    if(to.getTime() >= from.getTime()){
+    if(to >= from){
         await populateNearPriceAPI(from, to, accountId, appIdx, didRegistryContract)
     }
 }
@@ -1446,10 +1491,11 @@ export async function updateNearTransactionAPI(accountId, appIdx, factoryContrac
     let key = todayYear+todayMonth+'NearTransactionHistory'
     let alias = {[key]: yearMonthAlias}
     console.log('alias', alias)
-   
+    //let appClient = await ceramic.getAppCeramic(accountId)
     let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, alias)
     console.log('thisidx', thisIdx)
-    
+    // let thisIdx = new IDX({ ceramic: appClient, aliases: alias})
+    // console.log('thisidx', thisIdx)
     let getit = await thisIdx.get(key, thisIdx.id)
     console.log('get it', getit)
     let from
@@ -1498,6 +1544,8 @@ export async function populateNearTransactionAPI(from, to, accountId, appIdx, fa
         console.log('alias', alias)
         let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, alias)
         console.log('thisidx', thisIdx)
+        // let thisIdx = new IDX({ ceramic: appClient, aliases: alias})
+        // console.log('thisidx', thisIdx)
         let transData = await thisIdx.get(key, thisIdx.id)
         console.log('transData', transData)
         // get last month and year
@@ -1658,6 +1706,7 @@ export async function populateNearTransactionAPI(from, to, accountId, appIdx, fa
                 let key = uniqueArray[x]+month+'NearTransactionHistory'
                 let alias = {[key]: yearMonthAlias}
                 console.log('alias', alias)
+                //let thisIdx = new IDX({ ceramic: appClient, aliases: alias})
                 let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, alias)
                 console.log('thisidx', thisIdx)
                 let firstGetIt = await thisIdx.get(key, thisIdx.id)

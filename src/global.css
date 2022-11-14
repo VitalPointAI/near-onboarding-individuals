@@ -1,5 +1,5 @@
 body {
-  overflow: auto;
+  overflow-y: hidden; 
   overflow-x: hidden;
   font-family: 'Inter', sans-serif !important;
   height: 100%;
@@ -12,9 +12,10 @@ body {
 }
 
 #root {
+  overflow-y: hidden;
   display: flex;
-min-height: 100vh;
-flex-direction: column;
+  min-height: 100vh;
+  flex-direction: column;
   margin:auto;
 }
 
@@ -64,14 +65,7 @@ textarea {
   height: 100px !important;
 }
 
-button:active, button:focus, button:hover {
-  color: white ;
-  background: #0d6efd !important;
-} 
 
-button:active > img, button:focus > img, button:hover > img {
-  filter: brightness(1000);
-}
 a {
   text-decoration: none !important;
 }

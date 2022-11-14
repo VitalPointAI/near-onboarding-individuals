@@ -12,9 +12,10 @@ import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { CSVLink, CSVDownload } from 'react-csv'
 import Decimal from 'decimal.js'
 const axios = require('axios').default
-
+import theme from '../../../theme'
 // Material UI components
 import { makeStyles } from '@mui/styles'
+import Stack from '@mui/material/Stack'
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -146,7 +147,7 @@ export default function AccountTransactionActivity(props) {
       .then(() => {
 
       })
-    },[appIdx])
+    },[appIdx, clicked])
 console.log('accountId', accountId)
     const transactionDataHeaders = [
       {label: "Date", key: "Date"},
@@ -202,7 +203,7 @@ console.log('accountId', accountId)
 
     async function createExport(fromDate, toDate, accountId){
       setDownloadReady(false)
-
+      setClicked(true); 
       let priceArray = await fetchPriceTable(fromDate, toDate, accountId)
       let transactionArray = await fetchTransactionTable(fromDate, toDate, accountId, account, factoryContract, didRegistryContract)
       console.log('transaction array', transactionArray)
@@ -211,8 +212,7 @@ console.log('accountId', accountId)
 
       let totalFees = 0
       
-      setDownloadReady(false)
-      setClicked(true)
+       
                
       let sortedArray = _.sortBy(transactionArray, 'block_timestamp')
       console.log('sorted Array', sortedArray)    
@@ -268,104 +268,118 @@ console.log('accountId', accountId)
     }
 
   return (
-            <Grid container alignItems="center" justifyContent="center" spacing={0} >
-              <Grid item xs={6} sm={6} md={6} lg={6} xl={6} align="center" style={{marginBottom: '20px'}}>
-                <Card>
-                  <Typography variant="h6" align="center">Transactions</Typography>
-                  <Typography variant="caption" align="center"></Typography>
-                  <Typography variant="body1" align="center">{transactionCount}</Typography>
-                </Card>
-              </Grid>
-            
-              <Grid item xs={6} sm={6} md={6} lg={6} xl={6} align="center" style={{marginBottom: '20px'}}>
-                <Card>
-                  <Typography variant="h6" align="center">Fees Paid
-                    <Tooltip TransitionComponent={Zoom} title="The total value of fees paid throughout the period based on NEAR price at time of transaction.">
-                      <InfoIcon fontSize="small" style={{marginLeft:'5px', marginTop:'-3px'}} />
-                    </Tooltip>
-                  </Typography>
-                  <Typography variant="body1" align="center">${feesPaid}</Typography>
-                </Card>
-              </Grid>
-
-              <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="fromDate"
-                  type = "date"
-                  name="fromdate"
-                  label="From"
-                  value={fromDate}
-                  onChange={handleFromDateChange}
-                  InputLabelProps={{shrink: true,}}
-                  inputRef={register({
-                      required: false                              
-                  })}
-                />
-              </Grid>
-              <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
-                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                <InputLabel id="currency">Currency</InputLabel>
-                  <Select
-                    labelId="currency"
-                    label="Currency"
-                    id = "currency"
-                    variant="contained"
-                    value = {currency}
-                    onChange = {handleCurrencyChange}
-                    input={<Input />}
-                    >
-                    {currencies.map((currency) => (
-                      <MenuItem key={currency} value={currency}>
-                        {currency}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="toDate"
-                  type = "date"
-                  name="todate"
-                  label="To"
-                  value={toDate}
-                  onChange={handleToDateChange}
-                  InputLabelProps={{shrink: true,}}
-                  inputRef={register({
-                      required: false                              
-                  })}
-                />
-              </Grid>
-              <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
-              </Grid>
-
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginTop: '20px'}}>
+            <Stack alignItems="center" spacing={1} >
+	  		<Grid container spacing={2} direction='row' justifyContent='center' alignItems='center'>
+                	<Grid item>	
+	  			<Typography variant='overline' >Currency: </Typography>
+	  		</Grid>
+	  		<Grid item>
+                  		<Select
+                    		id = "currency"
+                    		variant="contained"
+                    		value = {currency}
+                    		onChange = {handleCurrencyChange}
+                    		input={<Input />}
+                    		>
+                    		{currencies.map((currency) => (
+                      			<MenuItem key={currency} value={currency}>
+                        			{currency}
+                     			 </MenuItem>
+                   		 ))}
+                  		</Select>
+	  		</Grid>
+	  	</Grid>
+		<Grid container sx={{marginLeft: '3px', marginRight: '5px'}} spacing={1} justifyContent='space-evenly' alignItems='center' direction="row">
+	  		<Grid item xs={3}>
+	  			<Typography variant='overline'>
+	  				Start: 
+	  			</Typography>
+	  		</Grid>
+			<Grid item xs={9}>
+                		<TextField
+                  			autoFocus
+                  			margin="dense"
+                  			id="fromDate"
+                  			type = "date"
+                  			name="fromdate"
+                  			value={fromDate}
+                  			onChange={handleFromDateChange}
+                  			InputLabelProps={{shrink: true,}}
+                  			inputRef={register({
+                      				required: false,                              
+                 		 	})}
+                		/>
+	  		</Grid>
+	  	</Grid>
+	  	<Grid container sx={{marginLeft: '5px', marginRight: '5px'}} spacing={1} justifyContent='space-evenly' alignItems='center' direction='row'>
+	  		<Grid item xs={3}>
+	  			<Typography 
+	  			variant='overline'>End:&nbsp;&nbsp;&nbsp;   
+	  			</Typography>
+	  		</Grid>
+	  		<Grid item xs={9}>
+                		<TextField
+                  			autoFocus
+                  			margin="dense"
+                  			id="toDate"
+                  			type = "date"
+                  			name="todate"
+                  			value={toDate}
+                  			onChange={handleToDateChange}
+                  			InputLabelProps={{shrink: true}}
+                  			inputRef={register({
+                      			required: false                              
+					})}
+                		/>
+	  		</Grid>
+	      </Grid>
               
               {!downloadReady ?
-                !clicked ?
-                  <Button 
-                    variant="outlined"
-                    onClick={(e) => createExport(fromDate, toDate, accountId)}
-                  >
-                  Create CSV Export
-                </Button>
-                : <>
-                  <Typography variant="body1">Preparing Data</Typography>
-                  <Typography variant="caption" color="textSecondary">Powered by Nearblocks.io APIs</Typography>
-                  <LinearProgress />
-                  </>
-                : <Grid container spacing={0} justifyContent="space-between" alignItems="center">
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginTop:'20px'}} align="center">
-                  <Typography variant="h6">
-                    Downloads
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">Powered by Nearblocks.io APIs</Typography>
-                </Grid>
-                  <Grid item xs={6} sm={6} md={6} lg={6} xl={6} align="center">
+                
+                <Grid container sx={{padding: '10px'}} justifyContent='center' alignItems='center'>
+		  	<Grid item>
+		      		{!clicked?
+		 		 <Button 
+                    		  variant="outlined"
+                  		  onClick={(e) => createExport(fromDate, toDate, accountId)}
+                  		 >
+                  			Generate Report
+               			 </Button>:
+				<>
+				<LinearProgress sx={{marginTop: '10px'}}/>
+				<Typography variant="body1">Preparing Data</Typography>
+				<Typography variant="caption" color="textSecondary">Powered by Nearblocks.io APIs</Typography>
+				</>
+				}
+			</Grid>
+		</Grid>
+                : 
+		 <Stack justifyContent='center' alignItems='flex-start' sx={{marginTop: '5px', marginBottom: '5x'}}>
+		 <Typography variant='h6' sx={{color: theme.palette.primary.main, margin: '5px'}}>Report:</Typography>
+		 <Grid container spacing={0} justifyContent="space-between" alignItems="center">
+                 <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
+			
+                  	<Typography variant="overline" align="center">Transactions</Typography>
+                  	<Typography variant="body1" align="center">{transactionCount}</Typography>
+                	
+		 </Grid>
+		 <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
+                 	<Typography variant="overline" align="center">Fees Paid
+                  	</Typography>
+                  	<Typography variant="body1" align="center">${feesPaid}</Typography>
+		 </Grid>
+		 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginTop:'20px'}} align="center">
+                  <Stack spacing={1}>
+		  	<Typography variant="overline">
+                    		Download full report:
+                  	</Typography>
+		   	 <CSVLink data={csvSingleExport} filename={`${accountId.split('.')[0]}-activity.csv`} headers={transactionDataHeaders}>	
+		  	<Button variant='outlined'>Download CSV</Button>
+		        </CSVLink>
+                  	<Typography variant="overline" color="textSecondary">Powered by Nearblocks.io APIs</Typography>
+                  </Stack>
+		 </Grid>
+                  <Grid item xs={6} sm={6} md={6} lg={6} xl={6} sx={{paddingTop: '10px', paddingBottom: '5px' }} align="left">
                     <Button 
                       variant="outlined"
                       onClick={handleReset}
@@ -373,17 +387,10 @@ console.log('accountId', accountId)
                     Reset
                     </Button>
                   </Grid>
-                  <Grid item xs={6} sm={6} md={6} lg={6} xl={6} align="center">
-                    <CSVLink data={csvSingleExport} filename={`${accountId.split('.')[0]}-activity.csv`} headers={transactionDataHeaders}>
-                      <img src={csvIcon} style={{width:'30px', height:'auto'}}/>
-                      <Typography variant="body1" style={{marginTop: '-5px'}}>
-                        CSV
-                      </Typography>
-                    </CSVLink>
-                  </Grid>
+		  
                 </Grid>
+		</Stack>      
               }
-              </Grid>
-            </Grid>
+            </Stack>
     )
 }

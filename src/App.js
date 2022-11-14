@@ -15,7 +15,6 @@ import Registration from './components/mainPages/registration'
 import CreateIndivProfile from './components/mainPages/createIndividualProfile'
 import CreateGuildProfile from './components/mainPages/createGuildProfile'
 import ExploreGuilds from './components/mainPages/guilds'
-import ExploreIndividuals from './components/mainPages/individuals'
 import DisplayGuildProfile from './components/mainPages/displayGuildProfile'
 import DisplayIndivProfile from './components/mainPages/displayIndivProfile'
 import Admin from './components/mainPages/admin'
@@ -24,30 +23,34 @@ import Announcements from './components/mainPages/announcements'
 import Leaderboards from './components/mainPages/leaderboards'
 import Rewards from './components/mainPages/rewards'
 import Dashboard from './components/mainPages/dashboard'
+import AccountInfo from './components/secondaryPages/AccountInfo/accountInfo'
+import Opportunities from './components/secondaryPages/Opportunities/opportunities'
 import { Home } from './components/mainPages/home'
-
-
+import theme from './theme'
 // Material-UI Components
 import { makeStyles } from '@mui/styles'
 import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Grid'
 import useMediaQuery from '@mui/material/useMediaQuery'
-
-
-
+import { createTheme, ThemeProvider, styled } from '@mui/material/styles'
+import {updateCurrentGuilds} from './state/near'
 // helpers
 export const btnClass = 'btn btn-sm btn-outline-primary mb-3 '
 export const flexClass = 'd-flex justify-content-evenly align-items-center '
 export const qs = (s) => document.querySelector(s)
 
+
+
 const useStyles = makeStyles((theme) => ({
     root: {
-        flexGrow: 1,
+	height: '88vh', 
         position: 'relative',
-        display: 'flex',
-        flexDirection: 'column'
-      },
+	overflowX: 'hidden',
+	overflowY: 'hidden', 
+    	backgroundColor: '#2e2e30'  
+	   
+    },
     centered: {
       width: '200px',
       height: '100px',
@@ -82,27 +85,32 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
     
     const { state, dispatch, update } = useContext(appStore)
-
     const classes = useStyles()
     const matches = useMediaQuery('(max-width:500px)')
 
-    const onMount = () => {
+	const [guildList, setGuildList] = useState([]);
+    
+	const onMount = () => {
         dispatch(onAppMount());
     };
+    
+    const {
+        accountData, appIdx, funding, wallet, currentGuilds
+    } = state
 
-    useEffect(onMount, []);
-
-    window.onerror = function (message, url, lineNo) {
+    useEffect(onMount, [guildList]);
+    
+	window.onerror = function (message, url, lineNo) {
         alert('Error: ' + message + 
        '\nUrl: ' + url + 
        '\nLine Number: ' + lineNo);
     return true;   
     }    
     
-    const {
-        accountData, funding, wallet
-    } = state
-    
+    function updateGuildList(newList){
+		setGuildList(newList); 
+	}
+
     let children = null
 
     if (!accountData || !wallet) {
@@ -132,11 +140,12 @@ const App = () => {
     // }
     
     return(
-        <>
-        <div className={classes.root}>
-        <Header state={state}/>
+	<ThemeProvider theme={theme}>
+       
+	<div className={classes.root}>
         
-        <Grid container alignItems="center" justifyContent="center" >
+        <Header updateGuildList={updateGuildList} state={state}/>
+        <Grid container alignItems="center" style={{height: '80vh', overflowY: 'scroll'}} justifyContent="center" >
             <Grid item align="center" className={`${!matches ? classes.container : classes.containerFull}`}>
         
             <Route exact path="/">
@@ -168,9 +177,11 @@ const App = () => {
             </Dashboard>
             </Route>
             <Route exact path="/guilds">
-                <ExploreGuilds
+                <ExploreGuilds 
                     state={state}
-                    >
+	    	    guilds={guildList}
+                    guildCount={guildList.length}
+	    		>
                     { children }
                 </ExploreGuilds>
             </Route>
@@ -195,13 +206,13 @@ const App = () => {
                     { children }
                 </Pledge>
             </Route>
-            <Route exact path="/people">
-                <ExploreIndividuals
-                    state={state}
-                    >
-                    { children }
-                </ExploreIndividuals>
-            </Route>
+	    	<Route exact path="/opportunities">
+	    		<Opportunities
+					state={state}
+	    			>
+	    			{ children }
+	    		</Opportunities>
+	   		</Route>
             <Route exact path="/registration">
                 <Registration
                     state={state}
@@ -209,6 +220,13 @@ const App = () => {
                     { children }
                 </Registration>
             </Route>
+	    <Route exact path='/account-info'>
+	    	<AccountInfo 
+			state={state}
+	    	>
+	    		{ children }
+	    	</AccountInfo>
+	    </Route>
             <Route exact path="/register-individual">
                 <IndivRegister
                     state={state}
@@ -266,10 +284,11 @@ const App = () => {
             </Route>
            </Grid>
         </Grid>
+        
+	</div>
 
-        </div>     
         <Footer />
-        </>
+	</ThemeProvider>
     )
 }
 

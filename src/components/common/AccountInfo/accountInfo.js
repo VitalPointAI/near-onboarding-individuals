@@ -3,17 +3,36 @@ import { useParams } from 'react-router-dom'
 import { appStore, onAppMount } from '../../../state/app'
 
 // Material UI Components
+import Stack from '@mui/material/Stack' 
 import { makeStyles } from '@material-ui/core/styles'
-import Avatar from '@material-ui/core/Avatar'
+import Avatar from '@mui/material/Avatar'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import { LinearProgress } from '@material-ui/core'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import Button from '@material-ui/core/Button'
-
+import { createTheme, ThemeProvider, styled } from '@mui/material/styles'
 const imageName = require('../../../img/default-profile.png') // default no-image avatar
 const logoName = require('../../../img/default_logo.png') // default no-logo
 
+const CustomTypography = styled(Typography)(({ theme }) => ({
+	color: theme.typography.color,
+	padding: theme.typography.padding, 
+}))
+const CustomAvatar = styled(Avatar)(({theme}) => ({
+	padding: theme.avatar.padding,
+	
+}))
+const theme = createTheme({
+	typography: {
+		color: '#c05b05',
+		padding: 0
+	},
+	avatar: {
+		padding: 0,
+	}
+
+})
 export default function PersonaInfo(props) {
     const [profileExists, setProfileExists] = useState(false)
     const [editPersonaClicked, setEditPersonaClicked] = useState(false)
@@ -115,7 +134,7 @@ export default function PersonaInfo(props) {
              setFinished(true)
             })
         
-    }, [isUpdated, did, claimed, currentDaosList]
+    }, [did, claimed, currentDaosList]
     )
 
 
@@ -145,16 +164,18 @@ export default function PersonaInfo(props) {
   }
 
     return (
-            <>
+            <ThemeProvider theme={theme}>
                
             {!matches ? (
 
                 finished ? (
-                    <>
                     
-                    <Typography variant="overline" onClick={handleEditPersonaClick}>
-                    {accountType == 'guild' ? (<>
-                        <a href={`https://nearguilds.live/guild-profiles/${did}`}>
+                    <Stack direction='column' alignItems='flex-end' justifyContent='center' spacing={0}>
+
+					<>
+					{accountType == 'guild' ? (<>
+                       
+					<a href={`https://nearguilds.live/guild-profiles/${did}`}>
                             <div style={{ 
                                 height: '100px',
                                 backgroundImage: `url(${pfpLogo != logoName && pfpLogo != '' ? pfpLogo : logo})`, 
@@ -163,25 +184,25 @@ export default function PersonaInfo(props) {
                                 backgroundRepeat: 'no-repeat',
                                 backgroundOrigin: 'content-box'
                             }}/>
-                        </a>
+                      </a>
                         </>
                         )
-                    :  ( <>
+                    	:  ( <>
                         <a href={`https://nearpersonas.live/indiv-profiles/${did}`}>
-                            <Avatar src={pfpAvatar != imageName && pfpAvatar != '' ? pfpAvatar : avatar} style={{width: '100px', height:'100px'}} onClick={handleEditPersonaClick}/>
+                            <CustomAvatar sx={{borderColor: '#c05b05', border: 2}} src={pfpAvatar != imageName && pfpAvatar != '' ? pfpAvatar : avatar} onClick={handleEditPersonaClick}/>
                         </a>
                         </>)
-                    }{name ? name : accountId}: {balance} Ⓝ
-                    </Typography>
-                                          
-                    </>
+               
+						}	
+					</>                    
+                    </Stack>
                 ) : <LinearProgress />
             ) : (
                 finished ? (
-                    <>
+		<Stack direction='column' alignItems='flex-end' justifyContent='center' spacing={0}>
                    
-                    <Typography variant="overline" onClick={handleEditPersonaClick}>
-                    {accountType == 'guild' ? (<>
+					<>
+					{accountType == 'guild' ? (<>
                         <a href={`https://nearguilds.live/guild-profiles/${did}`}>
                             <div style={{
                                 height: '100px',
@@ -191,21 +212,21 @@ export default function PersonaInfo(props) {
                                 backgroundRepeat: 'no-repeat',
                                 backgroundOrigin: 'content-box'
                             }}/>
-                        </a>
-                        </>
-                        )
-                    :  ( <>
-                        <a href={`https://nearpersonas.live/indiv-profiles/${did}`}>
-                            <Avatar src={pfpAvatar != imageName && pfpAvatar != '' ? pfpAvatar : avatar}  style={{width: '100px', height:'100px'}} onClick={handleEditPersonaClick}/>
-                        </a>
-                        </>)
-                    }{name ? name : accountId}: {balance} Ⓝ
-                    </Typography>
+                        	</a>
+                        	</>
+                        	)
+                    		:  ( <>
+                        		<a href={`https://nearpersonas.live/indiv-profiles/${did}`}>
+                            		<CustomAvatar sx={{border: 2, borderColor: '#c05b05'}} src={pfpAvatar != imageName && pfpAvatar != '' ? pfpAvatar : avatar} onClick={handleEditPersonaClick}/>
+                        		</a>
+                        	</>)
+                    		}
+		    		</>
                        
-                    </>
+                    </Stack>
                 ) : <LinearProgress />
            )}
 
-       </>
+       </ThemeProvider>
     )
 }

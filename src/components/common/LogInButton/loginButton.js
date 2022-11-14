@@ -1,7 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@mui/styles'
 import { login } from '../../../state/near'
-
+import AccountInfo from '../AccountInfo/accountInfo'
 // Material UI components
 import Button from '@mui/material/Button'
 import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone'

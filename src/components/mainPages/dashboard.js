@@ -8,16 +8,23 @@ import Communities from '../common/Communities/communities'
 import CommunityCount from '../common/CommunityCount/communityCount'
 import MemberCommunities from '../common/MemberCommunities/memberCommunities'
 import MemberCommunityCount from '../common/MemberCommunityCount/memberCommunityCount'
-import AccountInfo from '../common/AccountInfo/accountInfo'
 import StakingActivity from '../common/StakingActivity/stakingActivity'
 import AccountTransactionActivity from '../common/AccountTransactionActivity/accountTransactionActivity'
+import theme from '../../theme'
 //import OpportunityCard from '../OpportunityCard/OpportunityCard'
 
 // Material UI
+import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
+import Stack from '@mui/material/Stack'
+import Button from '@mui/material/Button'
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import SavingsOutlinedIcon from '@mui/icons-material/SavingsOutlined';
+import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import useMediaQuery from '@mui/material/useMediaQuery'
 import Grid from '@mui/material/Grid'
 import Accordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
+import Paper from '@mui/material/Paper' 
 import AccordionDetails from '@mui/material/AccordionDetails'
 import Typography from '@mui/material/Typography'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -26,7 +33,7 @@ import MailIcon from '@mui/icons-material/Mail'
 import { LinearProgress } from '@mui/material'
 import Switch from '@mui/material/Switch'
 import FormControlLabel from '@mui/material/FormControlLabel'
-
+import { createTheme, ThemeProvider, styled } from '@mui/material/styles'
 const axios = require('axios').default
 
 //import './dashboard.css'
@@ -77,7 +84,8 @@ export default function Dashboard(props) {
       appIdx,
       didRegistryContract,
       factoryContract,
-      isUpdated
+      isUpdated,
+      page 
     } = state
 
     useEffect(
@@ -85,7 +93,11 @@ export default function Dashboard(props) {
             async function fetchMemberData() {
                 let memberDaos = []
                 let communities = []
-              if(currentGuilds && appIdx && account){
+
+	      console.log("current page", page)
+              update("", {page: 'dashboard'})
+	      console.log("current page", page)
+	      if(currentGuilds && appIdx && account){
                 for(let x = 0; x < currentGuilds.length; x++){
                   let guildInfo = await appIdx.get('guildProfile', currentGuilds[x].did)
                   let thisMemberStatus = await getCommunityMemberStatus(guildInfo.platform, guildInfo.contractId, account)
@@ -187,7 +199,8 @@ export default function Dashboard(props) {
         () => {          
             if(isUpdated){}  
             async function fetchTab1Data(){
-                    setOppsLoaded(false)
+                    if(appIdx){
+		    setOppsLoaded(false)
                     // Persona Opportunity Recommendations
 
                     // 1. Build complete list of all opportuntities for all active DAOs
@@ -221,7 +234,6 @@ export default function Dashboard(props) {
 
                     // 3. Initialize recommendations array
                     let currentRecommendations = []
-
                     // 3. For each opportunity, compare opportunity skillset requirements to persona skillsets and add to recommendations array if the same
                     // calculate a suitability percentage from skills required (true) (total skills possessed / total skills)
                     let skillMatch
@@ -350,7 +362,7 @@ export default function Dashboard(props) {
                     setRecommendationsLoaded(true)
                     console.log('recommendations', currentRecommendations)
             
-            }
+            }}
             let mounted = true
             if(mounted){
                 fetchTab1Data()
@@ -361,7 +373,7 @@ export default function Dashboard(props) {
                 mounted = false
             } 
         }
-    }, [currentGuilds, did, isUpdated]
+    }, [currentGuilds,appIdx, did, isUpdated]
     )
 
     function handleExpanded() {
@@ -444,11 +456,8 @@ export default function Dashboard(props) {
   }
 
     return (
-        
-        <Grid container justifyContent="center" alignItems="flex-start" spacing={1} style={{padding: '5px'}}>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginTop: '10px'}} align="center">
-              <AccountInfo />
-            </Grid>
+	<ThemeProvider theme={theme}>
+        <Grid container justifyContent="center" alignItems="flex-start" spacing={1} style={{marginTop: '10px', padding: '5px'}}>
             
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
               {email != '' ? (<FormControlLabel
@@ -464,7 +473,92 @@ export default function Dashboard(props) {
                 
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-               <Accordion>
+               <Grid container justifyContent='center' alignItems='center'>
+	    		<Grid item>
+	    			<Paper elevation={5} 
+	    					sx={{
+						padding: '15px',
+						height: '250px',
+						marginBottom: '30px', 
+						width: '220px', 
+						backgroundColor: theme.palette.background.dark}}>
+	    				<Stack justifyContent='space-evenly' alignItems='center'>
+	    					<ShieldOutlinedIcon sx={{
+								fontSize: '65px',
+								stroke: theme.palette.background.dark,
+								strokeWidth: 1,
+								color: theme.palette.primary.main}}/>
+	    					<Typography variant='overline' sx={{fontSize: '26px'}}>Guilds</Typography>
+						<Typography variant='p'>See your guilds, and guilds you are a member of.</Typography>
+	    					<Button sx={{marginTop: '20px'}} variant='contained'>Go</Button>
+	    				</Stack>
+	    			</Paper>
+	    		</Grid>
+			<Grid item>
+	    			<Paper elevation={5} 
+	    					sx={{
+						padding: '15px', 
+						height: '250px',
+						marginBottom: '30px', 
+						width: '220px', 
+						backgroundColor: theme.palette.background.dark}}>
+	    			        <Stack justifyContent='space-evenly' alignItems='center'>	
+	    					<AccountCircleOutlinedIcon sx={{
+							fontSize: '65px',
+							stroke: theme.palette.background.dark,
+							strokeWidth: 1,
+							color: theme.palette.primary.main}}/>		
+	    					<Typography variant='overline' sx={{fontSize: '26px'}}>Account</Typography>	
+	    					<Typography variant='p'>View transactions, and fees paid for a given period.</Typography>
+	    					<Button href='/account-info' sx={{marginTop: '20px'}} variant='contained'>Go</Button>
+
+	    				</Stack>
+	    			</Paper>
+	    		</Grid>
+			<Grid item>
+	    			<Paper elevation={5} 
+	    					sx={{
+						padding: '15px',
+						height: '250px',
+						marginBottom: '30px', 
+						width: '220px', 
+						backgroundColor: theme.palette.background.dark}}>
+	    				<Stack justifyContent='space-evenly' alignItems='center'>
+	    			  		<SavingsOutlinedIcon sx={{
+							fontSize: '70px',
+							stroke: theme.palette.background.dark,
+							strokeWidth: 1,
+							color: theme.palette.primary.main}} />	
+	    					<Typography variant='overline' sx={{fontSize: '26px'}}>Staking</Typography>
+	    					<Typography variant='p'>View staking data and generate reports.</Typography>
+	    					<Button sx={{marginTop: '20px'}}variant='contained'>Go</Button>
+	    				</Stack>
+	    			</Paper>
+	    		</Grid>
+	    		<Grid item>
+	    			<Paper elevation={5} 
+	    					sx={{
+						padding: '15px',
+						height: '250px',
+						marginBottom: '30px', 
+						width: '220px', 
+						backgroundColor: theme.palette.background.dark}}>
+	    				<Stack justifyContent='space-evenly' alignItems='center'>
+	    			  		<WorkOutlineOutlinedIcon sx={{
+							fontSize: '70px',
+							stroke: theme.palette.background.dark,
+							strokeWidth: 1,
+							color: theme.palette.primary.main}} />	
+	    					<Typography variant='overline' sx={{fontSize: '26px'}}>Opportunities</Typography>
+	    					<Typography variant='p'>See opportunities offered by guilds, and find links to their projects.</Typography>
+	    					<Button href="/opportunities" sx={{marginTop: '20px'}}variant='contained'>Go</Button>
+	    				</Stack>
+	    			</Paper>
+	    		</Grid>
+
+	    		
+	       </Grid>	
+	       <Accordion>
                <AccordionSummary
                  expandIcon={<ExpandMoreIcon />}
                  aria-controls="panel1a-content"
@@ -571,6 +665,6 @@ export default function Dashboard(props) {
            </Accordion>
             </Grid>       
         </Grid>
-        
+	</ThemeProvider>
     )
 }

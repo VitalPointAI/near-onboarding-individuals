@@ -39,7 +39,6 @@
     "shelljs": "~0.8.4"
   },
   "dependencies": {
-    "3id-did-provider": "^1.1.1",
     "@apollo/client": "^3.4.17",
     "@azure/identity": "^2.0.4",
     "@azure/keyvault-secrets": "^4.4.0",
@@ -56,9 +55,11 @@
     "@mui/material": "^5.2.8",
     "@mui/styles": "^5.2.3",
     "@types/react": "^16.8.6 || ^17.0.0",
+    "3id-did-provider": "^1.1.1",
     "animejs": "^3.2.1",
     "axios": "^0.24.0",
     "bip39": "^3.0.4",
+    "chart.js": "^3.8.0",
     "cors": "^2.8.5",
     "decimal.js": "^10.3.1",
     "dids": "^2.4.3",
@@ -79,11 +80,13 @@
     "near-seed-phrase": "^0.2.0",
     "qs": "^6.10.3",
     "react": "^16.8.0 || ^17.0.0",
+    "react-chartjs-2": "^4.2.0",
     "react-csv": "^2.2.2",
     "react-dom": "^16.8.0 || ^17.0.0",
     "react-draft-wysiwyg": "^1.14.7",
     "react-hook-form": "^6.15.4",
     "react-router-dom": "^5.2.0",
+    "react-swipeable-views": "^0.14.0",
     "regenerator-runtime": "~0.13.5"
   },
   "resolutions": {

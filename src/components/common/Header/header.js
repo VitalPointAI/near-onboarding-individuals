@@ -4,77 +4,84 @@ import { appStore, onAppMount } from '../../../state/app'
 import LeftSideDrawer from '../LeftSideDrawer/leftSideDrawer'
 import LoginButton from '../LogInButton/loginButton'
 import LogoutButton from '../LogoutButton/logoutButton'
-import ImageLoader from '../ImageLoader/imageLoader'
-//import NotificationCard from '../Notifications/notifications'
+import {updateCurrentGuilds} from '../../../state/near'
 import {ceramic} from '../../../utils/ceramic'
-
+import AccountInfo from '../AccountInfo/accountInfo'
 // Material UI
 import Grid from '@mui/material/Grid'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import Stack from '@mui/material/Stack'
 import { Typography } from '@mui/material'
+import { createTheme, ThemeProvider, styled } from '@mui/material/styles'
+import { TextField } from '@mui/material'
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
+import theme from '../../../theme'
+import IconButton from '@mui/material/IconButton'; 
 
-import '../../../global.css'
+const CustomGrid = styled(Grid)(({ theme })=>({
+		backgroundColor: theme.palette.background.dark,
+		height: '16vh'
 
-const nearLogo = require('../../../img/near-personas-logo.png')
-
-const logoStyle = {
-    maxWidth: '150px',
-    marginTop: '10px'
-}
-
-const Header = ({ state, handleUpdate }) => {
-    const [newNotifications, setNewNotifications] = useState(0)
-    const [popoverOpen, setPopoverOpen] = useState(false)
+}))
+const CustomAccountInfo = styled(AccountInfo)(({ theme }) => ({
+		maxHeight: '50px',
+		maxWidth: '50px'
+}))
+const CustomTextField = styled(TextField)(({theme}) => ({
+		maxWidth: '180px',	
+		'.MuiOutlinedInput-root': {
+			borderRadius: '25px'
+		}
+}))
+	
+const Header = ({ state, handleUpdate, updateGuildList }) => {
+    const [guilds, setGuilds] = useState([])
     const [anchorEl, setAnchorEl] = useState(null);
     const { update } = useContext(appStore);
 
     const {
+	currentGuilds,
         wallet,
         appIdx,
         isUpdated,
-        accountId
+        accountId,
+	page
     } = state
 
+    
     useEffect(
         () => {
         async function fetchData(){
-            if(isUpdated){}
-            if(accountId){
-                //get the list of all notifications for all accounts
-       
-                let result = await ceramic.downloadKeysSecret(appIdx, 'notifications')
-                if(result){
-
-                    //convert the object from ceramic to map in order to more easily
-                    //return notifications associated with current account
-                    if(result[0]){
-                        let notificationMap = new Map(Object.entries(result[0])) 
-
-                        let notifications = 0;
-
-                        //loop thorugh all notifications for user, if the read flag is false, increase the count
-                        //for the notification badge
-                        if(notificationMap.get(accountId)){
-                            for(let i = 0; i < notificationMap.get(accountId).length; i++){
-                                if(notificationMap.get(accountId)[i].read == false){
-                                    notifications++;
-                                }
-                            }
+        	let theseGuilds = await updateCurrentGuilds(); 
+		update('', {currentGuilds: theseGuilds})
+		
+		if(currentGuilds && appIdx){
+		    sortedGuilds = _.sortBy(currentGuilds, 'registered').reverse()
+                    console.log('sortedGuildsFromHeader', sortedGuilds)
+		    for(let x = 0; x < sortedGuilds.length; x++){
+                        let result = await appIdx.get('guildProfile', sortedGuilds[x].did)
+                        console.log('result', result)
+                        
+			if(result){
+                            let category, name
+                            result.category ? category = result.category : category = ''
+                            result.name ? name = result.name : name  = ''
+			    let newObject = {...sortedGuilds[x], category: category, name: name}
+                            sortedGuilds[x] = newObject
                         }
-                    
-
-                    //set the counter for the badge to the amount of unread notifications
-                    setNewNotifications(notifications)
                     }
-                }
-            }
-        }
+	            setGuilds(sortedGuilds)
+                    console.log('sortedguilds after from header', sortedGuilds)
+		    updateGuildList(sortedGuilds); 
+    		 
+		}
+	}
         fetchData()
         .then((res) => {
         
         })
-    }, [accountId, isUpdated])
+    }, [accountId, isUpdated, page])
 
     const matches = useMediaQuery('(max-width:500px)')
 
@@ -90,116 +97,105 @@ const Header = ({ state, handleUpdate }) => {
         update('', {isUpdated: !isUpdated})
         setPopoverOpen(false)
     }
-    
-    return (
-        
-        <Grid container justifyContent="space-between" alignItems="center" spacing={1} style={{paddingRight: '10px', paddingLeft: '10px', paddingBottom: '5px', backgroundColor: 'black'}}>
+   const search = (searchTerm) => {
+	titleArray = []
+	 console.log('guildslist', guilds)
+	for(var i in guilds){
+		console.log("guild in list", guilds[i])
+		titleArray.push(guilds[i].name)
+	}
+	console.log("titleArray", titleArray)
+	const matches = titleArray.filter(s => s.toLowerCase().includes(searchTerm.toLowerCase()));
+	console.log("matches,", matches)
+	
+	searchedGuilds = []
+	for(i in matches){
+		for(j in guilds){
+			if(matches[i] == guilds[j].name){
+				searchedGuilds.push(guilds[j])
+			}
+		}
+	}
+	updateGuildList(searchedGuilds) 
+
+   }  
+
+	return (
+        <ThemeProvider theme={theme}>
+        <CustomGrid sx={{boxShadow: 10}} container justifyContent="flex-end" alignItems="center" spacing={1} style={{paddingRight: '10px', paddingLeft: '10px', paddingBottom: '5px'}}>
             
             {wallet && wallet.signedIn ? 
                 !matches ? (
                     <>
-                    <Grid item >
-                    <div style={{float:'left', marginTop: '15px'}}>
-                        <LeftSideDrawer
-                        state={state}    
-                        />
-                    </div>
-                        <Link to="/"> 
-                            <ImageLoader image={nearLogo} style={logoStyle}/>
-                        </Link>
-                    </Grid>
-                    <Grid item style={{minWidth: '100px'}}>
-        
-                        {wallet && !wallet.signedIn ? <LoginButton /> :  
-                            <Stack direction="row" spacing={1} justifyContent="center">
-                                <Typography variant="overline" style={{color:'#FFFFFF'}}>
-                                    {accountId}
-                                </Typography>
-                                <LogoutButton /> 
-                            </Stack>
-                        }
-                    </Grid>
+                    	<Grid item >
+                    		<div style={{float:'left', marginTop: '15px'}}>
+                        		<LeftSideDrawer
+                        		state={state}    
+                        		/>
+                    		</div>
+                    	</Grid>
+			{
+				page == 'guilds'? 
+				<TextField>guilds</TextField>:<></>
+			}
+                    	<Grid item style={{minWidth: '100px'}}>
+        	
+            	            {wallet && !wallet.signedIn ? <LoginButton /> :  
+                                	<CustomAccountInfo /> 
+                        	}
+                    	</Grid>
                     </>
                 )
                 : (
                     <>
-                    <Grid item >
-                        <div style={{float:'left', marginTop: '15px'}}>
-                            <LeftSideDrawer
-                            state={state}                        
-                            />
-                        </div>
-                        <Link to="/"> 
-                            <ImageLoader image={nearLogo} style={logoStyle}/>
-                        </Link>
-                    </Grid>
-                    <Grid item  style={{minWidth: '100px'}}>
-                        {wallet && !wallet.signedIn ? <LoginButton /> :  
-                            <Stack spacing={1} justifyContent="center">
-                                <Typography variant="overline" style={{color:'#FFFFFF'}}>
-                                    {accountId.length <= 17 ? accountId : accountId.substring(0,15) + "..."}
-                                </Typography>
-                                <LogoutButton /> 
-                            </Stack>
-                        }
-                    </Grid>
+			<Grid item>
+			{
+				page == 'guilds'? 
+				<CustomTextField label='Search Guilds'i
+				onChange={(e) => search(e.target.value)} 
+				InputProps={{
+					endAdornment: 
+						 <InputAdornment position="end">
+						 	<IconButton>
+								 <SearchIcon />
+							</IconButton>
+						 </InputAdornment>
+				}}
+				/>:<></>
+			}
+			</Grid>
+                    	<Grid item >
+                        	{wallet && !wallet.signedIn ? <LoginButton /> :  
+                                	<CustomAccountInfo /> 
+                        	}
+                    	</Grid>
                     </>
                 )
             :  
             wallet && !wallet.signedIn ? 
                 !matches ? (
                     <>
-                    <Grid item >
-                        <div style={{float:'left', marginTop: '15px'}}>
-                            <LeftSideDrawer
-                                state={state}                        
-                            />
-                        </div>
-                        <Link to="/"> 
-                            <ImageLoader image={nearLogo} style={logoStyle}/>
-                        </Link>
-                    </Grid>
-                    <Grid item style={{minWidth: '100px'}}>
-                        {wallet && !wallet.signedIn ? <LoginButton /> :   
-                            <Stack direction="row" spacing={1} justifyContent="center">
-                                <Typography variant="overline" style={{color:'#FFFFFF'}}>
-                                    {accountId}
-                                </Typography>
-                                <LogoutButton /> 
-                            </Stack>
-                        }
-                    </Grid>
+                    	<Grid item xs={4} style={{minWidth: '100px'}}>
+                        	{wallet && !wallet.signedIn ? <LoginButton /> :   
+                                	<CustomAccountInfo /> 
+                        	}
+                    	</Grid>
                     </>
                 ) : (
                     <>
-                    <Grid item >
-                        <div style={{float:'left', marginTop: '15px'}}>
-                            <LeftSideDrawer
-                                state={state}
-                            
-                            />
-                        </div>
-                        <Link to="/"> 
-                            <ImageLoader image={nearLogo} style={logoStyle}/>
-                        </Link>
-                    </Grid>
-                    <Grid item style={{minWidth: '100px'}}>
-                        {wallet && !wallet.signedIn ? <LoginButton /> :  
-                            <Stack spacing={1} justifyContent="center">
-                                <Typography variant="overline" style={{color:'#FFFFFF'}}>
-                                    {accountId.length <= 17 ? accountId : accountId.substring(0,15) + "..."}
-                                </Typography>
-                                <LogoutButton /> 
-                            </Stack>
-                        }
-                    </Grid>
+                    	<Grid item xs={4} style={{minWidth: '100px'}}>
+                        	{wallet && !wallet.signedIn ? <LoginButton /> :  
+					<CustomAccountInfo /> 
+                        	}
+                    	</Grid>
                     </>
                 ) 
             : null
         }
             
-        </Grid>
-        
+        </CustomGrid>
+        </ThemeProvider>
+
       
     )
 }

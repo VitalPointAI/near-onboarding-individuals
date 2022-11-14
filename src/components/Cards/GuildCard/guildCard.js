@@ -6,10 +6,12 @@ import { ceramic } from '../../../utils/ceramic'
 import { catalystDao } from '../../../utils/catalystDao'
 import Purpose from '../Purpose/purpose'
 import Social from '../../common/Social/social'
+import SuitabilityMetrics from '../../Charts/SuitabilityMetrics/suitabilityMetrics'
 import { signalCounter, guildRootName, getCommunityMemberStatus } from '../../../state/near'
-
-
+import SwipeableViews from 'react-swipeable-views';
+import theme from '../../../theme'
 // Material UI Components
+import Box from '@mui/material/Box'
 import { withStyles } from '@mui/styles'
 import Button from '@mui/material/Button'
 import { LinearProgress, CircularProgress } from '@mui/material'
@@ -34,17 +36,36 @@ import MilitaryTechIcon from '@mui/icons-material/MilitaryTech'
 import InfoIcon from '@mui/icons-material/Info'
 import Tooltip from '@mui/material/Tooltip'
 import CategoryIcon from '@mui/icons-material/Category'
+import { createTheme, ThemeProvider, styled } from '@mui/material/styles'
+import MobileStepper from '@mui/material/MobileStepper';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack' 
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward' 
+import StepButton from '@mui/material/StepButton' 
+import Step from '@mui/material/Step' 
+import IconButton from '@mui/material/IconButton' 
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
+const StyledMobileStepper = styled(MobileStepper)(({ theme })=> ({
+	'.MuiMobileStepper-dotActive': {backgroundColor: theme.palette.primary.main},
+	backgroundColor: theme.palette.background.dark
+}))
 
-const HtmlTooltip = withStyles((theme) => ({
-  tooltip: {
-    backgroundColor: '#f5f5f9',
-    color: 'rgba(0, 0, 0, 0.87)',
-    maxWidth: '95%',
-    fontSize: '12px',
-    border: '1px solid #dadde9',
-  },
-}))(Tooltip)
+const StyledIconButton = styled(IconButton)(({theme}) => ({
+	'color': theme.palette.primary.main, 
+}))
+
+const StyledTypography = styled(Typography)(({theme}) => ({
+	'fontWeight': 500,
+	'color': 'white'
+}))
+
+const StyledStack = styled(Stack)(({theme}) => ({
+	'paddingRight': '5px',
+	'paddingLeft': '5px', 
+	'backgroundColor': theme.palette.primary.main,
+	'height': '35px'
+}))
 
 const imageName = require('../../../img/default_logo.png') // default no-image avatar
 const sortDown = require('../../../img/sortdown.png')
@@ -97,7 +118,7 @@ export default function GuildCard(props) {
     const [currentLikes, setCurrentLikes] = useState([])
     const [currentDisLikes, setCurrentDisLikes] = useState([])
     const [currentNeutrals, setCurrentNeutrals] = useState([])
-
+	const [activeStep, setActiveStep] = useState(0)
 
     const { 
       summoner,
@@ -154,7 +175,8 @@ export default function GuildCard(props) {
         if(didRegistryContract){
           try{
             let verificationStatus = await didRegistryContract.getVerificationStatus({accountId: contractId})
-            console.log('verification status', verificationStatus)
+
+console.log('verification status', verificationStatus)
             if(verificationStatus != 'null'){
               setVerified(verificationStatus)
             }
@@ -306,7 +328,16 @@ export default function GuildCard(props) {
   function handleUpdate(property){
     setIsUpdated(property)
   }
-
+	 
+  const handleNext = () => {
+	setActiveStep((prevActionStep) => prevActionStep + 1)
+  }
+ const handleBack = () => {
+	setActiveStep((prevActionStep) => prevActionStep - 1)
+ }
+  const handleStepChange = (step) => {
+  	setActiveStep(step)
+  }
   const handleEditDaoClick = () => {
     handleExpanded()
     handleEditDaoClickState(true)
@@ -383,35 +414,90 @@ export default function GuildCard(props) {
   }
 
     return(
-        <>
+		<ThemeProvider theme={theme}>
         {!display ? <LinearProgress /> : 
-                    
           finished ? 
           (
             <>
-            <ListItem alignItems="flex-start" style={{flexWrap:'wrap'}}>
-            <Paper elevation={2} style={{padding: '5px'}}>
+            <ListItem alignItems="flex-start" justifyContent='center' style={{flexWrap:'wrap', marginBottom: '10px'}}>	
+		  		<Box sx={{width: '240px', height: '260px', boxShadow: 8, backgroundColor: "#202023"}}>
+				  					<SwipeableViews
+				  						style={{marginTop: '24px'}}
+										axis='x'
+										index={activeStep}
+										onChangeIndex={handleStepChange}
+										enableMouseEvents>
+										<Stack justifyContent='center' alignItems='center'>
+											<a href={`${guildRootName}/guild-profiles/${guildDid}`}>	
+				  								<Box sx={{
+													height: '75px',
+													width: '100%',
+													backgroundPosition: 'center',
+                      								backgroundOrigin: 'content-box',
+													backgroundImage: `url(${logo})`,
+                      								backgroundSize: 'contain',
+                      								backgroundRepeat: 'no-repeat',
+                      								}}/>	
+				  								<StyledTypography variant='h7'>{name != '' ? name : contractId.split('.')[0]}</StyledTypography>
+				  							</a>
+				  							{				
+				  					 		category != '' && category != 'undefined' && category ? 
+											 <Chip sx={{marginTop: '15px', color: "white"}} icon={<CategoryIcon />} label={category} variant="outlined"/> : null}
+				  						</Stack>
+										<Box sx={{padding: '5px'}}>
+				  						<SuitabilityMetrics
+				  						
+				  							specific={specificSkillsPercentMatch}
+				  							values={valuePercentMatch}
+				  							general={generalSkillsPercentMatch}
+				  							work={workPercentMatch}
+				  						/> 
+				  						</Box>
+								</SwipeableViews>
+				  				<StyledMobileStepper
+				  				steps={2}
+		  						variant='dots'
+								position="static"
+								activeStep={activeStep}
+				  				nextButton = {
+									<StyledIconButton size='small' sx={{color: ''}} onClick={handleNext} disabled={activeStep === 1}>
+										<ArrowForwardIcon />
+									</StyledIconButton>
+								}
+		  						backButton = {
+									<StyledIconButton size = 'small' onClick={handleBack} disabled={activeStep === 0}>
+										<ArrowBackIcon />
+									</StyledIconButton>
+								}
+		  					>
+				  			</StyledMobileStepper>
+				  			<StyledStack direction='row' alignItems='center' justifyContent='space-between'>
+				  				<Stack direction='row' alignItems='center' justifyContent='flex-start'>
+				  					<IconButton size='small'><FavoriteBorderIcon
+		  								sx={{color: theme.palette.background.dark}} /></IconButton>	
+				  					<Typography variant='p'>{currentLikes.length}</Typography>
+				  				</Stack>
+				  				<IconButton onClick={handlePurposeClick}><InfoOutlinedIcon sx={{color: theme.palette.background.dark}} /></IconButton>
+				  			</StyledStack>
+			   		</Box>
+		{ /** 
+	    <Paper elevation={2} style={{padding: '5px', maxWidth: '80vw'}}>
             <Grid container spacing={1} alignItems="center" justifyContent="space-between">
               
               <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
                 <Stack direction="row" spacing={1} justifyContent="space-evenly">
                 {profileExists ? <>
-                  <Typography variant="overline">V: {valuePercentMatch}%</Typography>
-                  <Typography variant="overline">L: {subjectMatch ? 'yes' : 'no'}</Typography>
-                  <Typography variant="overline">G: {generalSkillsPercentMatch}%</Typography>
-                  <Typography variant="overline">S: {specificSkillsPercentMatch}%</Typography>
-                  <Typography variant="overline">W: {workPercentMatch}%</Typography>
-                  <Typography variant="h5">{overallMatch}%</Typography>
+                  <Typography variant="h5">{overallMatch? overallMatch: 0}%</Typography>
                   <HtmlTooltip
                     title={<>
                       <Typography variant="h5">Suitability Score</Typography>
                       <div><Typography variant="body1">
                       The higher the percentage score, the more suitable the guild is for you.<br></br>
-                      V = Values<br></br>
-                      L = Teaches what you want to learn<br></br>
-                      G = General Skills<br></br>
-                      S = Specific Skills<br></br>
-                      W = Work Type
+                      Values: {valuePercentMatch}<br />
+                      Teaches what you want to learn: {subjectMatch ? 'Yes': 'No'}<br />
+                      General Skills: {generalSkillsPercentMatch}<br />
+                      Specific Skills: {specificSkillsPercentMatch}<br></br>
+                      Work Type: {workPercentMatch}
                       </Typography></div>
                       </>
                     }
@@ -426,7 +512,6 @@ export default function GuildCard(props) {
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
                   
-                    <a href={`${guildRootName}/guild-profiles/${guildDid}`}>
                     <div style={{width: '100%', 
                       height: '100px',
                       backgroundImage: `url(${logo})`, 
@@ -473,7 +558,8 @@ export default function GuildCard(props) {
                 </Grid>                     
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
                   <Stack direction="row" spacing={1} justifyContent="space-between">  
-                    {purpose ? (<Button variant="outlined" style={{textAlign: 'center', fontSize: '80%', marginTop:'5px'}} onClick={handlePurposeClick}>Purpose</Button>) : null}
+                    {
+		   purpose ? (<Button variant="outlined" style={{textAlign: 'center', fontSize: '80%', marginTop:'5px'}} onClick={handlePurposeClick}>Purpose</Button>) : null}
                     {category != '' && category != 'undefined' && category ? <Chip icon={<CategoryIcon />} label={category} variant="outlined" style={{marginTop: '5px'}}/> : null}
                   </Stack>
               </Grid>
@@ -516,8 +602,7 @@ export default function GuildCard(props) {
                 </Grid>
               : null }          
             </Grid>
-            </Paper>
-            <Divider variant="middle" style={{marginTop: '15px', width:'100%', marginBottom: '15px'}}/>
+            </Paper>*/}
             </ListItem>
             </>
             ) 
@@ -529,7 +614,6 @@ export default function GuildCard(props) {
             handlePurposeClickState={handlePurposeClickState}
             contractId={contractId}
             /> : null }
-        </>
-       
+      </ThemeProvider> 
     )
 }
